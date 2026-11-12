@@ -1,0 +1,199 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>IDEAFRAME tokens specimen</title>
+<link rel="stylesheet" href="tokens.css">
+<style>
+  /* Specimen only. Every value below comes from tokens.css. */
+  * { box-sizing: border-box; }
+  body {
+    margin: 0;
+    background: var(--color-bg-canvas);
+    color: var(--color-text-primary);
+    font: var(--weight-regular) var(--text-body)/var(--leading-body) var(--font-body);
+  }
+  main { max-width: var(--width-marketing); margin: 0 auto; padding: var(--space-8) var(--space-6) var(--space-16); }
+  section { margin-top: var(--space-12); }
+  .bar { display: flex; justify-content: space-between; align-items: center; gap: var(--space-4); flex-wrap: wrap; }
+  .row { display: flex; gap: var(--space-3); flex-wrap: wrap; align-items: center; }
+  .label {
+    font: var(--weight-medium) var(--text-caption)/var(--leading-caption) var(--font-body);
+    color: var(--color-text-tertiary); margin: 0 0 var(--space-3);
+  }
+  .hero { font: var(--weight-semibold) var(--text-hero)/var(--leading-hero) var(--font-display); letter-spacing: var(--tracking-hero); margin: 0; }
+  .section-h { font: var(--weight-semibold) var(--text-section)/var(--leading-section) var(--font-display); letter-spacing: var(--tracking-section); margin: 0; }
+  .title { font: var(--weight-semibold) var(--text-title)/var(--leading-title) var(--font-display); letter-spacing: var(--tracking-title); margin: 0; }
+  .secondary { color: var(--color-text-secondary); }
+  .caption { font-size: var(--text-caption); line-height: var(--leading-caption); color: var(--color-text-tertiary); }
+  .telugu { font-family: var(--font-telugu); line-height: var(--leading-telugu); }
+  a { color: var(--color-text-link); }
+
+  .btn {
+    display: inline-flex; align-items: center; justify-content: center;
+    min-height: var(--control-height); padding: 0 var(--control-padding-x);
+    border-radius: var(--radius-button); border: var(--border-width) solid transparent;
+    font: var(--weight-semibold) var(--text-ui)/var(--leading-ui) var(--font-body);
+    cursor: pointer;
+    transition: background-color var(--motion-fast) var(--ease-out),
+                box-shadow var(--motion-fast) var(--ease-out),
+                transform var(--motion-press) var(--ease-out);
+  }
+  .btn:active { transform: scale(var(--press-scale)); }
+  .btn:focus-visible, .input:focus-visible, .card:focus-visible {
+    outline: var(--focus-ring-width) solid var(--color-focus-ring); outline-offset: var(--focus-ring-offset);
+  }
+  .btn-primary { background: var(--color-action); color: var(--color-text-on-action); }
+  .btn-primary:hover { background: var(--color-action-hover); }
+  .btn-primary:active { background: var(--color-action-pressed); }
+  .btn-secondary { background: var(--color-bg-raised); color: var(--color-text-primary); border-color: var(--color-border-strong); }
+  .btn-secondary:hover { background: var(--color-action-subtle); }
+  .btn-quiet { background: transparent; color: var(--color-text-link); }
+  .btn-quiet:hover { background: var(--color-action-subtle); }
+  .btn-danger { background: var(--color-danger-solid); color: var(--color-text-on-action); }
+  .btn-danger:hover { background: var(--color-danger-solid-hover); }
+  .btn:disabled { background: var(--color-bg-surface); color: var(--color-text-disabled); border-color: var(--color-border-subtle); cursor: not-allowed; transform: none; }
+
+  .field { display: grid; gap: var(--space-2); max-width: 420px; }
+  .field label { font: var(--weight-medium) var(--text-ui)/var(--leading-ui) var(--font-body); }
+  .input {
+    min-height: var(--control-height); padding: 0 var(--space-4);
+    border: var(--border-width) solid var(--color-border-strong); border-radius: var(--radius-control);
+    background: var(--color-bg-raised); color: var(--color-text-primary); font: inherit; font-size: var(--text-ui);
+  }
+  .input::placeholder { color: var(--color-text-tertiary); }
+
+  .cards { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: var(--space-4); }
+  .card {
+    background: var(--color-bg-raised); border: var(--border-width) solid var(--color-border-subtle);
+    border-radius: var(--radius-card); padding: var(--space-6); box-shadow: var(--shadow-subtle);
+    transition: box-shadow var(--motion-base) var(--ease-out);
+  }
+  .card:hover { box-shadow: var(--shadow-hover); }
+  .card[aria-pressed="true"] { outline: var(--focus-ring-width) solid var(--color-action); outline-offset: -2px; }
+  .card h3 { margin: 0 0 var(--space-1); font: var(--weight-semibold) var(--text-body)/var(--leading-body) var(--font-display); }
+  .card p { margin: 0; font-size: var(--text-ui); color: var(--color-text-secondary); }
+  .chip {
+    display: inline-block; margin-top: var(--space-3); padding: 2px var(--space-2); border-radius: var(--radius-small);
+    background: var(--color-action-subtle); color: var(--color-text-link);
+    font: var(--weight-medium) var(--text-caption)/var(--leading-caption) var(--font-body);
+  }
+
+  .status { padding: var(--space-3) var(--space-4); border-radius: var(--radius-control); font-size: var(--text-ui); flex: 1 1 220px; }
+  .s-success { background: var(--color-success-subtle); color: var(--color-success); }
+  .s-warning { background: var(--color-warning-subtle); color: var(--color-warning); }
+  .s-danger { background: var(--color-danger-subtle); color: var(--color-danger); }
+  .s-info { background: var(--color-info-subtle); color: var(--color-info); }
+
+  .swatches { display: grid; grid-template-columns: repeat(auto-fit, minmax(130px, 1fr)); gap: var(--space-3); }
+  .swatch { border: var(--border-width) solid var(--color-border-subtle); border-radius: var(--radius-control); overflow: hidden; font-size: var(--text-caption); }
+  .swatch i { display: block; height: 56px; }
+  .swatch span { display: block; padding: var(--space-2); color: var(--color-text-secondary); }
+
+  .editor {
+    background: var(--color-bg-canvas); color: var(--color-text-primary);
+    border-radius: var(--radius-panel); padding: var(--space-4);
+    display: grid; grid-template-columns: 180px 1fr 200px; gap: var(--space-3);
+    font-size: var(--text-ui); line-height: var(--leading-ui);
+  }
+  .editor .pane { background: var(--color-bg-surface); border: var(--border-width) solid var(--color-border-subtle); border-radius: var(--radius-control); padding: var(--space-3); display: grid; gap: var(--space-2); align-content: start; }
+  .editor .stage { min-height: 180px; place-content: center; text-align: center; color: var(--color-text-tertiary); }
+  .editor .pane-title { font: var(--weight-medium) var(--text-micro)/var(--leading-micro) var(--font-body); color: var(--color-text-tertiary); }
+  @media (max-width: 720px) { .editor { grid-template-columns: 1fr; } }
+</style>
+</head>
+<body>
+<main>
+  <div class="bar">
+    <p class="label" style="margin:0">IDEAFRAME tokens specimen · proposed · not production artwork</p>
+    <div class="row">
+      <button class="btn btn-secondary" data-set-theme="light">Light</button>
+      <button class="btn btn-secondary" data-set-theme="dark">Dark</button>
+    </div>
+  </div>
+
+  <section>
+    <p class="label">Type</p>
+    <h1 class="hero">Create something extraordinary.</h1>
+    <h2 class="section-h" style="margin-top:var(--space-6)">Your ideas, beautifully made.</h2>
+    <h3 class="title" style="margin-top:var(--space-4)">Choose a brand kit</h3>
+    <p>Turn an idea into three original creative directions. <a href="#">Explore the studio</a></p>
+    <p class="secondary">Secondary text: beautiful posters and cinematic reels, made locally.</p>
+    <p class="caption">Caption and metadata · Model ready on this Mac</p>
+    <p class="telugu" lang="te">మీ ఆలోచనను మూడు సృజనాత్మక దిశలుగా మార్చండి.</p>
+  </section>
+
+  <section>
+    <p class="label">Buttons</p>
+    <div class="row">
+      <button class="btn btn-primary">Create concepts</button>
+      <button class="btn btn-secondary">Explore studio</button>
+      <button class="btn btn-quiet">Learn more</button>
+      <button class="btn btn-danger">Delete project</button>
+      <button class="btn btn-primary" disabled>Export</button>
+    </div>
+  </section>
+
+  <section>
+    <p class="label">Input</p>
+    <div class="field">
+      <label for="idea">Your idea</label>
+      <input class="input" id="idea" placeholder="Describe your idea…">
+    </div>
+  </section>
+
+  <section>
+    <p class="label">Concept cards</p>
+    <div class="cards">
+      <button class="card" aria-pressed="false" style="text-align:left;font:inherit;color:inherit;cursor:pointer"><h3>Editorial</h3><p>Typography-first poster</p></button>
+      <button class="card" aria-pressed="true" style="text-align:left;font:inherit;color:inherit;cursor:pointer"><h3>Cinematic</h3><p>Motion-led reel</p><span class="chip">Selected</span></button>
+      <button class="card" aria-pressed="false" style="text-align:left;font:inherit;color:inherit;cursor:pointer"><h3>Minimal</h3><p>Quiet visual composition</p></button>
+    </div>
+  </section>
+
+  <section>
+    <p class="label">Status</p>
+    <div class="row">
+      <div class="status s-success">✓ Export saved locally.</div>
+      <div class="status s-warning">! Model not installed.</div>
+      <div class="status s-danger">✕ Export failed. Disk is full.</div>
+      <div class="status s-info">i Working offline.</div>
+    </div>
+  </section>
+
+  <section>
+    <p class="label">Colour</p>
+    <div class="swatches">
+      <div class="swatch"><i style="background:var(--color-bg-canvas)"></i><span>bg-canvas</span></div>
+      <div class="swatch"><i style="background:var(--color-bg-surface)"></i><span>bg-surface</span></div>
+      <div class="swatch"><i style="background:var(--color-text-primary)"></i><span>text-primary</span></div>
+      <div class="swatch"><i style="background:var(--color-action)"></i><span>action</span></div>
+      <div class="swatch"><i style="background:var(--color-accent)"></i><span>accent</span></div>
+      <div class="swatch"><i style="background:var(--color-border-strong)"></i><span>border-strong</span></div>
+      <div class="swatch"><i style="background:var(--brand-gradient)"></i><span>brand-gradient (provisional)</span></div>
+    </div>
+  </section>
+
+  <section>
+    <p class="label">Editor surface: always dark, compact</p>
+    <div class="editor" data-surface="editor">
+      <div class="pane"><span class="pane-title">ASSETS</span><span>Logo.svg</span><span class="secondary">Clip 01.mov</span></div>
+      <div class="pane stage">Preview</div>
+      <div class="pane"><span class="pane-title">INSPECTOR</span>
+        <input class="input" value="1080">
+        <button class="btn btn-primary">Export</button>
+        <button class="btn btn-secondary">Reset</button>
+      </div>
+    </div>
+  </section>
+</main>
+<script>
+  document.querySelectorAll('[data-set-theme]').forEach(function (b) {
+    b.addEventListener('click', function () {
+      document.documentElement.setAttribute('data-theme', b.getAttribute('data-set-theme'));
+    });
+  });
+</script>
+</body>
+</html>

@@ -1,5 +1,77 @@
 @import "tailwindcss";
+/* The one token source (light, dark, editor density, reduced motion). */
+@import "../../../design/tokens/tokens.css";
 
-:root { font-family: ui-sans-serif, system-ui, -apple-system, "Kohinoor Telugu", "Telugu Sangam MN", sans-serif; }
-body { @apply bg-zinc-50 text-zinc-900; }
-.te { font-family: "Kohinoor Telugu", "Telugu Sangam MN", "Noto Sans Telugu", sans-serif; }
+/* Short utility names for the semantic tokens. "inline" makes every utility read the
+   token on the element itself, so dark mode and [data-surface="editor"] apply.
+   An alias must never reuse its token's own name (that would make a variable cycle). */
+@theme inline {
+  --font-sans: var(--font-body);
+  --font-head: var(--font-display);
+
+  --color-canvas: var(--color-bg-canvas);
+  --color-surface: var(--color-bg-surface);
+  --color-raised: var(--color-bg-raised);
+  --color-scrim: var(--color-bg-scrim);
+
+  --color-ink: var(--color-text-primary);
+  --color-ink-2: var(--color-text-secondary);
+  --color-ink-3: var(--color-text-tertiary);
+  --color-ink-off: var(--color-text-disabled);
+  --color-link: var(--color-text-link);
+  --color-on-act: var(--color-text-on-action);
+
+  --color-line: var(--color-border-subtle);
+  --color-line-strong: var(--color-border-strong);
+
+  --color-act: var(--color-action);
+  --color-act-hover: var(--color-action-hover);
+  --color-act-pressed: var(--color-action-pressed);
+  --color-act-subtle: var(--color-action-subtle);
+  --color-focus: var(--color-focus-ring);
+
+  --color-spark: var(--color-accent);
+  --color-spark-subtle: var(--color-accent-subtle);
+
+  --color-ok: var(--color-success);
+  --color-ok-subtle: var(--color-success-subtle);
+  --color-warn: var(--color-warning);
+  --color-warn-subtle: var(--color-warning-subtle);
+  --color-bad: var(--color-danger);
+  --color-bad-subtle: var(--color-danger-subtle);
+  --color-bad-solid: var(--color-danger-solid);
+  --color-bad-solid-hover: var(--color-danger-solid-hover);
+  --color-note: var(--color-info);
+  --color-note-subtle: var(--color-info-subtle);
+
+  --radius-chip: var(--radius-small);
+  --radius-field: var(--radius-control);
+  --radius-box: var(--radius-card);
+  --radius-sheet: var(--radius-panel);
+  --radius-btn: var(--radius-button);
+
+  --shadow-soft: var(--shadow-subtle);
+  --shadow-lift: var(--shadow-hover);
+  --shadow-float: var(--shadow-overlay);
+}
+
+body {
+  background: var(--color-bg-surface);
+  color: var(--color-text-primary);
+  font-family: var(--font-body);
+  font-size: var(--text-body);
+  line-height: var(--leading-body);
+  -webkit-font-smoothing: antialiased;
+}
+
+/* Telugu text: its own face and more room for vowel signs. */
+.te { font-family: var(--font-telugu); line-height: var(--leading-telugu); }
+
+/* Keyboard focus is always visible [v1.3]. */
+:focus-visible {
+  outline: var(--focus-ring-width) solid var(--color-focus-ring);
+  outline-offset: var(--focus-ring-offset);
+}
+
+/* Native controls follow the theme. */
+input, select, textarea { accent-color: var(--color-action); }

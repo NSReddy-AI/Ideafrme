@@ -1,0 +1,276 @@
+/*
+ * IDEAFRAME by AINRICH — design tokens
+ * Base: Design System Bible v1.3 (Apple-inspired direction), 12 Nov 2026.
+ * Owner decisions, 12 Nov 2026:
+ *   - follow v1.3 wherever versions conflict;
+ *   - action blue darkened from v1.3 #1677F2 to #0F66D9 so white labels pass 4.5:1.
+ *
+ * Rules for using this file
+ *   1. Components use the semantic tokens below. Never hard-code a colour, font,
+ *      radius, spacing or duration in a screen.
+ *   2. Every text/background pair in use must be listed in design/qa/contrast_check.py
+ *      and pass it.
+ *   3. The logo is artwork. Its gradient is governed by the approved vector master,
+ *      not by --brand-gradient.
+ *
+ * Provenance tags
+ *   [v1.3]      stated in v1.3
+ *   [v1.1]      v1.3 is silent; from the v1.1 motion addendum
+ *   [v1.0]      v1.3 and v1.1 are silent; from v1.0
+ *   [proposed]  in no version; added here, awaiting approval
+ *
+ * Status: proposed specification. Since M6 step 2 (12 Nov 2026) this file is the one
+ * token source of the M6 app: app/web/src/index.css imports it and maps short
+ * Tailwind utility names onto these variables (bg-canvas, text-ink, bg-act ...).
+ * Change values here only; never redefine them in a screen.
+ */
+
+:root {
+  color-scheme: light;
+
+  /* ================= Typography ================= */
+
+  /* Font roles [v1.3] */
+  --font-display: -apple-system, BlinkMacSystemFont, "Inter", sans-serif;
+  --font-body: -apple-system, BlinkMacSystemFont, "Inter", sans-serif;
+  --font-mono: ui-monospace, "SFMono-Regular", Menlo, monospace;
+  /* [v1.0] Noto Sans Telugu first. Only its Black weight is bundled (engine/fonts), so
+     macOS system Telugu faces follow as fallbacks for interface text [proposed]. */
+  --font-telugu: "Noto Sans Telugu", "Kohinoor Telugu", "Telugu Sangam MN", var(--font-body);
+
+  /* Scale [v1.3]: desktop size / line height. rem units so browser text zoom works. */
+  --text-hero: clamp(2.5rem, 1.5rem + 4vw, 4rem);        /* 64/68 */
+  --leading-hero: 1.0625;
+  --text-section: clamp(2rem, 1.4rem + 2.4vw, 2.75rem);  /* 44/50 */
+  --leading-section: 1.136;
+  --text-title: clamp(1.5rem, 1.3rem + 0.9vw, 1.875rem); /* 30/36 */
+  --leading-title: 1.2;
+  --text-body: 1rem;                                     /* 16/24 */
+  --leading-body: 1.5;
+  --text-ui: 0.875rem;                                   /* 14/20 */
+  --leading-ui: 1.429;
+  --text-caption: 0.75rem;                               /* 12/17 */
+  --leading-caption: 1.417;
+
+  /* Dense sizes for editor panels [v1.0] */
+  --text-small: 0.8125rem;                               /* 13/20 */
+  --leading-small: 1.538;
+  --text-micro: 0.6875rem;                               /* 11/16, metadata only */
+  --leading-micro: 1.455;
+
+  /* Weights and tracking [proposed]: large type is set tighter, small type is not */
+  --weight-regular: 400;
+  --weight-medium: 500;
+  --weight-semibold: 600;
+  --tracking-hero: -0.022em;
+  --tracking-section: -0.018em;
+  --tracking-title: -0.012em;
+  --tracking-normal: 0;
+
+  /* Telugu needs more vertical room for its vowel signs [proposed] */
+  --leading-telugu: 1.7;
+
+  /* ================= Colour, light theme ================= */
+
+  /* Backgrounds */
+  --color-bg-canvas: #FFFFFF;        /* [v1.3] */
+  --color-bg-surface: #F5F7FA;       /* [v1.3] */
+  --color-bg-raised: #FFFFFF;        /* [proposed] cards, menus, dialogs */
+  --color-bg-scrim: rgba(16, 24, 40, 0.5); /* [proposed] behind dialogs */
+
+  /* Text */
+  --color-text-primary: #101828;     /* [v1.3] */
+  --color-text-secondary: #46516D;   /* [v1.0] */
+  --color-text-tertiary: #667085;    /* [proposed] placeholders, metadata */
+  --color-text-disabled: #98A2B3;    /* [proposed] */
+  --color-text-link: #0F66D9;        /* [proposed] follows the action colour */
+  --color-text-on-action: #FFFFFF;   /* [v1.3] */
+
+  /* Borders */
+  --color-border-subtle: #D8DEEA;    /* [v1.0] decorative hairlines only */
+  --color-border-strong: #7C879B;    /* [proposed] input and control outlines, 3:1 */
+
+  /* Action */
+  --color-action: #0F66D9;           /* owner-approved, see header */
+  --color-action-hover: #0B55B8;     /* [proposed] */
+  --color-action-pressed: #094799;   /* [proposed] */
+  --color-action-subtle: #E8F1FD;    /* [proposed] selected rows, quiet hover */
+  --color-focus-ring: #0F66D9;       /* [proposed] */
+
+  /* Accent: decoration and highlights, never the main action */
+  --color-accent: #823DE0;           /* [v1.3] */
+  --color-accent-subtle: #F1E9FC;    /* [proposed] */
+
+  /* Status: text colour and its tinted background. Always pair with an icon or words. */
+  --color-success: #166534;          /* [v1.0] */
+  --color-success-subtle: #E7F6EC;   /* [proposed] */
+  --color-warning: #8A4B00;          /* [v1.0] */
+  --color-warning-subtle: #FDF3E1;   /* [proposed] */
+  --color-danger: #B42318;           /* [v1.0] */
+  --color-danger-subtle: #FDECEA;    /* [proposed] */
+  --color-danger-solid: #B42318;     /* [proposed] destructive button background */
+  --color-danger-solid-hover: #912018; /* [proposed] */
+  --color-info: #0F66D9;             /* [proposed] */
+  --color-info-subtle: #E8F1FD;      /* [proposed] */
+
+  /* Brand gradient [v1.0]: provisional until the vector master is measured.
+     Brand moments only. Never behind functional text. */
+  --brand-gradient: linear-gradient(100deg, #27C6F5 0%, #1769F5 42%, #9B22E7 100%);
+
+  /* ================= Space and shape ================= */
+
+  /* Spacing [v1.0] */
+  --space-1: 4px;
+  --space-2: 8px;
+  --space-3: 12px;
+  --space-4: 16px;
+  --space-6: 24px;
+  --space-8: 32px;
+  --space-12: 48px;
+  --space-16: 64px;
+
+  /* Radius */
+  --radius-small: 6px;    /* [v1.0] chips, tags */
+  --radius-control: 12px; /* [v1.1] inputs, selects */
+  --radius-card: 14px;    /* [v1.0] */
+  --radius-panel: 20px;   /* [v1.0] dialogs, large panels */
+  --radius-pill: 999px;   /* [proposed] buttons; owner's handoff asked for pill buttons */
+  --radius-button: var(--radius-pill);
+
+  /* Controls */
+  --control-height: 44px;         /* [v1.1] */
+  --control-padding-x: 20px;      /* [v1.1] */
+  --border-width: 1px;            /* [v1.0] */
+  --focus-ring-width: 2px;        /* [v1.3] */
+  --focus-ring-offset: 3px;       /* [v1.1] */
+
+  /* Elevation */
+  --shadow-subtle: 0 4px 16px rgba(16, 24, 40, 0.08); /* [v1.0], retinted */
+  --shadow-hover: 0 7px 18px rgba(16, 24, 40, 0.15);  /* [v1.1], retinted */
+  --shadow-overlay: 0 16px 48px rgba(16, 24, 40, 0.18); /* [proposed] menus, dialogs */
+
+  /* Stacking [v1.0] */
+  --z-canvas: 0;
+  --z-sticky: 10;
+  --z-popover: 30;
+  --z-modal: 50;
+  --z-toast: 60;
+
+  /* Layout [v1.0] */
+  --width-marketing: 1200px;
+  --width-prose: 720px;
+
+  /* ================= Motion ================= */
+
+  --motion-instant: 0ms;  /* [v1.1] scrubbing, drag handles, typing */
+  --motion-press: 110ms;  /* [v1.3] range 90-120 ms */
+  --motion-fast: 120ms;   /* [v1.3] hover, focus */
+  --motion-base: 220ms;   /* [v1.3] cards, menus, selection */
+  --motion-panel: 280ms;  /* [v1.3] sidebars, dialogs */
+  --motion-reveal: 560ms; /* [v1.3] marketing sections only */
+  --ease-out: cubic-bezier(0.2, 0.8, 0.2, 1); /* [v1.3] entrances */
+  --ease-exit: cubic-bezier(0.4, 0, 1, 1);    /* [v1.1] exits */
+  --press-scale: 0.98;                        /* [v1.3] */
+  --magnetic-max-offset: 4px;                 /* [v1.3] marketing hero button only */
+}
+
+/* ================= Dark theme [proposed] =================
+   v1.3 asks for a dark theme but gives no values. The same values appear twice
+   below: once for "follow the system", once for an explicit choice and for the
+   editor, which is always dark. Keep the two blocks identical. */
+
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    color-scheme: dark;
+    --color-bg-canvas: #0F1115;
+    --color-bg-surface: #181B22;
+    --color-bg-raised: #20242D;
+    --color-bg-scrim: rgba(0, 0, 0, 0.6);
+    --color-text-primary: #F2F4F7;
+    --color-text-secondary: #A4ACB9;
+    --color-text-tertiary: #8A93A3;
+    --color-text-disabled: #5C6472;
+    --color-text-link: #5AA2FF;
+    --color-border-subtle: #2A2F3A;
+    --color-border-strong: #6B7486;
+    --color-action-hover: #1A6FE0;
+    --color-action-pressed: #0B55B8;
+    --color-action-subtle: #14274A;
+    --color-focus-ring: #5AA2FF;
+    --color-accent: #A970F0;
+    --color-accent-subtle: #2A1F45;
+    --color-success: #4ADE80;
+    --color-success-subtle: #0F2A1B;
+    --color-warning: #FBBF24;
+    --color-warning-subtle: #2E2208;
+    --color-danger: #F97066;
+    --color-danger-subtle: #331614;
+    --color-danger-solid: #D92D20;
+    --color-danger-solid-hover: #B42318;
+    --color-info: #5AA2FF;
+    --color-info-subtle: #14274A;
+    --shadow-subtle: 0 4px 16px rgba(0, 0, 0, 0.4);
+    --shadow-hover: 0 7px 18px rgba(0, 0, 0, 0.5);
+    --shadow-overlay: 0 16px 48px rgba(0, 0, 0, 0.6);
+  }
+}
+
+:root[data-theme="dark"],
+[data-surface="editor"] {
+  color-scheme: dark;
+  --color-bg-canvas: #0F1115;
+  --color-bg-surface: #181B22;
+  --color-bg-raised: #20242D;
+  --color-bg-scrim: rgba(0, 0, 0, 0.6);
+  --color-text-primary: #F2F4F7;
+  --color-text-secondary: #A4ACB9;
+  --color-text-tertiary: #8A93A3;
+  --color-text-disabled: #5C6472;
+  --color-text-link: #5AA2FF;
+  --color-border-subtle: #2A2F3A;
+  --color-border-strong: #6B7486;
+  --color-action-hover: #1A6FE0;
+  --color-action-pressed: #0B55B8;
+  --color-action-subtle: #14274A;
+  --color-focus-ring: #5AA2FF;
+  --color-accent: #A970F0;
+  --color-accent-subtle: #2A1F45;
+  --color-success: #4ADE80;
+  --color-success-subtle: #0F2A1B;
+  --color-warning: #FBBF24;
+  --color-warning-subtle: #2E2208;
+  --color-danger: #F97066;
+  --color-danger-subtle: #331614;
+  --color-danger-solid: #D92D20;
+  --color-danger-solid-hover: #B42318;
+  --color-info: #5AA2FF;
+  --color-info-subtle: #14274A;
+  --shadow-subtle: 0 4px 16px rgba(0, 0, 0, 0.4);
+  --shadow-hover: 0 7px 18px rgba(0, 0, 0, 0.5);
+  --shadow-overlay: 0 16px 48px rgba(0, 0, 0, 0.6);
+}
+
+/* ================= Editor density [v1.0 sizes] =================
+   The professional editor is compact and quiet: smaller controls, squarer
+   corners, and no lift or scale on precision controls. */
+
+[data-surface="editor"] {
+  --control-height: 32px;
+  --control-padding-x: 12px;
+  --radius-control: 10px;
+  --radius-button: 10px;
+  --text-ui: 0.8125rem;
+  --leading-ui: 1.538;
+  --press-scale: 1;
+}
+
+/* ================= Reduced motion [v1.1] ================= */
+
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}
