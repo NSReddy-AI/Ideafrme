@@ -48,8 +48,8 @@ For M6 work only, it replaces the M4 rule "work only in `Reel Studio_dev`".
 - Poster to reel (`app/poster_to_reel.py`) creates an ordinary slides reel with the script prepared but NOT approved.
   Never approve a script or plan for the owner, except in throwaway test projects that are deleted afterwards.
 - Offline readiness: `tools/m6_offline_check.py` (read-only). No-network proof: run anything as
-  `sandbox-exec -f tools/m6_offline.sb <command>`. Packaging and Windows: `docs/M6_PACKAGING_AND_PORTABILITY.md`; the
-  packaging choice is the owner's.
+  `sandbox-exec -f tools/m6_offline.sb <command>`. Packaging and Windows: `docs/M6_PACKAGING_AND_PORTABILITY.md`.
+  Owner decision (12 Nov 2026): keep the launcher (option A). Do not add a desktop wrapper without a new decision.
 - M5 AI integration is NO-GO (Codex Phase 2E). The Creative Director in M6 stays deterministic until the owner decides otherwise.
 
 ## Running side by side with production

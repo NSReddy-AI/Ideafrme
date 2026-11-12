@@ -1,6 +1,7 @@
 # M6 step 8: packaging, offline readiness and Windows audit (12 Nov 2026)
 
-Status: analysis and checks done. No packaging change was made: the choice below is the owner's.
+Status: analysis and checks done. **Owner decision (12 Nov 2026): option A, keep the launcher.** No packaging change is needed.
+Revisit B (local .app) when the approved logo vector exists, and C (Tauri 2) before distributing to others or to Windows.
 
 ## 1. Offline readiness on this Mac: PASS
 
