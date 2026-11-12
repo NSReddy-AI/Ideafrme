@@ -209,6 +209,29 @@ class CreativeRoutes(unittest.TestCase):
         draft = self.ok(*self.S.call("POST", "/api/brands/action", {"action": "save", "brand_id": head["record"]["brand_id"], "expected_head": head["hash"], "payload": head["record"]["payload"]}))
         self.assertEqual(draft["record"]["state"], "draft"); self.assertIn("clearance", approve(draft)[1]["detail"])
 
+    # -- M7-B B2: brief without a brand kit -> three concepts -> one opened as an unapproved draft, never overwritten
+    def test_create_concepts_choose(self):
+        brief = {"purpose": "Invite families", "topic": "చదువుల పండుగ", "audience": "Parents", "format": "poster", "instructions": "No prices."}
+        bad = self.S.call("POST", "/api/creative/workflow/create", {"name": "B2", "text": "చదువుల పండుగ", "language": "te", "brief": brief, "brand_hash": None, "acknowledge": False})
+        self.assertGreaterEqual(bad[0], 400)                                        # the compatibility acknowledgement is required
+        p = self.ok(*self.S.call("POST", "/api/creative/workflow/create", {"name": "B2", "text": "చదువుల పండుగ", "language": "te", "brief": brief, "brand_hash": None, "acknowledge": True}))["project"]
+        self.assertIsNone(p["binding"]["record"]["brand"]); self.assertEqual(p["binding"]["record"]["brief"]["topic"], "చదువుల పండుగ")
+        req = {"project_id": p["project_id"], "expected_revision": p["revision"], "expected_binding": p["binding"]["hash"], "expected_head": p["binding"]["published_head"], "seed": 7, "acknowledge_brief": False}
+        self.assertGreaterEqual(self.S.call("POST", "/api/creative/director/generate", req)[0], 400)   # brief must be acknowledged
+        req["acknowledge_brief"] = True
+        b = self.ok(*self.S.call("POST", "/api/creative/director/generate", req))
+        self.assertEqual(len(b["concepts"]), 3); self.assertIn("deterministic", b["mode"])
+        self.assertTrue(all(any(l["type"] == "text" for l in c["layers"]) for c in b["concepts"]))
+        sel = {"source": req, "bundle_digest": b["digest"], "concept_id": b["concepts"][1]["id"], "acknowledge_rules": False}
+        self.assertGreaterEqual(self.S.call("POST", "/api/creative/director/select", sel)[0], 400)       # rules must be acknowledged
+        sel["acknowledge_rules"] = True
+        r = self.ok(*self.S.call("POST", "/api/creative/director/select", sel))
+        self.assertFalse(r["approved"]); self.assertNotEqual(r["project"]["project_id"], p["project_id"])
+        again = self.S.call("POST", "/api/creative/director/select", sel)
+        self.assertGreaterEqual(again[0], 400); self.assertIn("already exists", again[1]["detail"])   # never overwritten
+        listed = [x["project_id"] for x in self.ok(*self.S.call("GET", "/api/creative/projects"))["projects"]]
+        self.assertIn(r["project"]["project_id"], listed)
+
     # -- Brand Library, bound project and deterministic Director
     def test_brand_binding_and_director(self):
         saved = self.ok(*self.S.call("POST", "/api/brands/action", {"action": "save", "brand_id": None, "expected_head": None, "payload": PAYLOAD}))

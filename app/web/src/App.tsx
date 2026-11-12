@@ -5,6 +5,8 @@ import { Btn, Card, Err, MOTION, PageHead, Pill, Select, cx } from './ui'
 import { PosterEditor, PostersPage } from './Posters'
 import { BrandStudio } from './BrandStudio'
 import { DesignReference } from './DesignReference'
+import { Create } from './Create'
+import { Concepts } from './Concepts'
 
 type Start = (b: Parameters<typeof api.job>[1]) => Promise<void>
 
@@ -419,23 +421,23 @@ function ProjectList({ rows, onOpen }: { rows: ProjectRow[]; onOpen: (n: string)
 }
 
 // ------------------------------------------------------------------ shell
-// Routes live in the address bar: #/ (home), #/projects (reels), #/posters, #/settings, #/p/<reel>, #/poster/<id>.
+// Routes live in the address bar: #/ (home), #/create, #/concepts/<id>, #/projects (reels), #/posters, #/brands, #/settings,
+// #/design, #/p/<reel>, #/poster/<id>.
 // An old Reel Studio link (#<project>) still opens that project.
-type Page = 'home' | 'projects' | 'posters' | 'brands' | 'settings' | 'design'
-type Route = { page: Page } | { page: 'project'; name: string } | { page: 'poster'; id: string }
+type Page = 'home' | 'create' | 'projects' | 'posters' | 'brands' | 'settings' | 'design'
+type Route = { page: Page } | { page: 'project'; name: string } | { page: 'poster'; id: string } | { page: 'concepts'; id: string }
 const readRoute = (): Route => {
   const h = decodeURIComponent(location.hash.replace(/^#\/?/, ''))
   if (!h) return { page: 'home' }
-  if (h === 'projects' || h === 'posters' || h === 'brands' || h === 'settings' || h === 'design') return { page: h }
+  if (h === 'create' || h === 'projects' || h === 'posters' || h === 'brands' || h === 'settings' || h === 'design') return { page: h }
   if (h.startsWith('poster/')) return { page: 'poster', id: h.slice(7) }
+  if (h.startsWith('concepts/')) return { page: 'concepts', id: h.slice(9) }
   return { page: 'project', name: h.startsWith('p/') ? h.slice(2) : h }
 }
-const hrefOf = (r: Route) => r.page === 'project' ? `#/p/${encodeURIComponent(r.name)}` : r.page === 'poster' ? `#/poster/${encodeURIComponent(r.id)}` : r.page === 'home' ? '#/' : `#/${r.page}`
+const hrefOf = (r: Route) => r.page === 'project' ? `#/p/${encodeURIComponent(r.name)}` : r.page === 'poster' ? `#/poster/${encodeURIComponent(r.id)}` : r.page === 'concepts' ? `#/concepts/${encodeURIComponent(r.id)}` : r.page === 'home' ? '#/' : `#/${r.page}`
 
 const NAV: { page: Page; label: string }[] = [
-  { page: 'home', label: 'Home' }, { page: 'projects', label: 'Reels' }, { page: 'posters', label: 'Posters' }, { page: 'brands', label: 'Brand Studio' }, { page: 'settings', label: 'Settings' }]
-// Areas that arrive in later M6 steps. Shown so the layout is final, but not clickable.
-const LATER = ['Concepts']
+  { page: 'home', label: 'Home' }, { page: 'create', label: 'Create' }, { page: 'projects', label: 'Reels' }, { page: 'posters', label: 'Posters' }, { page: 'brands', label: 'Brand Studio' }, { page: 'settings', label: 'Settings' }]
 
 export default function App() {
   const [cat, setCat] = useState<Catalog | null>(null); const [rows, setRows] = useState<ProjectRow[]>([]); const [showTests, setShowTests] = useState(false)
@@ -447,7 +449,7 @@ export default function App() {
     const on = () => setRoute(readRoute())
     window.addEventListener('hashchange', on); return () => window.removeEventListener('hashchange', on)
   }, [])
-  const section = route.page === 'project' ? 'projects' : route.page === 'poster' ? 'posters' : route.page === 'design' ? 'settings' : route.page
+  const section = route.page === 'project' ? 'projects' : route.page === 'poster' ? 'posters' : route.page === 'design' ? 'settings' : route.page === 'concepts' ? 'create' : route.page
   const recent = rows.filter(r => !r.archived).slice(0, 5)
   return (
     <div className="flex min-h-screen flex-col bg-surface text-ink md:flex-row">
@@ -462,8 +464,6 @@ export default function App() {
             <a key={n.page} href={hrefOf({ page: n.page })} aria-current={section === n.page ? 'page' : undefined}
               className={cx('block rounded-field px-3 py-2 text-sm font-medium', MOTION, section === n.page ? 'bg-act-subtle text-link' : 'text-ink-2 hover:bg-surface hover:text-ink')}>{n.label}</a>
           ))}
-          <div className="hidden px-3 pt-5 pb-1 md:block text-[length:var(--text-micro)] font-medium tracking-wide text-ink-3">Coming in M6</div>
-          {LATER.map(l => <span key={l} aria-disabled="true" title="Arrives in a later M6 step" className="hidden cursor-not-allowed md:block px-3 py-2 text-sm text-ink-off">{l}</span>)}
         </nav>
         <p className="hidden border-t border-line px-5 py-4 md:block text-xs text-ink-3">Works on this Mac. Nothing is published.</p>
       </aside>
@@ -476,6 +476,8 @@ export default function App() {
               <PosterEditor id={route.id} />
             </>
             : route.page === 'posters' ? <PostersPage onOpen={id => go({ page: 'poster', id })} />
+            : route.page === 'create' ? <Create onConcepts={id => go({ page: 'concepts', id })} reelForm={<NewProject cat={cat} onMade={n => go({ page: 'project', name: n })} />} />
+            : route.page === 'concepts' ? <Concepts id={route.id} onOpen={id => go({ page: 'poster', id })} />
             : route.page === 'brands' ? <BrandStudio />
             : route.page === 'design' ? <DesignReference />
             : route.page === 'project' ? <>
@@ -499,10 +501,9 @@ export default function App() {
               </Card>
             </div>
             : <div className="space-y-6">
-              <PageHead title="Create" sub="Start a reel from your own video, pictures or recording, or design a poster." />
-              <NewProject cat={cat} onMade={n => go({ page: 'project', name: n })} />
-              <Card title="New poster" right={<a href="#/posters" className="text-sm text-link hover:underline">Open Posters</a>}>
-                <p className="text-sm text-ink-2">Editable 1080 × 1350 posters in Telugu and English, with poster QA before export.</p>
+              <PageHead title="Home" sub="Posters and reels, made on this Mac." />
+              <Card title="Start something new" right={<a href="#/create" className="inline-flex min-h-[var(--control-height)] items-center rounded-btn bg-act px-[var(--control-padding-x)] text-sm font-semibold text-on-act hover:bg-act-hover">Create</a>}>
+                <p className="text-sm text-ink-2">Describe your idea, then choose a poster, a reel, or both.</p>
               </Card>
               <section>
                 <div className="mb-2 flex items-baseline gap-3"><h2 className="text-base font-semibold">Recent reels</h2><a href="#/projects" className="text-sm text-link hover:underline">All reels</a></div>

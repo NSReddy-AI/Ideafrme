@@ -25,6 +25,11 @@ export type ApprovedDoc = { format: string; source: { project: string; brand: st
 export type ReelRow = { project: string; ok: boolean; approvals?: string[]; items?: number; code?: string; detail?: string }
 export type ContentLink = { element_id: string; content_id: string; reel: string; item_id: string; kind: string; ok: boolean; detail: string }
 
+export type Brief = { purpose: string; topic: string; audience: string; format: 'poster'; instructions: string }
+export type Binding = { hash: string; published_head: string; record: { brief: Brief; brand: { record: { payload: { name: string; mandatory_rules: string[] } } } | null } }
+export type ConceptRequest = { project_id: string; expected_revision: number; expected_binding: string; expected_head: string; seed: number; acknowledge_brief: true }
+export type ConceptBundle = { mode: string; digest: string; rules: string[]; instructions: string; warnings: string[]; concepts: import('./concepts-logic').ConceptPlan[] }
+
 /** A refused request keeps M5's error code, so the screen can react to e.g. "upgrade-required" or "conflict". */
 export class CreativeError extends Error {
   code: string; status: number
@@ -72,5 +77,12 @@ export const creative = {
     call<{ project: PosterProject; link: ContentLink }>('POST', '/api/creative/approved/insert', { ...at(p), reel: doc.source.project, item_id: item.id, expected_fingerprint: doc.fingerprint }),
   toReel: (p: PosterProject, b: { brand: string; platform: string; style: string; slug: string }) =>
     call<{ project: string; slides: number; script: string[]; script_approved: boolean }>('POST', '/api/creative/to-reel', { ...at(p), ...b }),
+  // M7-B B2: brief -> three concepts -> chosen draft (M5 binding workflow and deterministic Creative Director)
+  eligibleBrands: () => call<{ versions: { hash: string; brand_id: string; revision: number; name: string; eligible: boolean; reason: string }[] }>('GET', '/api/creative/workflow/brands').then(r => r.versions),
+  createFromBrief: (b: { name: string; text: string; language: 'en' | 'te'; brief: Brief; brand_hash: string | null; acknowledge: boolean }) =>
+    call<{ project: PosterProject }>('POST', '/api/creative/workflow/create', b).then(r => r.project),
+  concepts: (r: ConceptRequest) => call<ConceptBundle>('POST', '/api/creative/director/generate', r),
+  chooseConcept: (source: ConceptRequest, bundle: ConceptBundle, concept_id: string) =>
+    call<{ project: PosterProject; bundle_digest: string; concept_id: string; approved: boolean }>('POST', '/api/creative/director/select', { source, bundle_digest: bundle.digest, concept_id, acknowledge_rules: true }),
   links: (p: PosterProject) => call<{ links: ContentLink[] }>('GET', `/api/creative/approved/links/${encodeURIComponent(p.project_id)}`).then(r => r.links),
 }
