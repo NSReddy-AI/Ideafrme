@@ -75,3 +75,6 @@ body {
 
 /* Native controls follow the theme. */
 input, select, textarea { accent-color: var(--color-action); }
+
+/* Off-screen layout for measuring drawn text (M5 inspectScene and measure.ts). */
+.measurement { position: fixed; left: -20000px; top: 0; pointer-events: none; }

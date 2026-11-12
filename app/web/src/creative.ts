@@ -31,10 +31,24 @@ export class CreativeError extends Error {
   constructor(code: string, message: string, status: number) { super(message); this.code = code; this.status = status }
 }
 
+// M7-A: plain-language explanations for refusals a person can act on. The server's own detail is kept after it.
+const FRIENDLY: Record<string, string> = {
+  conflict: 'This poster changed somewhere else (another window or tab). The latest version is loaded; please repeat your change.',
+  stale: 'The poster changed while it was being exported. Nothing was saved; export again.',
+  timeout: 'The export took too long and was stopped. Nothing was saved; export again.',
+  lock: 'Another IDEAFRAME window or server is already using this poster session. Close the other one, then reload this page.',
+  'recovery-required': 'This poster has an interrupted save. Its original files are kept safe; it needs explicit recovery before more editing.',
+  'durability-blocked': 'The disk could not confirm the save. Nothing was changed; check free space and try again.',
+  internal: 'Something went wrong on this Mac. Nothing was changed; try again, and if it repeats, restart the app.',
+}
+const explain = (code: string, detail: string) => (FRIENDLY[code] ? `${FRIENDLY[code]} (${detail})` : detail)
+
 async function call<T>(method: 'GET' | 'POST', url: string, body?: unknown): Promise<T> {
-  const r = await fetch(url, { method, headers: body !== undefined ? { 'Content-Type': 'application/json' } : undefined, body: body !== undefined ? JSON.stringify(body) : undefined })
+  let r: Response
+  try { r = await fetch(url, { method, headers: body !== undefined ? { 'Content-Type': 'application/json' } : undefined, body: body !== undefined ? JSON.stringify(body) : undefined }) }
+  catch { throw new CreativeError('offline', 'The local IDEAFRAME server is not answering. Start it again with the launcher, then reload this page.', 0) }
   const data = await r.json().catch(() => ({}))
-  if (!r.ok) throw new CreativeError(data.error ?? 'request', typeof data.detail === 'string' ? data.detail : `request failed (${r.status})`, r.status)
+  if (!r.ok) { const code = data.error ?? 'request'; throw new CreativeError(code, explain(code, typeof data.detail === 'string' ? data.detail : `request failed (${r.status})`), r.status) }
   return data as T
 }
 const at = (p: PosterProject) => ({ project_id: p.project_id, expected_revision: p.revision })

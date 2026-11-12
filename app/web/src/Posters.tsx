@@ -9,6 +9,7 @@ import { resizeBox } from '@m5/visual_poster_studio/geometry.mjs'
 import { creative, CreativeError, type ApprovedDoc, type ContentLink, type ExportReceipt, type Face, type Layer, type PosterProject, type PosterQA, type PosterRow, type ReelRow, type Scene } from './creative'
 import { Btn, Card, Err, Field, MOTION, PageHead, Pill, Select, cx } from './ui'
 import { api, type Catalog } from './api'
+import { measureText, measuredChecks, type MeasuredCheck } from './measure'
 
 const SAFE_MARGIN = 64   // same proposed value as app/poster_qa.py
 const msg = (e: unknown) => (e as Error).message
@@ -56,6 +57,7 @@ export function PosterEditor({ id }: { id: string }) {
   const [faces, setFaces] = useState<Record<string, Face> | null>(null); const [pngOk, setPngOk] = useState(false); const [fontNote, setFontNote] = useState('Loading pinned fonts…')
   const [scene, setScene] = useState<Scene | null>(null); const [preview, setPreview] = useState<string | null>(null)
   const [overflow, setOverflow] = useState<string[]>([]); const [previewErr, setPreviewErr] = useState<string | null>(null)
+  const [measured, setMeasured] = useState<MeasuredCheck[]>([])
   const [qa, setQa] = useState<PosterQA | null>(null); const [links, setLinks] = useState<ContentLink[]>([])
   const [gesture, setGesture] = useState<Gesture | null>(null)
   const [exporting, setExporting] = useState(false); const [receipt, setReceipt] = useState<ExportReceipt | null>(null)
@@ -76,7 +78,9 @@ export function PosterEditor({ id }: { id: string }) {
     creative.scene(p).then(async s => {
       const check = await inspectScene(s)
       if (n !== seq.current) return
-      setScene(s); setOverflow(check.overflow); setPreviewErr(null)
+      const ink = await measureText(s)
+      if (n !== seq.current) return
+      setScene(s); setOverflow(check.overflow); setMeasured(measuredChecks(ink, s.profile as unknown as { width: number; height: number }, SAFE_MARGIN)); setPreviewErr(null)
       setPreview(old => { if (old) URL.revokeObjectURL(old); return URL.createObjectURL(new Blob([s.svg], { type: 'image/svg+xml' })) })
     }).catch(e => { if (n === seq.current) { setScene(null); setPreviewErr(msg(e)) } })
     creative.qa(p).then(q => { if (n === seq.current) setQa(q) }).catch(() => { if (n === seq.current) setQa(null) })
@@ -157,7 +161,11 @@ export function PosterEditor({ id }: { id: string }) {
     finally { setExporting(false) }
   }
 
-  const failing = qa?.checks.filter(c => !c.passed) ?? []
+  // Server QA (declared boxes) + measured-ink QA from this browser. With a current preview, the measured safe-area check
+  // replaces the box-based one (the box is usually larger than the drawn text).
+  const failing = [...(qa?.checks.filter(c => !c.passed && !(c.name === 'safe_area' && current)) ?? []),
+    ...(current ? measured.map(m => ({ ...m, passed: false })) : [])]
+  const qaPass = !!qa && qa.passed && !overflow.length && !(current && measured.some(m => m.level === 'error'))
   const wordsBlocked = failing.some(c => c.name === 'approved_text')   // M7-A: the server refuses this export too
   return (
     <div data-surface="editor" className="rounded-sheet bg-canvas p-4 text-ink shadow-float">
@@ -231,11 +239,11 @@ export function PosterEditor({ id }: { id: string }) {
           </div>
           <div className="rounded-box bg-surface p-3">
             <div className="mb-2 flex items-center gap-2"><h2 className="text-xs font-semibold tracking-wide text-ink-3">POSTER QA</h2>
-              {qa && qa.revision === p.revision && <Pill ok={qa.passed && overflow.length === 0}>{qa.passed && !overflow.length ? 'PASS' : 'FAIL'}</Pill>}</div>
+              {qa && qa.revision === p.revision && <Pill ok={qaPass}>{qaPass ? 'PASS' : 'FAIL'}</Pill>}</div>
             {overflow.length > 0 && <p className="mb-2 text-xs text-bad">Text overflows its box or lines overlap ({overflow.length} layer{overflow.length > 1 ? 's' : ''}). Export is blocked until fixed.</p>}
             {!qa ? <p className="text-xs text-ink-3">Checking…</p> : !failing.length ? <p className="text-xs text-ok">All checks pass.</p>
               : <ul className="space-y-1">{failing.map((c, i) => <li key={i}><button onClick={() => setSel(c.element_id)} className="w-full rounded-field px-1 py-0.5 text-left text-xs hover:bg-raised">
-                <span className={c.level === 'error' ? 'font-semibold text-bad' : 'font-semibold text-warn'}>{c.level === 'error' ? 'Error' : 'Warning'} · {c.name.replace('_', ' ')}</span>
+                <span className={c.level === 'error' ? 'font-semibold text-bad' : 'font-semibold text-warn'}>{c.level === 'error' ? 'Error' : 'Warning'} · {c.name.replace(/_/g, ' ')}</span>
                 <span className="block text-ink-2">{c.detail}</span></button></li>)}</ul>}
           </div>
           <ApprovedPanel p={p} locked={locked} onInserted={(np, id) => { setP(np); setSel(id) }} />
