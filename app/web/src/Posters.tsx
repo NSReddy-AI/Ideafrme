@@ -8,6 +8,7 @@ import { alignPosition, clippedBox } from '@m5/visual_poster_studio/layout.mjs'
 import { resizeBox } from '@m5/visual_poster_studio/geometry.mjs'
 import { creative, CreativeError, type ApprovedDoc, type ContentLink, type ExportReceipt, type Face, type Layer, type PosterProject, type PosterQA, type PosterRow, type ReelRow, type Scene } from './creative'
 import { Btn, Card, Err, Field, MOTION, PageHead, Pill, Select, cx } from './ui'
+import { api, type Catalog } from './api'
 
 const SAFE_MARGIN = 64   // same proposed value as app/poster_qa.py
 const msg = (e: unknown) => (e as Error).message
@@ -236,6 +237,7 @@ export function PosterEditor({ id }: { id: string }) {
                 <span className="block text-ink-2">{c.detail}</span></button></li>)}</ul>}
           </div>
           <ApprovedPanel p={p} locked={locked} onInserted={(np, id) => { setP(np); setSel(id) }} />
+          <MakeReelPanel p={p} locked={locked} />
         </aside>
       </div>
     </div>
@@ -325,6 +327,35 @@ function ApprovedPanel({ p, locked, onInserted }: { p: PosterProject; locked: bo
           <p className="mt-2 text-xs text-ink-3">Inserted exactly as approved. Poster QA flags any later edit.</p>
         </>}
       </>}
+      <Err msg={err} />
+    </div>
+  )
+}
+
+// ------------------------------------------------------------------ step 7: poster -> ordinary reel (owner approves the script in Reels)
+function MakeReelPanel({ p, locked }: { p: PosterProject; locked: boolean }) {
+  const [cat, setCat] = useState<Catalog | null>(null); const [brand, setBrand] = useState(''); const [platform, setPlatform] = useState('instagram')
+  const [style, setStyle] = useState(''); const [slug, setSlug] = useState(''); const [busy, setBusy] = useState(false)
+  const [err, setErr] = useState<string | null>(null); const [made, setMade] = useState<{ project: string; slides: number } | null>(null)
+  useEffect(() => { api.catalog().then(c => { setCat(c); const b = c.brands[0]; if (b) { setBrand(b.id); setStyle(b.default_style) } }).catch(e => setErr(msg(e))) }, [])
+  const go = async () => {
+    setBusy(true); setErr(null); setMade(null)
+    try { const r = await creative.toReel(p, { brand, platform, style, slug }); setMade(r) } catch (e) { setErr(msg(e)) } finally { setBusy(false) }
+  }
+  if (!cat) return null
+  return (
+    <div className="rounded-box bg-surface p-3">
+      <h2 className="mb-2 text-xs font-semibold tracking-wide text-ink-3">MAKE A REEL FROM THIS POSTER</h2>
+      <p className="mb-2 text-xs text-ink-3">Uses the saved poster's latest PNG export as slides and its text, top to bottom, as the script. You approve the script in Reels before anything is rendered.</p>
+      <div className="grid grid-cols-2 gap-2">
+        <label className="text-xs text-ink-2">Brand<Select className="w-full" value={brand} onChange={e => { setBrand(e.target.value); const b = cat.brands.find(x => x.id === e.target.value); if (b) setStyle(b.default_style) }}>
+          {cat.brands.map(b => <option key={b.id} value={b.id}>{b.name}</option>)}</Select></label>
+        <label className="text-xs text-ink-2">Platform<Select className="w-full" value={platform} onChange={e => setPlatform(e.target.value)}>{cat.platforms.map(x => <option key={x.id} value={x.id}>{x.name}</option>)}</Select></label>
+        <label className="text-xs text-ink-2">Style<Select className="w-full" value={style} onChange={e => setStyle(e.target.value)}>{cat.styles.map(x => <option key={x.id} value={x.id}>{x.name}</option>)}</Select></label>
+        <label className="text-xs text-ink-2">Short name<Field value={slug} onChange={e => setSlug(e.target.value)} placeholder="e.g. tools_poster" /></label>
+      </div>
+      <Btn kind="ghost" className="mt-2 w-full" disabled={locked || busy || !slug.trim() || p.dirty} onClick={go}>{p.dirty ? 'Save the poster first' : 'Make reel'}</Btn>
+      {made && <p role="status" className="mt-2 rounded-field bg-ok-subtle px-2 py-1.5 text-xs text-ok">Reel created with {made.slides} slide{made.slides > 1 ? 's' : ''}. <a className="underline" href={`#/p/${encodeURIComponent(made.project)}`}>Open it in Reels</a> to approve the script, add title words, build and render.</p>}
       <Err msg={err} />
     </div>
   )

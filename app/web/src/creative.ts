@@ -56,5 +56,7 @@ export const creative = {
   approvedReel: (name: string) => call<ApprovedDoc>('GET', `/api/creative/approved/reels/${encodeURIComponent(name)}`),
   insertApproved: (p: PosterProject, doc: ApprovedDoc, item: ApprovedItem) =>
     call<{ project: PosterProject; link: ContentLink }>('POST', '/api/creative/approved/insert', { ...at(p), reel: doc.source.project, item_id: item.id, expected_fingerprint: doc.fingerprint }),
+  toReel: (p: PosterProject, b: { brand: string; platform: string; style: string; slug: string }) =>
+    call<{ project: string; slides: number; script: string[]; script_approved: boolean }>('POST', '/api/creative/to-reel', { ...at(p), ...b }),
   links: (p: PosterProject) => call<{ links: ContentLink[] }>('GET', `/api/creative/approved/links/${encodeURIComponent(p.project_id)}`).then(r => r.links),
 }

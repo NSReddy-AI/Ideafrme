@@ -142,6 +142,38 @@ class CreativeRoutes(unittest.TestCase):
         self.assertEqual(self.S.call("GET", "/api/creative/approved/reels/speaker")[0], 409)
         self.assertEqual(self.S.call("GET", "/api/creative/approved/reels/..")[0], 404)
 
+    # -- step 7: poster -> ordinary M4 slides reel, script prepared but NOT approved
+    def test_poster_to_reel(self):
+        import base64, io
+        from PIL import Image
+        p = self.ok(*self.S.call("POST", "/api/creative/projects", {"name": "To reel", "text": "మొదటి వాక్యం", "language": "te"}), 201)["project"]
+        p = self.ok(*self.S.call("POST", "/api/creative/action", {"project_id": p["project_id"], "expected_revision": p["revision"], "action": "add_text", "language": "en"}))["project"]
+        second = p["elements"][-1]
+        p = self.ok(*self.S.call("POST", "/api/creative/action", {"project_id": p["project_id"], "expected_revision": p["revision"], "action": "edit_text", "element_id": second["id"], "text": "Second line\nwraps here"}))["project"]
+        p = self.ok(*self.S.call("POST", "/api/creative/action", {"project_id": p["project_id"], "expected_revision": p["revision"], "action": "move", "element_id": second["id"], "x": 80, "y": 600}))["project"]
+        req = {"project_id": p["project_id"], "expected_revision": p["revision"], "brand": "tech_ai_tools", "platform": "instagram", "style": "listicle", "slug": "zz_m6_poster_reel"}
+        self.assertEqual(self.S.call("POST", "/api/creative/to-reel", req)[1]["error"], "save-first")
+        p = self.ok(*self.S.call("POST", "/api/creative/action", {"project_id": p["project_id"], "expected_revision": p["revision"], "action": "save"}))["project"]
+        self.assertEqual(self.S.call("POST", "/api/creative/to-reel", req)[1]["error"], "export-png-first")
+        start = self.ok(*self.S.call("POST", "/api/creative/export/begin", {"project_id": p["project_id"], "expected_revision": p["revision"]}))
+        buf = io.BytesIO(); Image.new("RGBA", (1080, 1350), (14, 23, 64, 255)).save(buf, "PNG")   # stands in for the browser's raster
+        self.ok(*self.S.call("POST", "/api/creative/export/finish", {"token": start["token"], "revision": p["revision"], "png": base64.b64encode(buf.getvalue()).decode(),
+                                                                      "qa": {"fonts_loaded": True, "overflow": [], "parity": True, "embedded_fonts": True}}))
+        rec = self.ok(*self.S.call("POST", "/api/creative/to-reel", req))
+        d = ROOT / "projects" / rec["project"]
+        try:
+            self.assertTrue(rec["project"].endswith("zz_m6_poster_reel"))
+            self.assertEqual(rec["script"], ["మొదటి వాక్యం", "Second line wraps here"])           # top to bottom, exact words
+            self.assertFalse(rec["script_approved"])
+            self.assertEqual(sorted(f.name for f in (d / "inputs").glob("slide_*.png")), ["slide_01.png", "slide_02.png"])
+            self.assertEqual((d / "inputs" / "slide_01.png").read_bytes(), buf.getvalue())
+            view = self.ok(*self.S.call("GET", f"/api/projects/{rec['project']}"))
+            self.assertEqual(view["project"]["narration"], "none"); self.assertFalse(view["script"]["approved"])
+            self.assertEqual([l["text"] for l in view["script"]["lines"]], rec["script"])
+            self.assertTrue((d / "build" / "conversion.json").is_file())
+        finally:
+            shutil.rmtree(d, ignore_errors=True)
+
     # -- Brand Library, bound project and deterministic Director
     def test_brand_binding_and_director(self):
         saved = self.ok(*self.S.call("POST", "/api/brands/action", {"action": "save", "brand_id": None, "expected_head": None, "payload": PAYLOAD}))

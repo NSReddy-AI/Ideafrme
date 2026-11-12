@@ -1,0 +1,21 @@
+{
+ "format": "ideaframe-poster-to-reel@1",
+ "created": "2026-11-12 12:51:28",
+ "project": "2026-11-12_zz_m6_e2e_both",
+ "poster": {
+  "project_id": "70a69f68-5fe9-4d27-8d7b-dd2cdb44b67c",
+  "name": "E2E both",
+  "revision": 3,
+  "source_fingerprint": "sha256:5ed10b16a267f4b0880a9e254b2fea70c7d3fbbafa2fefd60f60bcd6117e4c01",
+  "svg_sha256": "d3d433e042135eb9f70c34b8ef1167d2322fb8ac95b29f89d54982b123eb56bc",
+  "png_sha256": "7b05db7b88ad0b8d3dba072a2e7806371f69b11aa0748743f678a2df0c2e0255",
+  "export": "draft-3e41381af4cf3056"
+ },
+ "slides": 2,
+ "script": [
+  "Three tools to try",
+  "Free and offline"
+ ],
+ "script_approved": false,
+ "approved_lines": []
+}

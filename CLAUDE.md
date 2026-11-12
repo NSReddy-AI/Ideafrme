@@ -42,6 +42,11 @@ For M6 work only, it replaces the M4 rule "work only in `Reel Studio_dev`".
   from an approved brand, into a new folder, never into `brands/`.
 - Approved reel words on posters: `docs/APPROVED_CONTENT_CONTRACT.md`. Derived read-only from M4 approvals (same checks as the
   render gate); never relax those checks, and never insert reel words into a poster any other way.
+- Rendering outside the app's normal path: only through `tools/m6_render_job.py` (`app/engine_jobs.py`). It renders in an
+  isolated `jobs/<job>/` root, with a byte-identical engine copy, a copied project and the shared heavy-model lock.
+  Never modify the engine to make a job work. reel_002 parity evidence: `tests/acceptance/m6_step7_reel002_parity/`.
+- Poster to reel (`app/poster_to_reel.py`) creates an ordinary slides reel with the script prepared but NOT approved.
+  Never approve a script or plan for the owner, except in throwaway test projects that are deleted afterwards.
 - M5 AI integration is NO-GO (Codex Phase 2E). The Creative Director in M6 stays deterministic until the owner decides otherwise.
 
 ## Running side by side with production

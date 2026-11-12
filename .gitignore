@@ -16,3 +16,7 @@ engine/.heavy_model.lock
 
 # M5 runtime data (sessions, Brand Library) belongs to this machine, not to Git
 m5/.runtime/
+
+# Isolated engine job roots (renders, copies of projects)
+jobs/
+.heavy_model.lock

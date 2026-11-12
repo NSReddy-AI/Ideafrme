@@ -336,3 +336,18 @@ def _insert(s, v):
         return {"project": done, "link": link}
 @router.post("/api/creative/approved/insert")
 async def approved_insert(request: Request): return await _handle(request, _insert)
+
+
+# ---------------------------------------------------------------- step 7: poster -> ordinary M4 slides reel (script left unapproved)
+def _to_reel(s, v):
+    import poster_to_reel as T
+    exact(v, {"project_id", "expected_revision", "brand", "platform", "style", "slug"})
+    identity = project_id(v["project_id"]); s._ready(identity)
+    with s.manual.lock:
+        doc = s.manual.document(identity)
+        if v["expected_revision"] != doc["revision"]: raise UIError("conflict", "Stale poster revision.", 409)
+        if s.view(identity)["dirty"]: raise UIError("save-first", "Save the poster first.", 409)
+        try: return T.convert(s, identity, v["brand"], v["platform"], v["style"], v["slug"], links=_link_status(doc))
+        except T.ConvertError as e: raise UIError(e.code, str(e), e.status)
+@router.post("/api/creative/to-reel")
+async def to_reel(request: Request): return await _handle(request, _to_reel)
