@@ -24,7 +24,7 @@ file: NotoSansTelugu-Black.ttf, SHA-256 42a3167f…, byte-identical in engine/fo
 - **Metric note:** a first version of the check scaled both crops to 64 px high. That turned 1 px anti-aliasing
   differences into false flags (5 words). The native-size rule above replaced it, and the controls show it still catches real faults.
 
-## 2. The 52 px "large text" threshold — matches WCAG for a 390 px phone; conservative for Telugu
+## 2. The 52 px "large text" threshold (poster canvas coordinates) — measurements
 
 The fonts were measured with Pillow at a 1000 px em (the pinned Inter Bold and Noto Sans Telugu Black):
 
@@ -37,7 +37,12 @@ The fonts were measured with Pillow at a 1000 px em (the pinned Inter Bold and N
 - WCAG "large" bold text is 14 pt, which is 18.66 CSS px. On a 390 px phone that is poster font_size **51.7**, so 52 is the WCAG boundary.
 - Telugu letter bodies are 0.75 em: 1.33 times Inter's lowercase height and slightly taller than its capitals. At the
   same font size, Telugu looks larger than English, so 52 px is conservative for Telugu and exact for English.
-- **Owner decision (12 Nov 2026): keep 52 px**, with a 390 px phone as the reference. On 360 px phones the WCAG boundary would be 56; this is recorded and accepted.
+- **Owner decision (12 Nov 2026, corrected):** the approved large-text threshold is **52 px in poster canvas
+  coordinates** (font_size on the 1080 × 1350 poster), the same for every preview size, including 360 px and 390 px phones.
+  No 56 px threshold was approved. The phone-width figures above are background measurements only, not part of the rule.
+- Correction note: an earlier version of this file said a 56 px boundary for 360 px phones was "recorded and accepted".
+  That was wrong and has been removed.
+- The 64 px poster safe margin is unchanged.
 
 ## 3. Measured-text QA in the poster editor
 

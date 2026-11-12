@@ -4,20 +4,20 @@ Like engine/qa.py for reels, it reports PASS/FAIL with every check listed. It ne
 not block export; the editor shows it before export. Checks that need the browser's real text shaping
 (text overflowing its box, overlapping lines) stay in M5's browser inspectScene, which already refuses export.
 
-Rules (owner decisions 12 Nov 2026: 64 px safe margin as initial default; 52 px large text kept, 390 px phone reference -
-see tests/acceptance/m7a_telugu_shaping/README.md):
+Rules (owner decisions 12 Nov 2026: 64 px safe margin as initial default; large text = font_size >= 52 px in poster
+canvas coordinates, for every preview size - see tests/acceptance/m7a_telugu_shaping/README.md):
   canvas     every layer lies fully inside the poster (error)
   safe_area  text stays SAFE_MARGIN px inside each edge (warning)
   contrast   text against the layer it sits on, WCAG 2.2: 4.5:1, or 3:1 for large text (error).
-             Posters are seen at phone size, so "large" uses the size on a 390 px wide phone:
-             font_size * 390/1080 >= 18.66 px (14 pt bold; both pinned fonts are bold), i.e. font_size >= 52.
+             "Large" is font_size >= 52 in poster canvas coordinates (approved rule, independent of preview size).
+             It is computed as font_size * 390/1080 >= 18.66 px (WCAG 14 pt bold), which gives exactly 52.
              Text over the transparent background or over more than one layer cannot be judged (warning).
   glyphs     every character is covered by the pinned font for its script (error; M5 refuses to render it)
   empty      a text layer has visible text (warning)
   overlap    two text layers do not overlap (warning)"""
 
 SAFE_MARGIN = 64                      # owner-approved initial default (6 % of the 1080 px width)
-PHONE_SCALE = 390 / 1080              # owner-approved reference phone width in CSS px (gives 52 px)
+PHONE_SCALE = 390 / 1080              # with LARGE_PX this yields the approved 52 px canvas threshold; not a preview setting
 LARGE_PX = 18.66                      # WCAG large bold text, 14 pt
 
 
