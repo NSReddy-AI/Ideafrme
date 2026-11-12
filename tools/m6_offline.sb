@@ -1,0 +1,7 @@
+(version 1)
+; IDEAFRAME M6 offline check: everything allowed EXCEPT network traffic leaving this Mac.
+; Loopback (the app's own server, Ollama on localhost) and local Unix sockets stay allowed.
+(allow default)
+(deny network-outbound)
+(allow network-outbound (remote ip "localhost:*"))
+(allow network-outbound (remote unix-socket))

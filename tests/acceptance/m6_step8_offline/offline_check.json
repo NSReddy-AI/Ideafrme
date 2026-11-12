@@ -1,0 +1,219 @@
+[
+ {
+  "area": "system",
+  "item": "macOS on Apple Silicon",
+  "ok": true,
+  "required": true,
+  "detail": "Darwin 25.6.0 arm64"
+ },
+ {
+  "area": "python",
+  "item": "reelstudio",
+  "ok": true,
+  "required": true,
+  "detail": "Python 3.12.16 - app + engine (and M5 code); vendored: True"
+ },
+ {
+  "area": "python",
+  "item": "rs_tts",
+  "ok": true,
+  "required": true,
+  "detail": "Python 3.12.16 - AI narration; vendored: True"
+ },
+ {
+  "area": "python",
+  "item": "rs_asr",
+  "ok": true,
+  "required": true,
+  "detail": "Python 3.12.16 - Telugu speech-to-text; vendored: True"
+ },
+ {
+  "area": "tools",
+  "item": "ffmpeg",
+  "ok": true,
+  "required": true,
+  "detail": "/opt/homebrew/bin/ffmpeg - all video work; Homebrew bottle in vendor bundle: True"
+ },
+ {
+  "area": "tools",
+  "item": "ffprobe",
+  "ok": true,
+  "required": true,
+  "detail": "/opt/homebrew/bin/ffprobe - QA; Homebrew bottle in vendor bundle: True"
+ },
+ {
+  "area": "tools",
+  "item": "whisper-cli",
+  "ok": true,
+  "required": true,
+  "detail": "/opt/homebrew/bin/whisper-cli - English speech-to-text (whisper.cpp); Homebrew bottle in vendor bundle: True"
+ },
+ {
+  "area": "tools",
+  "item": "ollama",
+  "ok": true,
+  "required": true,
+  "detail": "/opt/homebrew/bin/ollama - local planner; Homebrew bottle in vendor bundle: True"
+ },
+ {
+  "area": "tools",
+  "item": "node",
+  "ok": true,
+  "required": false,
+  "detail": "/opt/homebrew/bin/node - only for rebuilding the UI and M5 JS tests; Homebrew bottle in vendor bundle: True"
+ },
+ {
+  "area": "tools",
+  "item": "npx",
+  "ok": true,
+  "required": false,
+  "detail": "/opt/homebrew/bin/npx - HyperFrames, only for hand-made motion compositions (not the app's own flow); Homebrew bottle in vendor bundle: True"
+ },
+ {
+  "area": "tools",
+  "item": "HyperFrames (global npm)",
+  "ok": true,
+  "required": false,
+  "detail": "0.9.9 - not in the vendor bundle; optional for the app's own flow"
+ },
+ {
+  "area": "tools",
+  "item": "Google Chrome",
+  "ok": true,
+  "required": false,
+  "detail": "used by HyperFrames and M4's link screenshots only; the app itself runs in any modern browser"
+ },
+ {
+  "area": "models",
+  "item": "vasista22/whisper-telugu-large-v2",
+  "ok": true,
+  "required": true,
+  "detail": "all files present, sizes match - REQUIRED (Telugu STT)"
+ },
+ {
+  "area": "models",
+  "item": "openai/whisper-large-v2 (config)",
+  "ok": true,
+  "required": true,
+  "detail": "all files present, sizes match - REQUIRED (STT generation config)"
+ },
+ {
+  "area": "models",
+  "item": "ai4bharat/indic-parler-tts",
+  "ok": true,
+  "required": true,
+  "detail": "all files present, sizes match - REQUIRED (AI narration; gated download)"
+ },
+ {
+  "area": "models",
+  "item": "google/flan-t5-large (tokenizer)",
+  "ok": true,
+  "required": true,
+  "detail": "all files present, sizes match - REQUIRED (narration tokenizer)"
+ },
+ {
+  "area": "models",
+  "item": "ggml-large-v3-turbo.bin",
+  "ok": true,
+  "required": true,
+  "detail": "all files present, sizes match - REQUIRED (English STT)"
+ },
+ {
+  "area": "models",
+  "item": "ollama qwen3:14b",
+  "ok": true,
+  "required": true,
+  "detail": "all files present, sizes match - REQUIRED (planner)"
+ },
+ {
+  "area": "models",
+  "item": "ollama qwen3:8b",
+  "ok": true,
+  "required": false,
+  "detail": "all files present, sizes match - optional backup planner"
+ },
+ {
+  "area": "models",
+  "item": "Telugu STT pinned weights (asr.json)",
+  "ok": true,
+  "required": true,
+  "detail": "blob 1c3388d44fab present"
+ },
+ {
+  "area": "app",
+  "item": "built UI (app/web/dist)",
+  "ok": true,
+  "required": true,
+  "detail": "served by the app; rebuilding needs node + node_modules"
+ },
+ {
+  "area": "app",
+  "item": "UI packages (app/web/node_modules)",
+  "ok": true,
+  "required": false,
+  "detail": "only for rebuilding the UI; `npm ci --offline` from the local npm cache"
+ },
+ {
+  "area": "fonts",
+  "item": "engine/fonts/NotoSansTelugu-Black.ttf",
+  "ok": true,
+  "required": true,
+  "detail": "bundled"
+ },
+ {
+  "area": "fonts",
+  "item": "engine/fonts/Inter-Bold.otf",
+  "ok": true,
+  "required": true,
+  "detail": "bundled"
+ },
+ {
+  "area": "fonts",
+  "item": "engine/fonts/Anton-Regular.ttf",
+  "ok": true,
+  "required": true,
+  "detail": "bundled"
+ },
+ {
+  "area": "fonts",
+  "item": "engine/fonts/DejaVuSans-Bold.ttf",
+  "ok": true,
+  "required": true,
+  "detail": "bundled"
+ },
+ {
+  "area": "fonts",
+  "item": "engine/fonts/SixCaps.ttf",
+  "ok": true,
+  "required": true,
+  "detail": "bundled"
+ },
+ {
+  "area": "fonts",
+  "item": "M5 pinned Inter-Bold.otf",
+  "ok": true,
+  "required": true,
+  "detail": "hash matches the pin"
+ },
+ {
+  "area": "fonts",
+  "item": "M5 pinned NotoSansTelugu-Black.ttf",
+  "ok": true,
+  "required": true,
+  "detail": "hash matches the pin"
+ },
+ {
+  "area": "app",
+  "item": "engine/models (face tracking, matting, upscaling)",
+  "ok": true,
+  "required": true,
+  "detail": "bundled in the workspace"
+ },
+ {
+  "area": "policy",
+  "item": "paid AI providers switched off",
+  "ok": true,
+  "required": true,
+  "detail": "all off"
+ }
+]

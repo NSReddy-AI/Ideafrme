@@ -47,6 +47,9 @@ For M6 work only, it replaces the M4 rule "work only in `Reel Studio_dev`".
   Never modify the engine to make a job work. reel_002 parity evidence: `tests/acceptance/m6_step7_reel002_parity/`.
 - Poster to reel (`app/poster_to_reel.py`) creates an ordinary slides reel with the script prepared but NOT approved.
   Never approve a script or plan for the owner, except in throwaway test projects that are deleted afterwards.
+- Offline readiness: `tools/m6_offline_check.py` (read-only). No-network proof: run anything as
+  `sandbox-exec -f tools/m6_offline.sb <command>`. Packaging and Windows: `docs/M6_PACKAGING_AND_PORTABILITY.md`; the
+  packaging choice is the owner's.
 - M5 AI integration is NO-GO (Codex Phase 2E). The Creative Director in M6 stays deterministic until the owner decides otherwise.
 
 ## Running side by side with production
