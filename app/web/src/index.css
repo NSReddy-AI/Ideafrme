@@ -13,6 +13,7 @@
   --color-surface: var(--color-bg-surface);
   --color-raised: var(--color-bg-raised);
   --color-scrim: var(--color-bg-scrim);
+  --color-media: var(--color-bg-media);
 
   --color-ink: var(--color-text-primary);
   --color-ink-2: var(--color-text-secondary);
@@ -78,3 +79,11 @@ input, select, textarea { accent-color: var(--color-action); }
 
 /* Off-screen layout for measuring drawn text (M5 inspectScene and measure.ts). */
 .measurement { position: fixed; left: -20000px; top: 0; pointer-events: none; }
+
+/* M7-B B1: enter motion for dialogs and toasts (Bible: modal 240 ms fade + small scale; toast 180 ms).
+   Durations come from tokens, so prefers-reduced-motion (tokens.css) removes them. */
+@keyframes if-rise { from { opacity: 0; transform: translateY(8px) scale(0.98); } to { opacity: 1; transform: none; } }
+.dialog-motion[open] { animation: if-rise var(--motion-base) var(--ease-out); }
+.dialog-motion::backdrop { animation: if-fade var(--motion-base) var(--ease-out); }
+.toast-motion { animation: if-rise var(--motion-base) var(--ease-out); }
+@keyframes if-fade { from { opacity: 0; } to { opacity: 1; } }

@@ -50,6 +50,9 @@ For M6 work only, it replaces the M4 rule "work only in `Reel Studio_dev`".
 - Offline readiness: `tools/m6_offline_check.py` (read-only). No-network proof: run anything as
   `sandbox-exec -f tools/m6_offline.sb <command>`. Packaging and Windows: `docs/M6_PACKAGING_AND_PORTABILITY.md`.
   Owner decision (12 Nov 2026): keep the launcher (option A). Do not add a desktop wrapper without a new decision.
+- UI: build screens from `app/web/src/ui.tsx` (buttons, fields, notices, tabs, dialog, toasts; reference page `#/design`).
+  `python3 -B tools/m6_token_audit.py` must report 0 findings: no literal colours, palette classes, fixed radii or timings in screens.
+  No native alert/confirm/prompt: use `useConfirm`. No logo or app icon until the approved master SVG exists.
 - M5 AI integration is NO-GO (Codex Phase 2E). The Creative Director in M6 stays deterministic until the owner decides otherwise.
 
 ## Running side by side with production

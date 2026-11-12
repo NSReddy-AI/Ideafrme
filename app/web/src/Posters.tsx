@@ -7,7 +7,7 @@ import { comparePng, inspectScene, loadFonts, qualifyEmbedded, raster } from '@m
 import { alignPosition, clippedBox } from '@m5/visual_poster_studio/layout.mjs'
 import { resizeBox } from '@m5/visual_poster_studio/geometry.mjs'
 import { creative, CreativeError, type ApprovedDoc, type ContentLink, type ExportReceipt, type Face, type Layer, type PosterProject, type PosterQA, type PosterRow, type ReelRow, type Scene } from './creative'
-import { Btn, Card, Err, Field, MOTION, PageHead, Pill, Select, cx } from './ui'
+import { Btn, Card, Err, Field, MOTION, PageHead, Pill, Select, cx, useConfirm } from './ui'
 import { api, type Catalog } from './api'
 import { measureText, measuredChecks, type MeasuredCheck } from './measure'
 
@@ -256,6 +256,7 @@ export function PosterEditor({ id }: { id: string }) {
 
 // ------------------------------------------------------------------ inspector for one layer
 function Inspector({ p, el, text, link, locked, act }: { p: PosterProject; el: Layer; text?: { text: string; language: string }; link?: ContentLink; locked: boolean; act: (a: string, x?: Record<string, unknown>) => Promise<void> }) {
+  const confirm = useConfirm()
   const [draft, setDraft] = useState(text?.text ?? ''); const [composing, setComposing] = useState(false)
   const [size, setSize] = useState(String(el.style.font_size ?? '')); const [fill, setFill] = useState(el.style.fill)
   const [box, setBox] = useState({ x: String(el.x), y: String(el.y), width: String(el.width), height: String(el.height) })
@@ -302,7 +303,7 @@ function Inspector({ p, el, text, link, locked, act }: { p: PosterProject; el: L
         </div>
       </div>
       <Err msg={err} />
-      <Btn kind="danger" className="w-full" disabled={locked} onClick={() => { if (window.confirm('Remove this layer? You can undo it.')) act('remove', { element_id: el.id }) }}>Remove layer</Btn>
+      <Btn kind="danger" className="w-full" disabled={locked} onClick={async () => { if (await confirm({ title: 'Remove this layer?', body: 'You can bring it back with Undo.', confirmLabel: 'Remove layer', tone: 'danger' })) act('remove', { element_id: el.id }) }}>Remove layer</Btn>
     </div>
   )
 }

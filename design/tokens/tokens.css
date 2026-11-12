@@ -77,6 +77,7 @@
   --color-bg-surface: #F5F7FA;       /* [v1.3] */
   --color-bg-raised: #FFFFFF;        /* [proposed] cards, menus, dialogs */
   --color-bg-scrim: rgba(16, 24, 40, 0.5); /* [proposed] behind dialogs */
+  --color-bg-media: #000000;          /* [proposed] letterbox behind video players; same in every theme */
 
   /* Text */
   --color-text-primary: #101828;     /* [v1.3] */

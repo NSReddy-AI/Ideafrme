@@ -4,6 +4,7 @@ import { api, fileUrl, type Catalog, type Job, type Project, type ProjectRow } f
 import { Btn, Card, Err, MOTION, PageHead, Pill, Select, cx } from './ui'
 import { PosterEditor, PostersPage } from './Posters'
 import { BrandStudio } from './BrandStudio'
+import { DesignReference } from './DesignReference'
 
 type Start = (b: Parameters<typeof api.job>[1]) => Promise<void>
 
@@ -50,7 +51,7 @@ function JobPanel({ job, onCancel }: { job: Job | null; onCancel: () => void }) 
         <span className="ml-auto text-ink-3">{last?.step ? `${last.step}${last.platform ? ' · ' + last.platform : ''}` : ''}</span>
         {(job.status === 'running' || job.status === 'queued') && <Btn kind="ghost" onClick={onCancel}>Cancel</Btn>}
       </div>
-      <div className="mt-2 h-2 overflow-hidden rounded bg-surface"><div className={cx('h-full transition-all', job.status === 'failed' ? 'bg-bad-solid' : 'bg-act')} style={{ width: `${job.status === 'done' ? 100 : job.pct || 2}%` }} /></div>
+      <div className="mt-2 h-2 overflow-hidden rounded-chip bg-surface"><div className={cx('h-full transition-all', job.status === 'failed' ? 'bg-bad-solid' : 'bg-act')} style={{ width: `${job.status === 'done' ? 100 : job.pct || 2}%` }} /></div>
       {errs.filter((e, i, a) => a.findIndex(x => x.code === e.code && x.message === e.message) === i).map((e, i) => <Err key={i} msg={`${e.code ?? 'error'}: ${e.message}${e.code && HINTS[e.code] ? ' - ' + HINTS[e.code] : ''}`} />)}
       {warns.length > 0 && <details className="mt-2 text-xs text-warn"><summary>{warns.length} warning(s)</summary>{warns.map((w, i) => <div key={i}>{w.code}: {w.message}</div>)}</details>}
     </div>
@@ -112,7 +113,7 @@ function Inputs({ p, reload }: { p: Project; reload: (x?: Project) => void }) {
       <label className="block">Brief / notes<textarea value={notes} onChange={e => setNotes(e.target.value)} rows={2} className="mt-1 w-full rounded-field border border-line-strong p-2" /></label>
       {notes !== p.notes && <Btn kind="ghost" onClick={async () => reload(await api.patch(p.name, { notes }))}>Save notes</Btn>}
       <div className="flex flex-wrap gap-1 text-xs">{p.inputs.filter(f => !['notes.txt', 'urls.txt', 'script.txt'].includes(f) && !f.endsWith('.part')).map(f =>
-        <span key={f} className="inline-flex items-center gap-1 rounded bg-surface px-2 py-0.5">{f}<button title="Remove (kept in inputs/.removed)" className="text-ink-3 hover:text-bad"
+        <span key={f} className="inline-flex items-center gap-1 rounded-chip bg-surface px-2 py-0.5">{f}<button title="Remove (kept in inputs/.removed)" className="text-ink-3 hover:text-bad"
           onClick={async () => { setErr(null); try { reload(await api.removeInput(p.name, f)) } catch (e) { setErr((e as Error).message) } }}>×</button></span>)}</div>
       {p.project.video && <Framing p={p} reload={reload} />}
       <Err msg={err} />
@@ -129,9 +130,9 @@ function Captions({ p, reload }: { p: Project; reload: (x?: Project) => void }) 
       <p className="mt-2 text-xs text-ink-3">Spelling fixes only - never change what was said. Fixing a word after approval withdraws the approval; approve again before building.</p>
       <div className="te mt-2 flex flex-wrap gap-1 text-base leading-relaxed">
         {W.map(w => edit[w.i] !== undefined
-          ? <input key={w.i} autoFocus value={edit[w.i]} onChange={e => setEdit({ ...edit, [w.i]: e.target.value })} className="w-32 rounded border border-act px-1" />
+          ? <input key={w.i} autoFocus value={edit[w.i]} onChange={e => setEdit({ ...edit, [w.i]: e.target.value })} className="w-32 rounded-chip border border-act px-1" />
           : <button key={w.i} title={`${w.s.toFixed(1)} s${w.w_asr ? ` · heard: ${w.w_asr}` : ''}`} onClick={() => setEdit({ ...edit, [w.i]: w.w })}
-              className={cx('rounded px-1 hover:bg-surface', w.review && 'bg-warn-subtle', w.w_asr && 'underline decoration-act')}>{w.w}</button>)}
+              className={cx('rounded-chip px-1 hover:bg-surface', w.review && 'bg-warn-subtle', w.w_asr && 'underline decoration-act')}>{w.w}</button>)}
       </div>
       {n > 0 && <div className="mt-2 flex gap-2"><Btn onClick={async () => { setErr(null); try { reload(await api.captions(p.name, edit)); setEdit({}) } catch (e) { setErr((e as Error).message) } }}>Save {n} fix(es)</Btn><Btn kind="ghost" onClick={() => setEdit({})}>Cancel</Btn></div>}
       <Err msg={err} />
@@ -146,10 +147,10 @@ function Framing({ p, reload }: { p: Project; reload: (x?: Project) => void }) {
     <details className="rounded-field border border-line p-3">
       <summary className="cursor-pointer font-medium">Framing - where the speaker is in the video (the reel crops around this)</summary>
       <div className="mt-2 flex flex-wrap items-start gap-4">
-        <div className="relative w-80"><img src={src} className="w-80 rounded" /><div className="absolute top-0 h-full w-0.5 bg-act" style={{ left: `${fx * 100}%` }} /></div>
+        <div className="relative w-80"><img src={src} className="w-80 rounded-chip" /><div className="absolute top-0 h-full w-0.5 bg-act" style={{ left: `${fx * 100}%` }} /></div>
         <div className="space-y-2 text-xs">
           <label className="block">Speaker position {Math.round(fx * 100)}%<br /><input type="range" min={0} max={1} step={0.01} value={fx} onChange={e => setFx(Number(e.target.value))} className="w-56" /></label>
-          <label className="block">Preview at second<br /><input type="number" min={0} value={t} onChange={e => setT(Number(e.target.value))} className="w-20 rounded border border-line-strong px-1" /> <Btn kind="ghost" onClick={() => setSrc(api.sourceFrame(p.name, t))}>Show</Btn></label>
+          <label className="block">Preview at second<br /><input type="number" min={0} value={t} onChange={e => setT(Number(e.target.value))} className="w-20 rounded-chip border border-line-strong px-1" /> <Btn kind="ghost" onClick={() => setSrc(api.sourceFrame(p.name, t))}>Show</Btn></label>
           <Btn disabled={saved} onClick={async () => reload(await api.patch(p.name, { face_x: fx }))}>{saved ? 'Saved' : 'Save framing'}</Btn>
           <p className="text-ink-3">Takes effect at the next "Build edit".</p>
         </div>
@@ -184,7 +185,7 @@ function PlanStep({ p, start, busy, reload }: { p: Project; start: Start; busy: 
           {pl.problems.length > 0 && <Err msg={'Problems: ' + pl.problems.join('; ')} />}
           {pl.marked.length > 0 && <div className="rounded-field bg-warn-subtle p-2 text-xs text-warn">❓ To check before approving:<ul className="te list-disc pl-5">{pl.marked.map((m, i) => <li key={i}>{m}</li>)}</ul></div>}
           {p.words && <Captions p={p} reload={reload} />}
-          <details><summary className="cursor-pointer text-xs text-ink-2">Full plan (beats, captions, every on-screen word)</summary><pre className="te mt-2 max-h-96 overflow-auto whitespace-pre-wrap rounded bg-surface p-3 text-xs">{pl.markdown}</pre></details>
+          <details><summary className="cursor-pointer text-xs text-ink-2">Full plan (beats, captions, every on-screen word)</summary><pre className="te mt-2 max-h-96 overflow-auto whitespace-pre-wrap rounded-chip bg-surface p-3 text-xs">{pl.markdown}</pre></details>
           <div className="flex flex-wrap items-center gap-2">
             <input value={hook} onChange={e => setHook(e.target.value)} placeholder="Own hook D:  line1 / line2 / line3 / headline 1 / headline 2" className="te min-w-80 flex-1 rounded-field border border-line-strong px-2 py-1.5" />
             <Btn kind="ghost" disabled={busy || !hook.trim()} onClick={() => go({ action: 'hook', hook })}>Add as option D</Btn>
@@ -236,7 +237,7 @@ function NarrationStep({ p, cat, reload, start, busy }: { p: Project; cat: Catal
           <ol className="te space-y-1.5">
             {p.script.lines.map((l, i) => {
               const f = flaggedOf(l)
-              return <li key={i} className={cx('rounded px-2 py-1', f && 'bg-warn-subtle')}>
+              return <li key={i} className={cx('rounded-chip px-2 py-1', f && 'bg-warn-subtle')}>
                 <div><span className="mr-2 text-xs text-ink-3">{i + 1}.</span>{f && '❓ '}{l.text}</div>
                 {spoken && l.say !== l.text && <div className="text-xs text-ink-2">spoken: {l.say}</div>}
                 {spoken && l.numbers.filter(n => n.check !== 'ok').map((n, j) => <div key={j} className="text-xs text-warn">❓ {n.text} → {n.say}: {n.why}</div>)}
@@ -260,7 +261,7 @@ function NarrationStep({ p, cat, reload, start, busy }: { p: Project; cat: Catal
           {p.narration_audio && <div className="flex flex-wrap items-center gap-3"><audio controls src={fileUrl(p.narration_audio.file) + `?d=${p.narration_audio.duration}`} />
             <span className="text-xs text-ink-3">{p.narration_audio.duration} s{p.narration_audio.memory?.peak_rss_gb ? ` · voice model peak ${p.narration_audio.memory.peak_rss_gb} GB of ${p.narration_audio.memory.limit_gb} GB` : ''}</span></div>}
           {p.narration_check && <div className="text-xs"><div>Speech-to-text check: character error {(p.narration_check.cer_total * 100).toFixed(1)}%</div>
-            {p.narration_check.to_check.length > 0 && <div className="mt-1 rounded bg-warn-subtle p-2 text-warn">Listen to these sentences:<ul className="te list-disc pl-5">{p.narration_check.to_check.map((x, i) => <li key={i}>{typeof x === 'string' ? x : [x.line, x.text, x.why].filter(v => v != null).join(' · ')}</li>)}</ul></div>}</div>}
+            {p.narration_check.to_check.length > 0 && <div className="mt-1 rounded-chip bg-warn-subtle p-2 text-warn">Listen to these sentences:<ul className="te list-disc pl-5">{p.narration_check.to_check.map((x, i) => <li key={i}>{typeof x === 'string' ? x : [x.line, x.text, x.why].filter(v => v != null).join(' · ')}</li>)}</ul></div>}</div>}
         </div>
       )}
       <Err msg={err} />
@@ -304,7 +305,7 @@ function Exports({ p }: { p: Project }) {
             {g.outputs.map(o => (
               <div key={o.file} className="rounded-field border border-line p-3 text-sm">
                 <div className="mb-2 flex items-center gap-2"><strong className="capitalize">{o.platform}</strong><Pill ok={o.qa?.passed}>{o.qa ? (o.qa.passed ? 'QA PASS' : 'QA FAIL') : 'no QA'}</Pill><span className="ml-auto text-xs text-ink-3">{o.size_mb} MB</span></div>
-                <video controls preload="metadata" src={fileUrl(o.file)} poster={fileUrl(o.cover)} className="aspect-[9/16] w-full rounded bg-black" />
+                <video controls preload="metadata" src={fileUrl(o.file)} poster={fileUrl(o.cover)} className="aspect-[9/16] w-full rounded-chip bg-media" />
                 {o.qa && <div className="mt-2 text-xs">
                   <div>{o.qa.duration?.toFixed(1)} s · {o.qa.loudness} LUFS · peak {o.qa.true_peak} dB</div>
                   <div className="mt-1 flex flex-wrap gap-1">{o.qa.checks.map(c => <Pill key={c.name} ok={c.passed}>{c.name}</Pill>)}</div>
@@ -368,7 +369,7 @@ function ProjectView({ name, cat }: { name: string; cat: Catalog }) {
         </>}
       <Card step={3} title="Build the edit (captions, graphics, music)" state={st(!!p.edit && prepDone, prepDone && !p.edit)}
         right={<Btn disabled={busy || !prepDone || (!speaker && !titleReady(p))} onClick={() => run({ action: 'build' })}>{p.edit ? 'Build again' : 'Build edit'}</Btn>}>
-        {p.edit ? <div className="flex flex-wrap gap-4 text-sm"><video controls preload="metadata" src={fileUrl(p.edit) + `?t=${p.edit_layout?.duration}`} className="h-72 rounded bg-black" />
+        {p.edit ? <div className="flex flex-wrap gap-4 text-sm"><video controls preload="metadata" src={fileUrl(p.edit) + `?t=${p.edit_layout?.duration}`} className="h-72 rounded-chip bg-media" />
           <div className="text-xs text-ink-2"><div>{p.edit_layout?.kind}</div><div>{p.edit_layout?.duration} s · {(p.edit_layout?.edit_size ?? []).join('×')}</div>{p.edit_layout?.slides && <div>{p.edit_layout.slides} slides</div>}<div>captions: {p.edit_layout?.captions_words ? `${p.edit_layout.captions_words} words (speaker's own)` : p.edit_layout?.captions ? 'approved script text' : 'none'}</div></div></div>
           : <p className="text-sm text-ink-3">Uses approved material only: {speaker ? 'plan beats in source order, silences cut, verbatim captions, approved number cards' : 'one slide per approved sentence, captions = approved text'}.</p>}
       </Card>
@@ -420,12 +421,12 @@ function ProjectList({ rows, onOpen }: { rows: ProjectRow[]; onOpen: (n: string)
 // ------------------------------------------------------------------ shell
 // Routes live in the address bar: #/ (home), #/projects (reels), #/posters, #/settings, #/p/<reel>, #/poster/<id>.
 // An old Reel Studio link (#<project>) still opens that project.
-type Page = 'home' | 'projects' | 'posters' | 'brands' | 'settings'
+type Page = 'home' | 'projects' | 'posters' | 'brands' | 'settings' | 'design'
 type Route = { page: Page } | { page: 'project'; name: string } | { page: 'poster'; id: string }
 const readRoute = (): Route => {
   const h = decodeURIComponent(location.hash.replace(/^#\/?/, ''))
   if (!h) return { page: 'home' }
-  if (h === 'projects' || h === 'posters' || h === 'brands' || h === 'settings') return { page: h }
+  if (h === 'projects' || h === 'posters' || h === 'brands' || h === 'settings' || h === 'design') return { page: h }
   if (h.startsWith('poster/')) return { page: 'poster', id: h.slice(7) }
   return { page: 'project', name: h.startsWith('p/') ? h.slice(2) : h }
 }
@@ -446,7 +447,7 @@ export default function App() {
     const on = () => setRoute(readRoute())
     window.addEventListener('hashchange', on); return () => window.removeEventListener('hashchange', on)
   }, [])
-  const section = route.page === 'project' ? 'projects' : route.page === 'poster' ? 'posters' : route.page
+  const section = route.page === 'project' ? 'projects' : route.page === 'poster' ? 'posters' : route.page === 'design' ? 'settings' : route.page
   const recent = rows.filter(r => !r.archived).slice(0, 5)
   return (
     <div className="flex min-h-screen flex-col bg-surface text-ink md:flex-row">
@@ -476,6 +477,7 @@ export default function App() {
             </>
             : route.page === 'posters' ? <PostersPage onOpen={id => go({ page: 'poster', id })} />
             : route.page === 'brands' ? <BrandStudio />
+            : route.page === 'design' ? <DesignReference />
             : route.page === 'project' ? <>
               <a href="#/projects" className="mb-4 inline-block text-sm text-link hover:underline">← Reels</a>
               <ProjectView name={route.name} cat={cat} />
@@ -488,6 +490,9 @@ export default function App() {
             : route.page === 'settings' ? <div className="space-y-4">
               <PageHead title="Settings" sub="Local tools, models and planner status." />
               <SystemCheck />
+              <Card title="Design" right={<a href="#/design" className="text-sm text-link hover:underline">Component reference</a>}>
+                <p className="text-sm text-ink-2">Every shared button, field, status, dialog and notice, in the IDEAFRAME tokens.</p>
+              </Card>
               <Card title="Planner">
                 <div className="text-sm">{Object.entries(cat.providers).map(([k, v]) => <span key={k} className="mr-2"><Pill ok={!!v}>{k}</Pill></span>)}</div>
                 <p className="mt-2 text-xs text-ink-3">Local AI only (Ollama/Qwen3, Whisper, Indic Parler-TTS). Paid providers are optional and stay off unless their key is set.</p>
