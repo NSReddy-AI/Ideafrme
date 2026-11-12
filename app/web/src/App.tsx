@@ -1,7 +1,7 @@
 import { useCallback, useEffect, useRef, useState } from 'react'
 import { api, fileUrl, type Catalog, type Job, type Project, type ProjectRow } from './api'
 
-import { Btn, Card, Err, MOTION, PageHead, Pill, Select, cx } from './ui'
+import { Btn, Card, Err, Field, MOTION, Notice, PageHead, Pill, Select, TextArea, cx } from './ui'
 import { PosterEditor, PostersPage } from './Posters'
 import { BrandStudio } from './BrandStudio'
 import { DesignReference } from './DesignReference'
@@ -72,7 +72,7 @@ function NewProject({ cat, onMade }: { cat: Catalog; onMade: (n: string) => void
         <label className="text-sm">Brand<br /><Select className="w-full" value={brand} onChange={e => pickBrand(e.target.value)}>{cat.brands.map(x => <option key={x.id} value={x.id}>{x.name}</option>)}</Select></label>
         <label className="text-sm">Main platform<br /><Select className="w-full" value={platform} onChange={e => setPlatform(e.target.value)}>{cat.platforms.map(x => <option key={x.id} value={x.id}>{x.name}</option>)}</Select></label>
         <label className="text-sm">Style<br /><Select className="w-full" value={style} onChange={e => setStyle(e.target.value)}>{cat.styles.map(x => <option key={x.id} value={x.id}>{x.name}</option>)}</Select></label>
-        <label className="text-sm">Short name<br /><input value={slug} onChange={e => setSlug(e.target.value)} placeholder="e.g. housing_numbers" className="min-h-9 w-full rounded-field border border-line-strong bg-raised px-2 py-1.5 text-sm" /></label>
+        <label className="text-sm">Short name<br /><Field value={slug} onChange={e => setSlug(e.target.value)} placeholder="e.g. housing_numbers" /></label>
       </div>
       <Btn className="mt-3" disabled={!slug.trim()} onClick={async () => { setErr(null); try { onMade((await api.create({ brand, platform, style, slug })).name) } catch (e) { setErr((e as Error).message) } }}>Create project</Btn>
       <Err msg={err} />
@@ -112,7 +112,7 @@ function Inputs({ p, reload }: { p: Project; reload: (x?: Project) => void }) {
           </Select>
         </div>
       )}
-      <label className="block">Brief / notes<textarea value={notes} onChange={e => setNotes(e.target.value)} rows={2} className="mt-1 w-full rounded-field border border-line-strong p-2" /></label>
+      <label className="block">Brief / notes<TextArea value={notes} onChange={e => setNotes(e.target.value)} rows={2} className="mt-1" /></label>
       {notes !== p.notes && <Btn kind="ghost" onClick={async () => reload(await api.patch(p.name, { notes }))}>Save notes</Btn>}
       <div className="flex flex-wrap gap-1 text-xs">{p.inputs.filter(f => !['notes.txt', 'urls.txt', 'script.txt'].includes(f) && !f.endsWith('.part')).map(f =>
         <span key={f} className="inline-flex items-center gap-1 rounded-chip bg-surface px-2 py-0.5">{f}<button title="Remove (kept in inputs/.removed)" className="text-ink-3 hover:text-bad"
@@ -152,7 +152,7 @@ function Framing({ p, reload }: { p: Project; reload: (x?: Project) => void }) {
         <div className="relative w-80"><img src={src} className="w-80 rounded-chip" /><div className="absolute top-0 h-full w-0.5 bg-act" style={{ left: `${fx * 100}%` }} /></div>
         <div className="space-y-2 text-xs">
           <label className="block">Speaker position {Math.round(fx * 100)}%<br /><input type="range" min={0} max={1} step={0.01} value={fx} onChange={e => setFx(Number(e.target.value))} className="w-56" /></label>
-          <label className="block">Preview at second<br /><input type="number" min={0} value={t} onChange={e => setT(Number(e.target.value))} className="w-20 rounded-chip border border-line-strong px-1" /> <Btn kind="ghost" onClick={() => setSrc(api.sourceFrame(p.name, t))}>Show</Btn></label>
+          <label className="block">Preview at second<br /><span className="mr-2 inline-block w-24 align-middle"><Field type="number" min={0} value={t} onChange={e => setT(Number(e.target.value))} /></span><Btn kind="ghost" onClick={() => setSrc(api.sourceFrame(p.name, t))}>Show</Btn></label>
           <Btn disabled={saved} onClick={async () => reload(await api.patch(p.name, { face_x: fx }))}>{saved ? 'Saved' : 'Save framing'}</Btn>
           <p className="text-ink-3">Takes effect at the next "Build edit".</p>
         </div>
@@ -185,11 +185,11 @@ function PlanStep({ p, start, busy, reload }: { p: Project; start: Start; busy: 
           </div>
           {pl.cards.length > 0 && <div className="te text-xs text-ink-2">Number cards: {pl.cards.map(c => `${c.number}${c.label ? ' ' + c.label : ''}`).join(' · ')}</div>}
           {pl.problems.length > 0 && <Err msg={'Problems: ' + pl.problems.join('; ')} />}
-          {pl.marked.length > 0 && <div className="rounded-field bg-warn-subtle p-2 text-xs text-warn">❓ To check before approving:<ul className="te list-disc pl-5">{pl.marked.map((m, i) => <li key={i}>{m}</li>)}</ul></div>}
+          {pl.marked.length > 0 && <Notice tone="warning" className="text-xs">❓ To check before approving:<ul className="te list-disc pl-5">{pl.marked.map((m, i) => <li key={i}>{m}</li>)}</ul></Notice>}
           {p.words && <Captions p={p} reload={reload} />}
           <details><summary className="cursor-pointer text-xs text-ink-2">Full plan (beats, captions, every on-screen word)</summary><pre className="te mt-2 max-h-96 overflow-auto whitespace-pre-wrap rounded-chip bg-surface p-3 text-xs">{pl.markdown}</pre></details>
           <div className="flex flex-wrap items-center gap-2">
-            <input value={hook} onChange={e => setHook(e.target.value)} placeholder="Own hook D:  line1 / line2 / line3 / headline 1 / headline 2" className="te min-w-80 flex-1 rounded-field border border-line-strong px-2 py-1.5" />
+            <Field value={hook} onChange={e => setHook(e.target.value)} aria-label="Your own hook" placeholder="Own hook D:  line1 / line2 / line3 / headline 1 / headline 2" className="te min-w-0 flex-1 sm:min-w-80" />
             <Btn kind="ghost" disabled={busy || !hook.trim()} onClick={() => go({ action: 'hook', hook })}>Add as option D</Btn>
           </div>
           <div className="flex flex-wrap items-center gap-3 border-t border-line pt-3">
@@ -230,7 +230,7 @@ function NarrationStep({ p, cat, reload, start, busy }: { p: Project; cat: Catal
       {mode === 'ai' && <p className="text-xs text-ink-3">A distinct synthetic narrator (never an imitation of a real person). The two-line Telugu AI disclosure is added on screen; switch on the platform's AI label when you upload.</p>}
       <div>
         <div className="mb-1 font-medium">Script - one sentence per line, exactly as it should appear in captions</div>
-        <textarea value={text} onChange={e => setText(e.target.value)} rows={8} className="te w-full rounded-field border border-line-strong p-2 text-base leading-relaxed" />
+        <TextArea value={text} onChange={e => setText(e.target.value)} rows={8} aria-label="Narration script" className="te text-base! leading-relaxed!" />
         <Btn kind={textChanged ? 'primary' : 'ghost'} disabled={!text.trim() || !textChanged} onClick={() => wrap(() => api.script(p.name, text))}>{textChanged ? 'Prepare for review' : 'Prepared'}</Btn>
         <span className="ml-2 text-xs text-ink-3">Shows how every number will be spoken. The text is never rewritten; any edit needs a new approval.</span>
       </div>
@@ -263,7 +263,7 @@ function NarrationStep({ p, cat, reload, start, busy }: { p: Project; cat: Catal
           {p.narration_audio && <div className="flex flex-wrap items-center gap-3"><audio controls src={fileUrl(p.narration_audio.file) + `?d=${p.narration_audio.duration}`} />
             <span className="text-xs text-ink-3">{p.narration_audio.duration} s{p.narration_audio.memory?.peak_rss_gb ? ` · voice model peak ${p.narration_audio.memory.peak_rss_gb} GB of ${p.narration_audio.memory.limit_gb} GB` : ''}</span></div>}
           {p.narration_check && <div className="text-xs"><div>Speech-to-text check: character error {(p.narration_check.cer_total * 100).toFixed(1)}%</div>
-            {p.narration_check.to_check.length > 0 && <div className="mt-1 rounded-chip bg-warn-subtle p-2 text-warn">Listen to these sentences:<ul className="te list-disc pl-5">{p.narration_check.to_check.map((x, i) => <li key={i}>{typeof x === 'string' ? x : [x.line, x.text, x.why].filter(v => v != null).join(' · ')}</li>)}</ul></div>}</div>}
+            {p.narration_check.to_check.length > 0 && <Notice tone="warning" className="mt-1">Listen to these sentences:<ul className="te list-disc pl-5">{p.narration_check.to_check.map((x, i) => <li key={i}>{typeof x === 'string' ? x : [x.line, x.text, x.why].filter(v => v != null).join(' · ')}</li>)}</ul></Notice>}</div>}
         </div>
       )}
       <Err msg={err} />
@@ -278,7 +278,7 @@ function TitlePage({ p, reload, wordsFromPlan }: { p: Project; reload: (x?: Proj
   const [f, setF] = useState({ line1: hk.line1 ?? '', line2: hk.line2 ?? '', line3: hk.line3 ?? '', tag_top: hk.tag_top ?? '', tag_bottom: hk.tag_bottom ?? '', h1: hl[0] ?? '', h2: hl[1] ?? '' })
   const [err, setErr] = useState<string | null>(null)
   const saved = f.line1 === (hk.line1 ?? '') && f.line2 === (hk.line2 ?? '') && f.line3 === (hk.line3 ?? '') && f.tag_top === (hk.tag_top ?? '') && f.tag_bottom === (hk.tag_bottom ?? '') && f.h1 === (hl[0] ?? '') && f.h2 === (hl[1] ?? '')
-  const inp = (k: keyof typeof f, ph: string) => <input value={f[k]} onChange={e => setF({ ...f, [k]: e.target.value })} placeholder={ph} className="te w-full rounded-field border border-line-strong px-2 py-1.5 text-base" />
+  const inp = (k: keyof typeof f, ph: string) => <Field value={f[k]} onChange={e => setF({ ...f, [k]: e.target.value })} placeholder={ph} aria-label={ph} className="te text-base!" />
   const up = async (file: File | undefined, kind: 'title_person' | 'title_bg') => { if (!file) return; try { reload(await api.upload(p.name, file, kind)) } catch (e) { setErr((e as Error).message) } }
   return (
     <div className="space-y-3 text-sm">
@@ -346,7 +346,7 @@ function ProjectView({ name, cat }: { name: string; cat: Catalog }) {
   if (p.locked) return (
     <div className="space-y-4">
       <h1 className="text-xl font-semibold">{p.name}</h1>
-      <p className="rounded-field bg-warn-subtle px-3 py-2 text-sm text-warn">Locked baseline (reel_002) - read-only in the app. It is the reference that every engine change is checked against.</p>
+      <Notice tone="info" title="Locked baseline (reel_002).">Read-only in the app. It is the reference that every engine change is checked against.</Notice>
       <Card title="Exports"><Exports p={p} /></Card>
     </div>
   )

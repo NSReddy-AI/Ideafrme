@@ -17,3 +17,10 @@ declare module '@m5/visual_poster_studio/geometry.mjs' {
   type Box = { x: number; y: number; width: number; height: number }
   export function resizeBox(box: Box, corner: 'nw' | 'ne' | 'sw' | 'se', dx: number, dy: number, locked: boolean, view: { width: number; height: number }): Box
 }
+declare module '@m5/visual_poster_studio/editing.mjs' {
+  type Key = { key?: string; ctrlKey?: boolean; metaKey?: boolean; altKey?: boolean; shiftKey?: boolean; isComposing?: boolean; keyCode?: number }
+  export function shortcut(event: Key, composingField: unknown, editable?: boolean): 'save' | 'apply-text' | 'undo' | 'redo' | null
+  export function nudge(event: Key, composingField: unknown, editable?: boolean): { x: number; y: number } | null
+  export function nextLayerIndex(index: number, key: string, count: number): number
+  export function zoomWidth(value: 'fit' | '25' | '50' | '75' | '100'): string
+}

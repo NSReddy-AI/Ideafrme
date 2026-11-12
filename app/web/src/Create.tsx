@@ -34,7 +34,7 @@ function BriefForm({ both, onConcepts }: { both: boolean; onConcepts: (id: strin
     brandApi.list().then(l => setDrafts(l.brands.filter(b => b.record.state !== 'approved' || !b.approval_current))).catch(() => {})
   }, [])
   const usable = (eligible ?? []).filter(v => v.eligible)
-  const ready = name.trim() && topic.trim() && ack
+  const ready = name.trim() && topic.trim() && purpose.trim() && audience.trim() && ack   // the concept step refuses a brief without purpose and audience
   const start = async () => {
     setBusy(true); setErr(null)
     try {
@@ -66,7 +66,7 @@ function BriefForm({ both, onConcepts }: { both: boolean; onConcepts: (id: strin
         <span>This poster keeps its brief and brand linked to it. Older M5 Studio versions cannot open posters like this.</span></label>
       {both && <Notice tone="info" className="mt-3">After you choose a concept and save the poster, use "Make a reel from this poster" in the editor.</Notice>}
       <Btn className="mt-4" busy={busy} disabled={!ready} onClick={start}>Continue to concepts</Btn>
-      {!ready && <p className="mt-2 text-xs text-ink-3">Needs a project name, a topic and the confirmation above.</p>}
+      {!ready && <p className="mt-2 text-xs text-ink-3">Needs a project name, topic, purpose, audience and the confirmation above.</p>}
       {err && <Notice tone="error" className="mt-3">{err}</Notice>}
     </Card>
   )
