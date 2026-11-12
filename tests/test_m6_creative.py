@@ -134,11 +134,17 @@ class CreativeRoutes(unittest.TestCase):
         self.assertEqual([l["item_id"] for l in links], [quote["id"]])
         p = self.ok(*self.S.call("POST", "/api/creative/action", {"project_id": p["project_id"], "expected_revision": p["revision"], "action": "edit_text", "element_id": link["element_id"], "text": quote["text"] + " (edited)"}))["project"]
         q = qa(); self.assertFalse(check(q)["passed"]); self.assertFalse(q["passed"]); self.assertIn("edited", check(q)["detail"])
+        blocked = self.S.call("POST", "/api/creative/export/begin", {"project_id": p["project_id"], "expected_revision": p["revision"]})
+        self.assertEqual((blocked[0], blocked[1]["error"]), (409, "approved-text"), blocked)        # M7-A: export refused
+        self.assertIn("approve it in that reel", blocked[1]["detail"])
         p = self.ok(*self.S.call("POST", "/api/creative/action", {"project_id": p["project_id"], "expected_revision": p["revision"], "action": "undo"}))["project"]
         self.assertTrue(check(qa())["passed"])                                                    # back to the approved words
+        start = self.ok(*self.S.call("POST", "/api/creative/export/begin", {"project_id": p["project_id"], "expected_revision": p["revision"]}))
+        self.assertIn("token", start); self.ok(*self.S.call("POST", "/api/creative/export/cancel", {}))
         plan = self.S.reels / "speaker" / "build" / "plan.json"                                   # the reel's approval is withdrawn
         P = json.loads(plan.read_text(encoding="utf-8")); P["approved"] = False; plan.write_text(json.dumps(P, ensure_ascii=False), encoding="utf-8")
         q = qa(); self.assertFalse(check(q)["passed"]); self.assertIn("no longer valid", check(q)["detail"])
+        self.assertEqual(self.S.call("POST", "/api/creative/export/begin", {"project_id": p["project_id"], "expected_revision": p["revision"]})[0], 409)
         self.assertEqual(self.S.call("GET", "/api/creative/approved/reels/speaker")[0], 409)
         self.assertEqual(self.S.call("GET", "/api/creative/approved/reels/..")[0], 404)
 
@@ -173,6 +179,35 @@ class CreativeRoutes(unittest.TestCase):
             self.assertTrue((d / "build" / "conversion.json").is_file())
         finally:
             shutil.rmtree(d, ignore_errors=True)
+
+    # -- M7-A: rights are append-only owner decisions; approval needs current clearance and goes stale when rights change
+    def test_brand_rights_and_approval(self):
+        import base64
+        from datetime import datetime, timedelta, timezone
+        stamp = lambda d: (datetime.now(timezone.utc) + timedelta(days=d)).strftime("%Y-%m-%dT%H:%M:%SZ")
+        unknown = {"status": "unknown", "authority": "", "evidence": "", "scopes": [], "destinations": [], "expires": None}
+        grant = lambda d, dest=("library_metadata", "poster", "reel"): {"status": "granted", "authority": "Test owner", "evidence": "test fixture", "scopes": ["internal_preview", "commercial_design"], "destinations": list(dest), "expires": stamp(d)}
+        a = self.ok(*self.S.call("POST", "/api/brands/asset", {"action": "register_asset", "name": "logo.png", "kind": "logo", "data_base64": base64.b64encode(b"logo-bytes-" + os.urandom(8)).decode(),
+                                                             "provenance": {"owner": "Test", "source": "test", "license": "unknown"}, "rights": unknown}))
+        b = self.ok(*self.S.call("POST", "/api/brands/action", {"action": "save", "brand_id": None, "expected_head": None, "payload": dict(PAYLOAD, name="Rights test", asset_ids=[a["asset_id"]])}))
+        approve = lambda br: self.S.call("POST", "/api/brands/action", {"action": "approve", "brand_id": br["record"]["brand_id"], "expected_head": br["hash"], "reviewer": "Test", "acknowledge": True})
+        rights = lambda prev, r: self.S.call("POST", "/api/brands/action", {"action": "rights", "asset_id": a["asset_id"], "expected_rights": prev, "rights": r})
+        self.assertIn("clearance", approve(b)[1]["detail"])                                     # unknown -> blocked
+        r1 = self.ok(*rights(a["rights_hash"], {**unknown, "status": "denied"}))["rights_hash"]
+        self.assertIn("clearance", approve(b)[1]["detail"])                                     # denied -> blocked
+        self.assertEqual(rights(a["rights_hash"], grant(30))[0], 400)                          # stale decision refused (append-only chain)
+        r2 = self.ok(*rights(r1, grant(-1)))["rights_hash"]                                     # already expired
+        self.assertIn("clearance", approve(b)[1]["detail"])
+        self.ok(*rights(r2, grant(30)))
+        lib = self.ok(*self.S.call("GET", "/api/brands"))
+        asset = next(x for x in lib["assets"] if x["record"]["id"] == a["asset_id"])
+        self.assertEqual(asset["rights"]["status"], "granted"); self.assertIsNotNone(asset["rights"]["previous"])
+        ok = self.ok(*approve(b)); self.assertEqual(ok["record"]["state"], "approved"); self.assertTrue(ok["approval_current"])
+        self.ok(*rights(asset["rights_hash"], {**unknown, "status": "denied"}))                  # the owner revokes the grant
+        head = next(x for x in self.ok(*self.S.call("GET", "/api/brands"))["brands"] if x["record"]["brand_id"] == ok["record"]["brand_id"])
+        self.assertFalse(head["approval_current"])                                              # revoked -> approval no longer counts
+        draft = self.ok(*self.S.call("POST", "/api/brands/action", {"action": "save", "brand_id": head["record"]["brand_id"], "expected_head": head["hash"], "payload": head["record"]["payload"]}))
+        self.assertEqual(draft["record"]["state"], "draft"); self.assertIn("clearance", approve(draft)[1]["detail"])
 
     # -- Brand Library, bound project and deterministic Director
     def test_brand_binding_and_director(self):

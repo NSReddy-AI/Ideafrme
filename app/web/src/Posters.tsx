@@ -158,6 +158,7 @@ export function PosterEditor({ id }: { id: string }) {
   }
 
   const failing = qa?.checks.filter(c => !c.passed) ?? []
+  const wordsBlocked = failing.some(c => c.name === 'approved_text')   // M7-A: the server refuses this export too
   return (
     <div data-surface="editor" className="rounded-sheet bg-canvas p-4 text-ink shadow-float">
       {/* toolbar */}
@@ -168,12 +169,13 @@ export function PosterEditor({ id }: { id: string }) {
         <Btn kind="quiet" disabled={locked || !p.can_undo} onClick={() => act('undo')}>Undo</Btn>
         <Btn kind="quiet" disabled={locked || !p.can_redo} onClick={() => act('redo')}>Redo</Btn>
         <Btn kind="ghost" disabled={locked || !p.dirty} onClick={() => act('save')}>Save</Btn>
-        <Btn kind="ghost" disabled={locked || !current || overflow.length > 0} onClick={() => exportDraft(false)}>Export SVG</Btn>
-        <Btn disabled={locked || !current || overflow.length > 0 || !pngOk} onClick={() => exportDraft(true)}>Export PNG</Btn>
+        <Btn kind="ghost" disabled={locked || !current || overflow.length > 0 || wordsBlocked} onClick={() => exportDraft(false)}>Export SVG</Btn>
+        <Btn disabled={locked || !current || overflow.length > 0 || !pngOk || wordsBlocked} onClick={() => exportDraft(true)}>Export PNG</Btn>
       </div>
       {upgrade && <div role="alert" className="mb-3 rounded-field bg-warn-subtle px-3 py-2 text-sm text-warn">
         This change needs the newer edit-history format (v3). Older M5 Studio versions cannot open this poster afterwards.
         <span className="ml-3 inline-flex gap-2"><Btn kind="ghost" disabled={locked} onClick={() => act(upgrade.action, { ...upgrade.extra, acknowledge_upgrade: true })}>Upgrade and continue</Btn><Btn kind="quiet" onClick={() => setUpgrade(null)}>Cancel</Btn></span></div>}
+      {wordsBlocked && <p role="alert" className="mb-3 rounded-field bg-bad-subtle px-3 py-2 text-sm text-bad">Export blocked: approved reel words on this poster no longer match their approval. Undo the edit or insert the approved line again. If the new wording is intended, approve it in that reel first, then insert it from there.</p>}
       <Err msg={err} />
       {receipt && <p role="status" className="mb-3 rounded-field bg-ok-subtle px-3 py-2 text-sm text-ok">Draft exported: {receipt.directory}{receipt.manifest.png_sha256 ? ' (SVG and PNG)' : ' (SVG)'}</p>}
 

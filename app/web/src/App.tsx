@@ -3,6 +3,7 @@ import { api, fileUrl, type Catalog, type Job, type Project, type ProjectRow } f
 
 import { Btn, Card, Err, MOTION, PageHead, Pill, Select, cx } from './ui'
 import { PosterEditor, PostersPage } from './Posters'
+import { BrandStudio } from './BrandStudio'
 
 type Start = (b: Parameters<typeof api.job>[1]) => Promise<void>
 
@@ -419,21 +420,21 @@ function ProjectList({ rows, onOpen }: { rows: ProjectRow[]; onOpen: (n: string)
 // ------------------------------------------------------------------ shell
 // Routes live in the address bar: #/ (home), #/projects (reels), #/posters, #/settings, #/p/<reel>, #/poster/<id>.
 // An old Reel Studio link (#<project>) still opens that project.
-type Page = 'home' | 'projects' | 'posters' | 'settings'
+type Page = 'home' | 'projects' | 'posters' | 'brands' | 'settings'
 type Route = { page: Page } | { page: 'project'; name: string } | { page: 'poster'; id: string }
 const readRoute = (): Route => {
   const h = decodeURIComponent(location.hash.replace(/^#\/?/, ''))
   if (!h) return { page: 'home' }
-  if (h === 'projects' || h === 'posters' || h === 'settings') return { page: h }
+  if (h === 'projects' || h === 'posters' || h === 'brands' || h === 'settings') return { page: h }
   if (h.startsWith('poster/')) return { page: 'poster', id: h.slice(7) }
   return { page: 'project', name: h.startsWith('p/') ? h.slice(2) : h }
 }
 const hrefOf = (r: Route) => r.page === 'project' ? `#/p/${encodeURIComponent(r.name)}` : r.page === 'poster' ? `#/poster/${encodeURIComponent(r.id)}` : r.page === 'home' ? '#/' : `#/${r.page}`
 
 const NAV: { page: Page; label: string }[] = [
-  { page: 'home', label: 'Home' }, { page: 'projects', label: 'Reels' }, { page: 'posters', label: 'Posters' }, { page: 'settings', label: 'Settings' }]
+  { page: 'home', label: 'Home' }, { page: 'projects', label: 'Reels' }, { page: 'posters', label: 'Posters' }, { page: 'brands', label: 'Brand Studio' }, { page: 'settings', label: 'Settings' }]
 // Areas that arrive in later M6 steps. Shown so the layout is final, but not clickable.
-const LATER = ['Brand Studio', 'Concepts']
+const LATER = ['Concepts']
 
 export default function App() {
   const [cat, setCat] = useState<Catalog | null>(null); const [rows, setRows] = useState<ProjectRow[]>([]); const [showTests, setShowTests] = useState(false)
@@ -474,6 +475,7 @@ export default function App() {
               <PosterEditor id={route.id} />
             </>
             : route.page === 'posters' ? <PostersPage onOpen={id => go({ page: 'poster', id })} />
+            : route.page === 'brands' ? <BrandStudio />
             : route.page === 'project' ? <>
               <a href="#/projects" className="mb-4 inline-block text-sm text-link hover:underline">← Reels</a>
               <ProjectView name={route.name} cat={cat} />

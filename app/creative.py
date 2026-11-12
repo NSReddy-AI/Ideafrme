@@ -165,11 +165,28 @@ def _qa(s, v):
 @router.post("/api/creative/qa")
 async def qa(request: Request): return await _handle(request, _qa)
 
+def _approved_words_or_refuse(s, identity):
+    """M7-A: a poster whose approved reel words were edited, changed or lost their approval cannot be exported."""
+    bad = [r for r in _link_status(s.manual.document(identity)) if not r["ok"]]
+    if bad:
+        lines = "; ".join(f"{r['item_id']} from {r['reel']}: {r['detail']}" for r in bad)
+        raise UIError("approved-text", f"Export blocked - approved reel words no longer match their approval ({lines}). "
+                      "Undo the edit or insert the approved line again; if the new wording is intended, approve it in that reel first.", 409)
+
+def _begin(s, v):
+    if type(v) == dict and isinstance(v.get("project_id"), str): _approved_words_or_refuse(s, project_id(v["project_id"]))
+    return s.begin(v)
+
+def _finish(s, v):
+    pending = getattr(s.exports, "pending", None)            # checked again: the reel's approval may change during the handshake
+    if pending: _approved_words_or_refuse(s, pending["identity"])
+    return s.finish(v)
+
 @router.post("/api/creative/export/begin")
-async def export_begin(request: Request): return await _handle(request, lambda s, v: s.begin(v))
+async def export_begin(request: Request): return await _handle(request, _begin)
 
 @router.post("/api/creative/export/finish")
-async def export_finish(request: Request): return await _handle(request, lambda s, v: s.finish(v))
+async def export_finish(request: Request): return await _handle(request, _finish)
 
 def _cancel(s, v):
     exact(v, set()); s.exports.cancel(); return {"cancelled": True}
