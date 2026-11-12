@@ -16,9 +16,19 @@ Created 12 Nov 2026 (step 1 of the M6 plan, approved by the owner).
 - `docs/M4_CLAUDE_REFERENCE.md` = the M4 `CLAUDE.md`, unchanged. The new `CLAUDE.md` holds the M6 rules.
 
 ## M5 source
-**Pending.** Codex was still editing `Codex/AI Studio` at creation time (last change about 01:00, 12 Nov).
-Copy it into `m5/` only from a checkpoint Codex names (handoff file, test log and manifest).
-Leave out `.runtime/` (browser profiles, test sessions, the local Brand Library).
+- **Copied into `m5/` on 12 Nov 2026** from Codex's frozen checkpoint
+  `Codex/AI Studio_M5_checkpoint_2026-11-12_064759` (read-only, prepared 06:48 UTC).
+- **Verified twice:** all 238 payload files against the checkpoint's own `SHA256SUMS`, once in the
+  checkpoint and once in the copy (0 failures, no unlisted files). `m5/SHA256SUMS` is the M5 baseline.
+- The checkpoint contains no `.runtime/`. M5 computes its storage root from its own folder
+  (`studio_manual_ui/service.py:14`), so `m5/.runtime/` is M6's own session and Brand Library storage,
+  separate from Codex's. It is git-ignored.
+- Codex's handoff and interface documents are in `m5/checkpoint/` (start with `M5_INTEGRATION_HANDOFF.md`).
+- Known hard-coded references to the Codex folder in the copy:
+  - `tests/run_isolated.py:13` refuses to run outside the Codex folder.
+  - `visual_poster_studio/app.js:453` shows a resume command that points at the Codex folder.
+  - `poster_render/backend.mjs`, `isolation.sb` and `tools/run_phase2.py` (the legacy renderer) are hard-coded too.
+  Never run these from M6. The app.js screen gets replaced by React in step 4.
 
 ## Checksum baseline
 `M6_BASELINE.sha256` covers every file in the initial copy except `app/web/node_modules/`.

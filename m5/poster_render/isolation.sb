@@ -1,0 +1,9 @@
+(version 1)
+(allow default)
+(deny file-write*)
+(allow file-write* (subpath "/Users/Nadish/projects/AI Video Editor./Codex/AI Studio"))
+(allow file-write-data (literal "/dev/null"))
+(deny network*)
+(allow network* (local unix-socket))
+; CDP uses inherited pipes; no HTTP listener or TCP connection is required.
+; Chromium requires local Unix IPC for its process singleton; IP networking stays denied.

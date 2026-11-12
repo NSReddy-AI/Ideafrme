@@ -13,3 +13,6 @@ __pycache__/
 engine/.heavy_model.lock
 *.render.lock
 .claude/settings.local.json
+
+# M5 runtime data (sessions, Brand Library) belongs to this machine, not to Git
+m5/.runtime/

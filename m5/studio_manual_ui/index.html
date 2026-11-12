@@ -1,0 +1,72 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>AI Reel Studio · Manual workspace</title>
+  <link rel="stylesheet" href="/styles.css">
+  <script src="/app.js" defer></script>
+</head>
+<body>
+  <header class="topbar">
+    <div class="identity"><span class="mark" aria-hidden="true">A</span><div><strong>AI Reel Studio</strong><span class="subline">Manual workspace</span></div></div>
+    <div class="top-status"><span class="pill">Local only</span><span id="save-state" class="pill muted">No project</span></div>
+  </header>
+  <main class="workspace">
+    <aside class="projects panel">
+      <h2>Projects</h2>
+      <label for="project-list">This session</label>
+      <select id="project-list"><option value="">Choose a project</option></select>
+      <button id="reopen" class="secondary" disabled>Reopen saved version</button>
+      <details open><summary>New project</summary>
+        <form id="create-form">
+          <label for="project-name">Project name</label>
+          <input id="project-name" maxlength="128" value="Untitled poster" required>
+          <label for="initial-text">First text layer</label>
+          <textarea id="initial-text" rows="4" maxlength="10000" spellcheck="false" autocapitalize="off" autocorrect="off" autocomplete="off" required>కొత్త ఆలోచన / New idea</textarea>
+          <label for="initial-language">Text language</label>
+          <select id="initial-language"><option value="te">Telugu</option><option value="en">English</option></select>
+          <button class="primary" type="submit">Create project</button>
+        </form>
+      </details>
+      <p class="small">Projects stay in this isolated local session. Save before closing the service.</p>
+    </aside>
+
+    <section class="editor panel" aria-labelledby="project-title">
+      <div class="editor-heading"><div><span class="eyebrow">TEXT &amp; GEOMETRY</span><h1 id="project-title">Your next idea starts here</h1><p id="project-meta" class="small">Create a project to begin manual editing.</p></div><button id="save" class="primary" disabled>Save project</button></div>
+      <div class="toolbar"><div><button id="undo" disabled>Undo</button><button id="redo" disabled>Redo</button></div><span class="small">Explicit edits · Reversible history</span></div>
+      <div id="notice" class="notice" role="status" aria-live="polite">Manual mode is ready. Media analysis stays off.</div>
+      <div class="editing-grid">
+        <section class="layer-section" aria-labelledby="layers-title">
+          <h2 id="layers-title">Layers</h2>
+          <div class="add-text-row"><select id="add-language" aria-label="Language for added text"><option value="te">Telugu</option><option value="en">English</option></select><button id="add-text" disabled>Add text</button></div>
+          <div class="shape-buttons"><button id="add-rectangle" disabled>+ Rectangle</button><button id="add-ellipse" disabled>+ Ellipse</button></div>
+          <ol id="layers" class="layers"><li class="empty">Your layers will appear here.</li></ol>
+          <p id="capacity" class="small">Up to 32 text layers and 64 layers total.</p>
+        </section>
+        <section class="inspector" aria-labelledby="selection-title">
+          <h2 id="selection-title">Layer properties</h2>
+          <fieldset id="properties" disabled>
+            <div id="text-fields"><label for="layer-text">Text content</label><textarea id="layer-text" rows="7" maxlength="10000" spellcheck="false" autocapitalize="off" autocorrect="off" autocomplete="off"></textarea><button id="apply-text" class="secondary">Apply text</button></div>
+            <div class="field-pair"><div><label for="position-x">X position</label><input id="position-x" type="number" step="1" min="-1000000" max="1000000"></div><div><label for="position-y">Y position</label><input id="position-y" type="number" step="1" min="-1000000" max="1000000"></div></div>
+            <button id="apply-position" class="secondary">Apply position</button>
+            <div class="field-pair"><div id="font-field"><label for="font-size">Font size</label><input id="font-size" type="number" min="1" max="512" step="1"><button id="apply-font" class="secondary">Apply size</button></div><div><label for="layer-color">Fill color</label><input id="layer-color" type="color"><button id="apply-color" class="secondary">Apply color</button></div></div>
+          </fieldset>
+          <p class="small">Text is stored exactly as entered. This workspace edits source properties; it does not render or export posters.</p>
+        </section>
+      </div>
+    </section>
+
+    <aside class="analysis panel" aria-labelledby="analysis-title">
+      <span class="eyebrow">INDEPENDENT SERVICE</span><h2 id="analysis-title">Media analysis</h2>
+      <span id="analysis-state" class="pill off">OFF</span>
+      <p id="analysis-message">Checking availability…</p>
+      <p id="analysis-error" class="small"></p>
+      <div class="analysis-controls"><button disabled title="Requires a qualified processing backend">Enable analysis</button><button disabled title="No operational backend is connected">Start analysis</button><button disabled title="No operational backend is connected">Stop / disable</button></div>
+      <button id="refresh-analysis" class="secondary">Refresh availability</button>
+      <div class="future"><h3>Reference workflows</h3><p>Image and poster analysis, English/Telugu OCR and reel/video references remain planned capabilities.</p><p>Processing stays disabled until security qualification. Manual editing and saving work independently.</p></div>
+    </aside>
+  </main>
+  <footer>Manual project source · English / Telugu · No external assets</footer>
+</body>
+</html>

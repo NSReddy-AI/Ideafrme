@@ -1,0 +1,1556 @@
+{
+  "visual_poster_studio/service.py": {
+    "sha256": "72eec921f3b6aab43e00c845b5dac39ddd2646c85aa31f5dfe24b44a94784e6c",
+    "imports": [
+      "from studio_manual_ui.service import Studio, UIError, exact",
+      "from .fonts import Fonts",
+      "from .scene import build_scene",
+      "from .exports import Exports",
+      "from .session import marker, initialize, root_path, sync_directory",
+      "from .recovery import Journal",
+      "from studio_manual_ui.service import safe, project_id, manual_subset, decode, read",
+      "import creative_core as core"
+    ],
+    "callables": [
+      {
+        "name": "VisualStudio.__init__",
+        "line": 12,
+        "signature": "VisualStudio.__init__(self, root, *, resume=False)",
+        "annotated_return": null,
+        "returns_observed": [],
+        "explicit_raises": [
+          "UIError('session', 'Invalid project directory.')"
+        ],
+        "docstring": null,
+        "request_exact_key_sets": []
+      },
+      {
+        "name": "VisualStudio.close",
+        "line": 43,
+        "signature": "VisualStudio.close(self)",
+        "annotated_return": null,
+        "returns_observed": [],
+        "explicit_raises": [],
+        "docstring": null,
+        "request_exact_key_sets": []
+      },
+      {
+        "name": "VisualStudio.status",
+        "line": 44,
+        "signature": "VisualStudio.status(self)",
+        "annotated_return": null,
+        "returns_observed": [
+          "{'ownership': 'visual-session@1', 'durability': 'application-crash-recovery; physical-power-loss-unverified', 'recovery': {**self.project_errors, **self.pairs.errors}, 'exports': self.exports.status, 'recovery_bytes': self.journal.usage()}"
+        ],
+        "explicit_raises": [],
+        "docstring": null,
+        "request_exact_key_sets": []
+      },
+      {
+        "name": "VisualStudio.analysis",
+        "line": 47,
+        "signature": "VisualStudio.analysis(self)",
+        "annotated_return": null,
+        "returns_observed": [
+          "result"
+        ],
+        "explicit_raises": [],
+        "docstring": null,
+        "request_exact_key_sets": []
+      },
+      {
+        "name": "VisualStudio.list_projects",
+        "line": 53,
+        "signature": "VisualStudio.list_projects(self)",
+        "annotated_return": null,
+        "returns_observed": [
+          "result"
+        ],
+        "explicit_raises": [],
+        "docstring": null,
+        "request_exact_key_sets": []
+      },
+      {
+        "name": "VisualStudio.view",
+        "line": 66,
+        "signature": "VisualStudio.view(self, identity)",
+        "annotated_return": null,
+        "returns_observed": [
+          "self._decorate(self.manual.view(identity))"
+        ],
+        "explicit_raises": [],
+        "docstring": null,
+        "request_exact_key_sets": []
+      },
+      {
+        "name": "VisualStudio.create",
+        "line": 68,
+        "signature": "VisualStudio.create(self, request)",
+        "annotated_return": null,
+        "returns_observed": [
+          "self._decorate(self.manual.create(request))"
+        ],
+        "explicit_raises": [
+          "UIError('limit', '64 explicit lines maximum.')"
+        ],
+        "docstring": null,
+        "request_exact_key_sets": []
+      },
+      {
+        "name": "VisualStudio.action",
+        "line": 71,
+        "signature": "VisualStudio.action(self, request)",
+        "annotated_return": null,
+        "returns_observed": [
+          "save(self, request)",
+          "self._decorate(self.journal.save(self.manual, request))",
+          "self._decorate(self.manual.action(request))",
+          "self._decorate(self.manual.view(identity))"
+        ],
+        "explicit_raises": [
+          "UIError('conflict', 'Stale geometry revision.', 409)",
+          "UIError('conflict', 'Stale layer removal revision.', 409)",
+          "UIError('conflict', 'Stale reorder revision.', 409)",
+          "UIError('geometry', str(exc))",
+          "UIError('limit', '20,000 active Unicode code points maximum.')",
+          "UIError('limit', '64 explicit lines maximum.')",
+          "UIError('remove', str(exc))",
+          "UIError('reorder', str(exc))",
+          "UIError('request', 'Explicit upgrade acknowledgement must be boolean.')",
+          "UIError('request', 'Object required.')",
+          "UIError('save-failed', 'Save could not start or finish; original files were not automatically repaired.')",
+          "UIError('upgrade-required', 'Explicit history upgrade acknowledgement required.', 409)",
+          "UIError('upgrade-required', 'Explicit history v3 acknowledgement required.', 409)"
+        ],
+        "docstring": null,
+        "request_exact_key_sets": [
+          "{'project_id', 'expected_revision', 'action', 'view_id', 'targets', 'acknowledge_upgrade'}",
+          "{'project_id', 'expected_revision', 'action', 'element_id'}",
+          "{'project_id', 'expected_revision', 'action', 'view_id', 'ordered_element_ids', 'acknowledge_upgrade'}",
+          "{'project_id', 'expected_revision', 'action'}"
+        ]
+      },
+      {
+        "name": "VisualStudio.context_checkpoint",
+        "line": 146,
+        "signature": "VisualStudio.context_checkpoint(self, identity, doc)",
+        "annotated_return": null,
+        "returns_observed": [
+          "digest"
+        ],
+        "explicit_raises": [],
+        "docstring": null,
+        "request_exact_key_sets": []
+      },
+      {
+        "name": "VisualStudio.reopen",
+        "line": 150,
+        "signature": "VisualStudio.reopen(self, identity, expected_revision=None)",
+        "annotated_return": null,
+        "returns_observed": [
+          "self._decorate(self.manual.reopen(identity, expected_revision))",
+          "self._decorate(self.manual.view(identity))"
+        ],
+        "explicit_raises": [],
+        "docstring": null,
+        "request_exact_key_sets": []
+      },
+      {
+        "name": "VisualStudio.scene",
+        "line": 158,
+        "signature": "VisualStudio.scene(self, identity, revision)",
+        "annotated_return": null,
+        "returns_observed": [
+          "bound_scene(self, identity, build_scene(doc, self.fonts))"
+        ],
+        "explicit_raises": [
+          "UIError('conflict', 'Project revision changed.', 409)",
+          "UIError('font', self.font_error)"
+        ],
+        "docstring": null,
+        "request_exact_key_sets": []
+      },
+      {
+        "name": "VisualStudio.begin",
+        "line": 166,
+        "signature": "VisualStudio.begin(self, request)",
+        "annotated_return": null,
+        "returns_observed": [
+          "self.exports.begin(request['project_id'], self.scene(request['project_id'], request['expected_revision']))"
+        ],
+        "explicit_raises": [],
+        "docstring": null,
+        "request_exact_key_sets": [
+          "{'project_id', 'expected_revision'}"
+        ]
+      },
+      {
+        "name": "VisualStudio.navigation",
+        "line": 170,
+        "signature": "VisualStudio.navigation(self)",
+        "annotated_return": null,
+        "returns_observed": [
+          "{'runtime_root': str(self.root), 'projects': self.list_projects(), 'exports': receipts, 'export_status': self.exports.status, 'recovery': {**self.project_errors, **self.pairs.errors}, 'recovery_bytes': self.journal.usage(), 'analysis': 'OFF', 'history_support': [1, 2, 3]}"
+        ],
+        "explicit_raises": [],
+        "docstring": null,
+        "request_exact_key_sets": []
+      },
+      {
+        "name": "VisualStudio.finish",
+        "line": 187,
+        "signature": "VisualStudio.finish(self, request)",
+        "annotated_return": null,
+        "returns_observed": [
+          "self.exports.finish(request['token'], request['revision'], request['png'], request['qa'], current)"
+        ],
+        "explicit_raises": [
+          "UIError('export', 'No export in flight.', 409)",
+          "UIError('stale', 'Bound export identity changed.', 409)"
+        ],
+        "docstring": null,
+        "request_exact_key_sets": [
+          "{'token', 'revision', 'png', 'qa'}"
+        ]
+      }
+    ]
+  },
+  "visual_poster_studio/brands.py": {
+    "sha256": "044a6e4a591fbc05f559460739dda99eec6c543b45f383d39a053331195822c6",
+    "imports": [
+      "import base64",
+      "from contextlib import contextmanager",
+      "from datetime import datetime, timezone",
+      "import fcntl, hashlib, json, os, re, sqlite3, uuid",
+      "from pathlib import Path",
+      "from studio_manual_ui.service import WORKSPACE, UIError, safe, read, exact"
+    ],
+    "callables": [
+      {
+        "name": "check",
+        "line": 13,
+        "signature": "check(ok, message)",
+        "annotated_return": null,
+        "returns_observed": [],
+        "explicit_raises": [
+          "UIError('brand-contract', message)"
+        ],
+        "docstring": null,
+        "request_exact_key_sets": []
+      },
+      {
+        "name": "string",
+        "line": 15,
+        "signature": "string(value, maximum=256, empty=False)",
+        "annotated_return": null,
+        "returns_observed": [
+          "value"
+        ],
+        "explicit_raises": [
+          "UIError('brand-contract', 'Invalid Unicode.')"
+        ],
+        "docstring": null,
+        "request_exact_key_sets": []
+      },
+      {
+        "name": "identity",
+        "line": 20,
+        "signature": "identity(value)",
+        "annotated_return": null,
+        "returns_observed": [
+          "value"
+        ],
+        "explicit_raises": [
+          "UIError('brand-contract', 'UUID required.')"
+        ],
+        "docstring": null,
+        "request_exact_key_sets": []
+      },
+      {
+        "name": "canonical",
+        "line": 25,
+        "signature": "canonical(v)",
+        "annotated_return": null,
+        "returns_observed": [
+          "json.dumps(v, sort_keys=True, separators=(',', ':'), ensure_ascii=False, allow_nan=False).encode()"
+        ],
+        "explicit_raises": [],
+        "docstring": null,
+        "request_exact_key_sets": []
+      },
+      {
+        "name": "now",
+        "line": 26,
+        "signature": "now()",
+        "annotated_return": null,
+        "returns_observed": [
+          "datetime.now(timezone.utc).strftime('%Y-%m-%dT%H:%M:%SZ')"
+        ],
+        "explicit_raises": [],
+        "docstring": null,
+        "request_exact_key_sets": []
+      },
+      {
+        "name": "timestamp",
+        "line": 27,
+        "signature": "timestamp(v)",
+        "annotated_return": null,
+        "returns_observed": [
+          "v"
+        ],
+        "explicit_raises": [
+          "UIError('brand-contract', 'Invalid expiry date.')"
+        ],
+        "docstring": null,
+        "request_exact_key_sets": []
+      },
+      {
+        "name": "payload",
+        "line": 33,
+        "signature": "payload(v)",
+        "annotated_return": null,
+        "returns_observed": [
+          "v"
+        ],
+        "explicit_raises": [],
+        "docstring": null,
+        "request_exact_key_sets": [
+          "{'name', 'colors', 'typography', 'mandatory_rules', 'preferences', 'inspiration', 'notes', 'asset_ids'}",
+          "{'english', 'telugu'}"
+        ]
+      },
+      {
+        "name": "rights",
+        "line": 47,
+        "signature": "rights(v)",
+        "annotated_return": null,
+        "returns_observed": [
+          "v"
+        ],
+        "explicit_raises": [],
+        "docstring": null,
+        "request_exact_key_sets": [
+          "{'status', 'authority', 'evidence', 'scopes', 'destinations', 'expires'}"
+        ]
+      },
+      {
+        "name": "validate_record",
+        "line": 57,
+        "signature": "validate_record(v)",
+        "annotated_return": null,
+        "returns_observed": [
+          "v"
+        ],
+        "explicit_raises": [
+          "UIError('brand-contract', 'Unknown record type.')"
+        ],
+        "docstring": null,
+        "request_exact_key_sets": [
+          "{'type', 'id', 'name', 'kind', 'sha256', 'bytes', 'provenance'}",
+          "{'owner', 'source', 'license'}",
+          "{'type', 'id', 'asset_id', 'previous', 'status', 'authority', 'evidence', 'scopes', 'destinations', 'expires'}",
+          "{'type', 'brand_id', 'revision', 'parent', 'state', 'reviewer', 'approved_at', 'payload', 'bindings'}",
+          "{'asset_id', 'sha256', 'rights_hash'}"
+        ]
+      },
+      {
+        "name": "Store.__init__",
+        "line": 81,
+        "signature": "Store.__init__(self, root=ROOT)",
+        "annotated_return": null,
+        "returns_observed": [],
+        "explicit_raises": [],
+        "docstring": null,
+        "request_exact_key_sets": []
+      },
+      {
+        "name": "Store.transaction",
+        "line": 84,
+        "signature": "Store.transaction(self, create=False)",
+        "annotated_return": null,
+        "returns_observed": [],
+        "explicit_raises": [
+          "UIError('brand-busy', 'Library has another active operation.', 409)",
+          "UIError('brand-storage', 'Library transaction failed; no automatic repair/retry.', 409)"
+        ],
+        "docstring": null,
+        "request_exact_key_sets": []
+      },
+      {
+        "name": "Store.put",
+        "line": 117,
+        "signature": "Store.put(self, c, v)",
+        "annotated_return": null,
+        "returns_observed": [
+          "h"
+        ],
+        "explicit_raises": [],
+        "docstring": null,
+        "request_exact_key_sets": []
+      },
+      {
+        "name": "Store.get",
+        "line": 120,
+        "signature": "Store.get(self, c, h)",
+        "annotated_return": null,
+        "returns_observed": [
+          "v"
+        ],
+        "explicit_raises": [
+          "UIError('brand-contract', 'Invalid stored JSON.')"
+        ],
+        "docstring": null,
+        "request_exact_key_sets": []
+      },
+      {
+        "name": "Store.asset",
+        "line": 125,
+        "signature": "Store.asset(self, c, i)",
+        "annotated_return": null,
+        "returns_observed": [
+          "v"
+        ],
+        "explicit_raises": [],
+        "docstring": null,
+        "request_exact_key_sets": []
+      },
+      {
+        "name": "Store.eligibility",
+        "line": 127,
+        "signature": "Store.eligibility(self, c, i, scope, destination)",
+        "annotated_return": null,
+        "returns_observed": [
+          "{'eligible': False, 'reason': 'missing-clearance', 'rights_hash': None}",
+          "{'eligible': ok, 'reason': 'current-scoped-grant' if ok else 'unknown-denied-expired-or-out-of-scope', 'rights_hash': row[0]}"
+        ],
+        "explicit_raises": [],
+        "docstring": null,
+        "request_exact_key_sets": []
+      },
+      {
+        "name": "Store.describe",
+        "line": 133,
+        "signature": "Store.describe(self, c, h)",
+        "annotated_return": null,
+        "returns_observed": [
+          "out"
+        ],
+        "explicit_raises": [],
+        "docstring": null,
+        "request_exact_key_sets": []
+      },
+      {
+        "name": "Store.list",
+        "line": 138,
+        "signature": "Store.list(self)",
+        "annotated_return": null,
+        "returns_observed": [
+          "{'brands': [], 'assets': [], 'initialized': False, 'creative_use_enabled': False}",
+          "{'brands': brands, 'assets': assets, 'initialized': True, 'creative_use_enabled': False}"
+        ],
+        "explicit_raises": [],
+        "docstring": null,
+        "request_exact_key_sets": []
+      },
+      {
+        "name": "Store.command",
+        "line": 146,
+        "signature": "Store.command(self, request)",
+        "annotated_return": null,
+        "returns_observed": [
+          "self.describe(c, h)",
+          "{'asset_id': v['id'], 'hash': h, 'rights_hash': rh}",
+          "{'rights_hash': h}",
+          "{'versions': items}"
+        ],
+        "explicit_raises": [
+          "UIError('asset', 'Invalid base64.')",
+          "UIError('brand-contract', 'Unknown library action.')"
+        ],
+        "docstring": null,
+        "request_exact_key_sets": [
+          "{'action', 'name', 'kind', 'provenance', 'data_base64', 'rights'}",
+          "{'action', 'asset_id', 'expected_rights', 'rights'}",
+          "{'action', 'brand_id', 'expected_head', 'payload'}",
+          "{'action', 'brand_id', 'expected_head', 'reviewer', 'acknowledge'}",
+          "{'action', 'brand_id'}"
+        ]
+      }
+    ]
+  },
+  "visual_poster_studio/project_bindings.py": {
+    "sha256": "190bbe1160fa6e63db84400e8398c012e2409b701e95097459276580c9efd6e3",
+    "imports": [
+      "import copy, hashlib, json, os, re, uuid",
+      "import creative_core as core",
+      "from creative_core.document import canonical",
+      "from studio_manual_ui.service import UIError, safe, read, decode, encoded, exact, project_id, manual_subset, MAX_DOCUMENT",
+      "from .session import marker, exclusive, sync_directory",
+      "from .brands import validate_record"
+    ],
+    "callables": [
+      {
+        "name": "check",
+        "line": 9,
+        "signature": "check(ok, message)",
+        "annotated_return": null,
+        "returns_observed": [],
+        "explicit_raises": [
+          "UIError('binding-contract', message, 409)"
+        ],
+        "docstring": null,
+        "request_exact_key_sets": []
+      },
+      {
+        "name": "sha",
+        "line": 11,
+        "signature": "sha(raw)",
+        "annotated_return": null,
+        "returns_observed": [
+          "hashlib.sha256(raw).hexdigest()"
+        ],
+        "explicit_raises": [],
+        "docstring": null,
+        "request_exact_key_sets": []
+      },
+      {
+        "name": "brief",
+        "line": 12,
+        "signature": "brief(value)",
+        "annotated_return": null,
+        "returns_observed": [
+          "value"
+        ],
+        "explicit_raises": [
+          "UIError('binding-contract', 'Invalid Unicode brief.')"
+        ],
+        "docstring": null,
+        "request_exact_key_sets": [
+          "{'purpose', 'topic', 'audience', 'format', 'instructions'}"
+        ]
+      },
+      {
+        "name": "validate",
+        "line": 20,
+        "signature": "validate(value, session_id, identity)",
+        "annotated_return": null,
+        "returns_observed": [
+          "value"
+        ],
+        "explicit_raises": [],
+        "docstring": null,
+        "request_exact_key_sets": [
+          "{'format', 'version', 'binding_id', 'session_id', 'project_id', 'revision', 'parent', 'brand', 'brief', 'origin'}",
+          "{'brand_id', 'revision', 'hash', 'record'}",
+          "{'session_id', 'project_id', 'commit', 'binding_hash'}"
+        ]
+      },
+      {
+        "name": "valid_commit",
+        "line": 31,
+        "signature": "valid_commit(value)",
+        "annotated_return": null,
+        "returns_observed": [
+          "type(value) == str and re.fullmatch('[0-9]{8}-[0-9a-f]{32}', value)"
+        ],
+        "explicit_raises": [],
+        "docstring": null,
+        "request_exact_key_sets": []
+      },
+      {
+        "name": "Pairs.__init__",
+        "line": 34,
+        "signature": "Pairs.__init__(self, session, journal)",
+        "annotated_return": null,
+        "returns_observed": [],
+        "explicit_raises": [],
+        "docstring": null,
+        "request_exact_key_sets": []
+      },
+      {
+        "name": "Pairs.usage",
+        "line": 36,
+        "signature": "Pairs.usage(self)",
+        "annotated_return": null,
+        "returns_observed": [
+          "0",
+          "total"
+        ],
+        "explicit_raises": [],
+        "docstring": null,
+        "request_exact_key_sets": []
+      },
+      {
+        "name": "Pairs.directory",
+        "line": 43,
+        "signature": "Pairs.directory(self, identity)",
+        "annotated_return": null,
+        "returns_observed": [
+          "safe(self.root / project_id(identity))"
+        ],
+        "explicit_raises": [],
+        "docstring": null,
+        "request_exact_key_sets": []
+      },
+      {
+        "name": "Pairs.owns",
+        "line": 44,
+        "signature": "Pairs.owns(self, identity)",
+        "annotated_return": null,
+        "returns_observed": [
+          "self.directory(identity).exists()"
+        ],
+        "explicit_raises": [],
+        "docstring": null,
+        "request_exact_key_sets": []
+      },
+      {
+        "name": "Pairs.head",
+        "line": 45,
+        "signature": "Pairs.head(self, identity)",
+        "annotated_return": null,
+        "returns_observed": [
+          "None",
+          "v"
+        ],
+        "explicit_raises": [],
+        "docstring": null,
+        "request_exact_key_sets": [
+          "{'format', 'commit', 'manifest_sha256'}"
+        ]
+      },
+      {
+        "name": "Pairs.pair",
+        "line": 49,
+        "signature": "Pairs.pair(self, identity, commit)",
+        "annotated_return": null,
+        "returns_observed": [
+          "{'document': doc, 'binding': b, 'manifest': m, 'manifest_sha256': sha(mraw), 'origin': origin, 'commit': commit}"
+        ],
+        "explicit_raises": [],
+        "docstring": null,
+        "request_exact_key_sets": [
+          "{'format', 'project_id', 'session_id', 'sequence', 'parent', 'creative_sha256', 'binding_sha256', 'origin_binding_sha256'}"
+        ]
+      },
+      {
+        "name": "Pairs.chain",
+        "line": 63,
+        "signature": "Pairs.chain(self, identity, commit)",
+        "annotated_return": null,
+        "returns_observed": [
+          "first"
+        ],
+        "explicit_raises": [],
+        "docstring": null,
+        "request_exact_key_sets": []
+      },
+      {
+        "name": "Pairs.load",
+        "line": 75,
+        "signature": "Pairs.load(self, identity)",
+        "annotated_return": null,
+        "returns_observed": [
+          "v['document']"
+        ],
+        "explicit_raises": [],
+        "docstring": null,
+        "request_exact_key_sets": []
+      },
+      {
+        "name": "Pairs.scan",
+        "line": 78,
+        "signature": "Pairs.scan(self, manual)",
+        "annotated_return": null,
+        "returns_observed": [],
+        "explicit_raises": [],
+        "docstring": null,
+        "request_exact_key_sets": []
+      },
+      {
+        "name": "Pairs.compatible",
+        "line": 84,
+        "signature": "Pairs.compatible(self, before, after)",
+        "annotated_return": null,
+        "returns_observed": [],
+        "explicit_raises": [],
+        "docstring": null,
+        "request_exact_key_sets": []
+      },
+      {
+        "name": "Pairs.install",
+        "line": 88,
+        "signature": "Pairs.install(self, manual, identity, doc)",
+        "annotated_return": null,
+        "returns_observed": [],
+        "explicit_raises": [],
+        "docstring": null,
+        "request_exact_key_sets": []
+      },
+      {
+        "name": "Pairs.new",
+        "line": 90,
+        "signature": "Pairs.new(self, identity, pin, fields, origin=None)",
+        "annotated_return": null,
+        "returns_observed": [
+          "validate({'format': 'studio-project-binding@1', 'version': 1, 'binding_id': str(uuid.uuid4()), 'session_id': self.session_id, 'project_id': identity, 'revision': 1, 'parent': None, 'brand': pin, 'brief': brief(fields), 'origin': origin}, self.session_id, identity)"
+        ],
+        "explicit_raises": [],
+        "docstring": null,
+        "request_exact_key_sets": []
+      },
+      {
+        "name": "Pairs.commit",
+        "line": 92,
+        "signature": "Pairs.commit(self, identity, doc, binding, expected_head, publish=True, origin_raw=None)",
+        "annotated_return": null,
+        "returns_observed": [
+          "actual",
+          "h"
+        ],
+        "explicit_raises": [
+          "UIError('bound-recovery-required', 'Paired save interrupted. Original generations preserved.', 409)"
+        ],
+        "docstring": null,
+        "request_exact_key_sets": []
+      },
+      {
+        "name": "Pairs.candidates",
+        "line": 126,
+        "signature": "Pairs.candidates(self, identity)",
+        "annotated_return": null,
+        "returns_observed": [
+          "result"
+        ],
+        "explicit_raises": [],
+        "docstring": null,
+        "request_exact_key_sets": []
+      }
+    ]
+  },
+  "studio_manual_ui/service.py": {
+    "sha256": "0b157a707c9a27d19d7f29eb9fcc453e0e46151dd15dc6c177461a5e10a02305",
+    "imports": [
+      "import copy",
+      "import fcntl",
+      "import hashlib",
+      "import json",
+      "import os",
+      "from pathlib import Path",
+      "import re",
+      "import threading",
+      "import uuid",
+      "import creative_core as core"
+    ],
+    "callables": [
+      {
+        "name": "UIError.__init__",
+        "line": 21,
+        "signature": "UIError.__init__(self, code, detail, status=400)",
+        "annotated_return": null,
+        "returns_observed": [],
+        "explicit_raises": [],
+        "docstring": null,
+        "request_exact_key_sets": []
+      },
+      {
+        "name": "exact",
+        "line": 26,
+        "signature": "exact(value, keys)",
+        "annotated_return": null,
+        "returns_observed": [],
+        "explicit_raises": [
+          "UIError('request', 'Missing or unsupported request fields.')"
+        ],
+        "docstring": null,
+        "request_exact_key_sets": []
+      },
+      {
+        "name": "text",
+        "line": 31,
+        "signature": "text(value, maximum=10000)",
+        "annotated_return": null,
+        "returns_observed": [
+          "value"
+        ],
+        "explicit_raises": [
+          "UIError('text', 'Enter nonempty text within the supported length.')",
+          "UIError('text', 'Invalid Unicode text.')"
+        ],
+        "docstring": null,
+        "request_exact_key_sets": []
+      },
+      {
+        "name": "integer",
+        "line": 39,
+        "signature": "integer(value, minimum, maximum)",
+        "annotated_return": null,
+        "returns_observed": [
+          "value"
+        ],
+        "explicit_raises": [
+          "UIError('number', 'Number is outside the supported range.')"
+        ],
+        "docstring": null,
+        "request_exact_key_sets": []
+      },
+      {
+        "name": "color",
+        "line": 45,
+        "signature": "color(value)",
+        "annotated_return": null,
+        "returns_observed": [
+          "value"
+        ],
+        "explicit_raises": [
+          "UIError('color', 'Use a six-digit hexadecimal color.')"
+        ],
+        "docstring": null,
+        "request_exact_key_sets": []
+      },
+      {
+        "name": "project_id",
+        "line": 51,
+        "signature": "project_id(value)",
+        "annotated_return": null,
+        "returns_observed": [
+          "value"
+        ],
+        "explicit_raises": [
+          "UIError('project', 'A canonical project ID is required.')"
+        ],
+        "docstring": null,
+        "request_exact_key_sets": []
+      },
+      {
+        "name": "encoded",
+        "line": 59,
+        "signature": "encoded(value)",
+        "annotated_return": null,
+        "returns_observed": [
+          "json.dumps(value, ensure_ascii=False, allow_nan=False, sort_keys=True, separators=(',', ':')).encode('utf-8')"
+        ],
+        "explicit_raises": [],
+        "docstring": null,
+        "request_exact_key_sets": []
+      },
+      {
+        "name": "pairs",
+        "line": 64,
+        "signature": "pairs(items)",
+        "annotated_return": null,
+        "returns_observed": [
+          "result"
+        ],
+        "explicit_raises": [
+          "UIError('json', 'Duplicate JSON key.')"
+        ],
+        "docstring": null,
+        "request_exact_key_sets": []
+      },
+      {
+        "name": "decode",
+        "line": 72,
+        "signature": "decode(raw)",
+        "annotated_return": null,
+        "returns_observed": [
+          "json.loads(raw.decode('utf-8'), object_pairs_hook=pairs, parse_constant=constant)"
+        ],
+        "explicit_raises": [
+          "UIError('json', 'Malformed JSON.')",
+          "UIError('json', 'Nonfinite numbers are unsupported.')"
+        ],
+        "docstring": null,
+        "request_exact_key_sets": []
+      },
+      {
+        "name": "safe",
+        "line": 81,
+        "signature": "safe(path)",
+        "annotated_return": null,
+        "returns_observed": [
+          "path"
+        ],
+        "explicit_raises": [
+          "UIError('path', 'Hard-linked files are not permitted.')",
+          "UIError('path', 'Noncanonical path refused.')",
+          "UIError('path', 'Special files are not permitted.')",
+          "UIError('path', 'Symlinks are not permitted.')"
+        ],
+        "docstring": null,
+        "request_exact_key_sets": []
+      },
+      {
+        "name": "read",
+        "line": 94,
+        "signature": "read(path, maximum)",
+        "annotated_return": null,
+        "returns_observed": [
+          "raw"
+        ],
+        "explicit_raises": [
+          "UIError('limit', 'Stored document exceeds UI size limit.')",
+          "UIError('path', 'File alias refused.')"
+        ],
+        "docstring": null,
+        "request_exact_key_sets": []
+      },
+      {
+        "name": "manual_subset",
+        "line": 104,
+        "signature": "manual_subset(document)",
+        "annotated_return": null,
+        "returns_observed": [],
+        "explicit_raises": [
+          "UIError('document', 'Unsupported or malformed manual document.')",
+          "UIError('limit', 'Manual document size limit reached.')",
+          "UIError('limit', 'Manual project capacity exceeded.')",
+          "UIError('unsupported', 'External or protected content is unsupported.')",
+          "UIError('unsupported', 'Media, paths and rendering are disabled.')",
+          "UIError('unsupported', 'Only manual text/geometry projects are supported.')",
+          "UIError('unsupported', 'Unsupported geometry.')",
+          "UIError('unsupported', 'Unsupported text style.')"
+        ],
+        "docstring": "Check all historical states BEFORE accepted validation could open asset references.",
+        "request_exact_key_sets": []
+      },
+      {
+        "name": "Studio.__init__",
+        "line": 138,
+        "signature": "Studio.__init__(self, root, *, resume=False, analysis_provider=None)",
+        "annotated_return": null,
+        "returns_observed": [],
+        "explicit_raises": [
+          "UIError('lock', 'This UI session already has an owner.')",
+          "UIError('path', 'Use a named root inside .runtime/studio-ui.')",
+          "UIError('session', 'Unsupported session.')"
+        ],
+        "docstring": null,
+        "request_exact_key_sets": [
+          "{'manual_ui', 'id'}"
+        ]
+      },
+      {
+        "name": "Studio.close",
+        "line": 163,
+        "signature": "Studio.close(self)",
+        "annotated_return": null,
+        "returns_observed": [],
+        "explicit_raises": [],
+        "docstring": null,
+        "request_exact_key_sets": []
+      },
+      {
+        "name": "Studio.analysis",
+        "line": 174,
+        "signature": "Studio.analysis(self)",
+        "annotated_return": null,
+        "returns_observed": [
+          "value"
+        ],
+        "explicit_raises": [
+          "ValueError()"
+        ],
+        "docstring": null,
+        "request_exact_key_sets": []
+      },
+      {
+        "name": "Studio.document",
+        "line": 191,
+        "signature": "Studio.document(self, identity)",
+        "annotated_return": null,
+        "returns_observed": [
+          "copy.deepcopy(self._working[identity])"
+        ],
+        "explicit_raises": [],
+        "docstring": null,
+        "request_exact_key_sets": []
+      },
+      {
+        "name": "Studio.view",
+        "line": 196,
+        "signature": "Studio.view(self, identity)",
+        "annotated_return": null,
+        "returns_observed": [
+          "{'project_id': identity, 'name': doc['project']['name'], 'revision': doc['revision'], 'view': doc['views'][0], 'elements': doc['elements'], 'content': [c for c in doc['content'] if c['id'] in active], 'can_undo': cursor > 0, 'can_redo': cursor < len(doc['history']['transactions']), 'saved': self._digests.get(identity) is not None, 'dirty': self._saved.get(identity) != hashlib.sha256(encoded(doc)).hexdigest(), 'remaining_text_slots': remaining, 'element_limit': MAX_ELEMENTS, 'approval_count': len(doc['approvals'])}"
+        ],
+        "explicit_raises": [],
+        "docstring": null,
+        "request_exact_key_sets": []
+      },
+      {
+        "name": "Studio.create",
+        "line": 211,
+        "signature": "Studio.create(self, request)",
+        "annotated_return": null,
+        "returns_observed": [
+          "self.view(identity)"
+        ],
+        "explicit_raises": [
+          "UIError('language', 'Choose English or Telugu.')",
+          "UIError('limit', 'Session project limit reached.')"
+        ],
+        "docstring": null,
+        "request_exact_key_sets": [
+          "{'name', 'text', 'language'}"
+        ]
+      },
+      {
+        "name": "Studio.list_projects",
+        "line": 232,
+        "signature": "Studio.list_projects(self)",
+        "annotated_return": null,
+        "returns_observed": [
+          "result"
+        ],
+        "explicit_raises": [],
+        "docstring": null,
+        "request_exact_key_sets": []
+      },
+      {
+        "name": "Studio.reopen",
+        "line": 242,
+        "signature": "Studio.reopen(self, identity, expected_revision=None)",
+        "annotated_return": null,
+        "returns_observed": [
+          "self.view(identity)"
+        ],
+        "explicit_raises": [
+          "UIError('identity', 'Project identity mismatch.')",
+          "UIError('not-saved', 'Save the project before reopening it.', 404)"
+        ],
+        "docstring": null,
+        "request_exact_key_sets": []
+      },
+      {
+        "name": "Studio.action",
+        "line": 261,
+        "signature": "Studio.action(self, request)",
+        "annotated_return": null,
+        "returns_observed": [
+          "self.view(identity)"
+        ],
+        "explicit_raises": [
+          "UIError('conflict', 'Saved file changed; reopen it before saving again.', 409)",
+          "UIError('conflict', 'Unexpected saved project.', 409)",
+          "UIError('core-validation', 'Operation refused: no change, history limit, or invalid/stale saved state.')",
+          "UIError('element', 'Choose an existing layer.')",
+          "UIError('element', 'Font size is for text layers.')",
+          "UIError('element', 'This layer has no text.')",
+          "UIError('language', 'Choose English or Telugu.')",
+          "UIError('limit', 'Layer limit reached.')",
+          "UIError('limit', 'No unused text slots for this language.')",
+          "UIError('operation', 'Unsupported manual operation.')",
+          "UIError('request', 'Object required.')",
+          "UIError('shape', 'Unsupported shape.')"
+        ],
+        "docstring": null,
+        "request_exact_key_sets": [
+          "{'project_id', 'expected_revision', 'action'} | extras[action]"
+        ]
+      }
+    ]
+  },
+  "visual_poster_studio/binding_workflow.py": {
+    "sha256": "12ddbcebf70fb29f91e37ed6be2e618a5088ba18e27b3bc42fb4c9156fc12bce",
+    "imports": [
+      "import copy, html, json",
+      "import creative_core as core",
+      "from creative_core.document import canonical",
+      "from studio_manual_ui.service import UIError, exact, project_id",
+      "from .brands import Store, ROOT as BRAND_ROOT",
+      "from .project_bindings import sha, brief, check"
+    ],
+    "callables": [
+      {
+        "name": "library",
+        "line": 9,
+        "signature": "library(studio)",
+        "annotated_return": null,
+        "returns_observed": [
+          "getattr(studio, 'brand_library', None) or Store(BRAND_ROOT)"
+        ],
+        "explicit_raises": [],
+        "docstring": null,
+        "request_exact_key_sets": []
+      },
+      {
+        "name": "pin",
+        "line": 10,
+        "signature": "pin(studio, value)",
+        "annotated_return": null,
+        "returns_observed": [
+          "None",
+          "{'brand_id': b['brand_id'], 'revision': b['revision'], 'hash': value, 'record': b}"
+        ],
+        "explicit_raises": [],
+        "docstring": null,
+        "request_exact_key_sets": []
+      },
+      {
+        "name": "eligible_versions",
+        "line": 23,
+        "signature": "eligible_versions(studio)",
+        "annotated_return": null,
+        "returns_observed": [
+          "{'versions': []}",
+          "{'versions': result}"
+        ],
+        "explicit_raises": [],
+        "docstring": null,
+        "request_exact_key_sets": []
+      },
+      {
+        "name": "binding_state",
+        "line": 36,
+        "signature": "binding_state(studio, identity)",
+        "annotated_return": null,
+        "returns_observed": [
+          "None",
+          "{'hash': sha(canonical(b)), 'record': copy.deepcopy(b), 'published_head': studio.pairs.heads[identity], 'eligible': valid, 'status': reason}"
+        ],
+        "explicit_raises": [],
+        "docstring": null,
+        "request_exact_key_sets": []
+      },
+      {
+        "name": "mark_saved",
+        "line": 45,
+        "signature": "mark_saved(studio, identity, doc)",
+        "annotated_return": null,
+        "returns_observed": [],
+        "explicit_raises": [],
+        "docstring": null,
+        "request_exact_key_sets": []
+      },
+      {
+        "name": "save",
+        "line": 46,
+        "signature": "save(studio, request)",
+        "annotated_return": null,
+        "returns_observed": [
+          "studio._decorate(studio.manual.view(identity))"
+        ],
+        "explicit_raises": [],
+        "docstring": null,
+        "request_exact_key_sets": [
+          "{'project_id', 'expected_revision', 'action'}"
+        ]
+      },
+      {
+        "name": "create",
+        "line": 50,
+        "signature": "create(studio, request)",
+        "annotated_return": null,
+        "returns_observed": [
+          "studio._decorate(studio.manual.view(identity))"
+        ],
+        "explicit_raises": [],
+        "docstring": null,
+        "request_exact_key_sets": [
+          "{'name', 'text', 'language', 'brief', 'brand_hash', 'acknowledge'}"
+        ]
+      },
+      {
+        "name": "proposal",
+        "line": 58,
+        "signature": "proposal(studio, request)",
+        "annotated_return": null,
+        "returns_observed": [
+          "(impact, sha(canonical(impact)), target, fields)"
+        ],
+        "explicit_raises": [],
+        "docstring": null,
+        "request_exact_key_sets": [
+          "{'project_id', 'expected_revision', 'expected_binding', 'expected_head', 'brand_hash', 'brief'}"
+        ]
+      },
+      {
+        "name": "change",
+        "line": 68,
+        "signature": "change(studio, request)",
+        "annotated_return": null,
+        "returns_observed": [
+          "studio._decorate(studio.manual.view(identity))"
+        ],
+        "explicit_raises": [],
+        "docstring": null,
+        "request_exact_key_sets": [
+          "{'proposal', 'impact_hash', 'acknowledge'}"
+        ]
+      },
+      {
+        "name": "bound_scene",
+        "line": 74,
+        "signature": "bound_scene(studio, identity, scene)",
+        "annotated_return": null,
+        "returns_observed": [
+          "result",
+          "scene"
+        ],
+        "explicit_raises": [],
+        "docstring": null,
+        "request_exact_key_sets": []
+      }
+    ]
+  },
+  "visual_poster_studio/scene.py": {
+    "sha256": "181f104eb0380f2b915340fa16b74a52172062d51a2e11997380ab027271b256",
+    "imports": [
+      "import hashlib",
+      "import html",
+      "from creative_core import fingerprint",
+      "from studio_manual_ui.service import manual_subset, UIError"
+    ],
+    "callables": [
+      {
+        "name": "build_scene",
+        "line": 10,
+        "signature": "build_scene(doc, fonts)",
+        "annotated_return": null,
+        "returns_observed": [
+          "{'project_id': doc['id'], 'svg': svg, 'svg_sha256': hashlib.sha256(svg.encode()).hexdigest(), 'source_fingerprint': fingerprint(doc), 'revision': doc['revision'], 'profile': PROFILE, 'boxes': boxes, 'fonts': {k: f['hash'] for k, f in fonts.faces.items()}}"
+        ],
+        "explicit_raises": [
+          "UIError('limit', 'Active text exceeds 20,000 Unicode code points.')",
+          "UIError('limit', 'SVG exceeds 4 MiB.')",
+          "UIError('limit', 'Text exceeds 64 explicit lines.')",
+          "UIError('limit', 'Text layer limit exceeded.')",
+          "UIError('view', 'Only 1080 × 1350 posters are supported.')",
+          "UIError('view', 'Unexpected element view.')"
+        ],
+        "docstring": null,
+        "request_exact_key_sets": []
+      }
+    ]
+  },
+  "visual_poster_studio/fonts.py": {
+    "sha256": "ee30559eea01bcf0193d69f2b8b81fdb85e006965e9f1560af840b0b3707724d",
+    "imports": [
+      "import base64",
+      "import hashlib",
+      "import struct",
+      "from pathlib import Path",
+      "from studio_manual_ui.service import UIError, read"
+    ],
+    "callables": [
+      {
+        "name": "coverage",
+        "line": 13,
+        "signature": "coverage(data)",
+        "annotated_return": null,
+        "returns_observed": [
+          "frozenset(result)"
+        ],
+        "explicit_raises": [
+          "ValueError('cmap range')"
+        ],
+        "docstring": "Read cmap formats 4/12 only from hash-qualified, bounded local sfnt bytes.",
+        "request_exact_key_sets": []
+      },
+      {
+        "name": "Fonts.__init__",
+        "line": 40,
+        "signature": "Fonts.__init__(self)",
+        "annotated_return": null,
+        "returns_observed": [],
+        "explicit_raises": [
+          "UIError('font', 'Pinned font unavailable, invalid or changed; export refused.')",
+          "ValueError('hash')",
+          "ValueError('licence')"
+        ],
+        "docstring": null,
+        "request_exact_key_sets": []
+      },
+      {
+        "name": "Fonts.css",
+        "line": 53,
+        "signature": "Fonts.css(self)",
+        "annotated_return": null,
+        "returns_observed": [
+          "''.join(('@font-face{font-family:' + f['family'] + ';src:url(\"' + f['uri'] + '\");font-weight:' + str(f['weight']) + ';font-style:normal;font-display:block;}' for f in self.faces.values()))"
+        ],
+        "explicit_raises": [],
+        "docstring": null,
+        "request_exact_key_sets": []
+      },
+      {
+        "name": "Fonts.public",
+        "line": 55,
+        "signature": "Fonts.public(self)",
+        "annotated_return": null,
+        "returns_observed": [
+          "{k: {x: v for x, v in f.items() if x != 'coverage'} for k, f in self.faces.items()}"
+        ],
+        "explicit_raises": [],
+        "docstring": null,
+        "request_exact_key_sets": []
+      },
+      {
+        "name": "Fonts.runs",
+        "line": 57,
+        "signature": "Fonts.runs(self, text)",
+        "annotated_return": null,
+        "returns_observed": [
+          "runs"
+        ],
+        "explicit_raises": [
+          "UIError('glyph', 'Unexpected newline in text run.')",
+          "UIError('glyph', f'Unsupported glyph U+{cp:04X}; no fallback applied.')"
+        ],
+        "docstring": null,
+        "request_exact_key_sets": []
+      }
+    ]
+  },
+  "visual_poster_studio/exports.py": {
+    "sha256": "aa669b6b16692297d48adc82dd648480db8979bed8cb3c0e9d4743d6e050306a",
+    "imports": [
+      "import base64",
+      "import binascii",
+      "import hashlib",
+      "import json",
+      "import os",
+      "import secrets",
+      "import time",
+      "from studio_manual_ui.service import UIError, safe, read, decode"
+    ],
+    "callables": [
+      {
+        "name": "Exports.__init__",
+        "line": 15,
+        "signature": "Exports.__init__(self, root, *, resume=False)",
+        "annotated_return": null,
+        "returns_observed": [],
+        "explicit_raises": [
+          "UIError('exports', 'Retained export root missing; no automatic repair.')"
+        ],
+        "docstring": null,
+        "request_exact_key_sets": []
+      },
+      {
+        "name": "Exports.audit",
+        "line": 21,
+        "signature": "Exports.audit(self)",
+        "annotated_return": null,
+        "returns_observed": [
+          "{'sets': count, 'bytes': total, 'partial': partial, 'errors': errors, 'blocked': bool(errors) or count > 20 or total > MAX_STORAGE}"
+        ],
+        "explicit_raises": [
+          "UIError('exports', 'Unexpected nested export layout.')",
+          "ValueError('SVG context mismatch')",
+          "ValueError('binding identity hash')",
+          "ValueError('brand identity hash')",
+          "ValueError('hash')",
+          "ValueError('not draft')",
+          "ValueError('unexpected PNG')",
+          "ValueError('unknown bound export identity')",
+          "ValueError('workflow fingerprint')"
+        ],
+        "docstring": null,
+        "request_exact_key_sets": []
+      },
+      {
+        "name": "Exports.cancel",
+        "line": 55,
+        "signature": "Exports.cancel(self)",
+        "annotated_return": null,
+        "returns_observed": [],
+        "explicit_raises": [],
+        "docstring": null,
+        "request_exact_key_sets": []
+      },
+      {
+        "name": "Exports.begin",
+        "line": 56,
+        "signature": "Exports.begin(self, identity, scene)",
+        "annotated_return": null,
+        "returns_observed": [
+          "{'token': self.pending['token'], 'expires_seconds': 15, 'scene': scene}"
+        ],
+        "explicit_raises": [
+          "UIError('busy', 'One export is already in flight.', 409)",
+          "UIError('exports', 'Retained exports require review; export writes blocked.')",
+          "UIError('limit', '20 export sets retained; nothing was deleted.')"
+        ],
+        "docstring": null,
+        "request_exact_key_sets": []
+      },
+      {
+        "name": "Exports.finish",
+        "line": 64,
+        "signature": "Exports.finish(self, token, revision, png, qa, current_revision)",
+        "annotated_return": null,
+        "returns_observed": [
+          "{'directory': str(directory), 'manifest': manifest}"
+        ],
+        "explicit_raises": [
+          "UIError('export', 'Unknown export handshake.', 409)",
+          "UIError('limit', 'PNG exceeds 8 MiB.')",
+          "UIError('limit', 'Session export storage exhausted.')",
+          "UIError('png', 'Generated PNG header or dimensions invalid.')",
+          "UIError('png', 'Malformed generated PNG.')",
+          "UIError('png-disabled', 'PNG qualification failed.')",
+          "UIError('qa', 'Font or overflow checks failed.')",
+          "UIError('request', 'Invalid export token or revision.')",
+          "UIError('stale', 'Project changed during export.', 409)",
+          "UIError('timeout', 'Export handshake expired.', 409)"
+        ],
+        "docstring": null,
+        "request_exact_key_sets": []
+      }
+    ]
+  },
+  "visual_poster_studio/director.py": {
+    "sha256": "404b41c368ff72bc35bed79da3cb1e0fd011f7d6165ec19cdb54a1dc0b5cad20",
+    "imports": [
+      "import copy, re, uuid",
+      "import creative_core as core",
+      "from creative_core.document import canonical",
+      "from studio_manual_ui.service import UIError, exact, project_id, manual_subset, safe, read, decode",
+      "from . import binding_workflow as workflow",
+      "from .project_bindings import sha",
+      "from .scene import build_scene, PROFILE",
+      "from .session import exclusive, sync_directory"
+    ],
+    "callables": [
+      {
+        "name": "require",
+        "line": 14,
+        "signature": "require(value, message)",
+        "annotated_return": null,
+        "returns_observed": [],
+        "explicit_raises": [
+          "UIError('director', message, 409)"
+        ],
+        "docstring": null,
+        "request_exact_key_sets": []
+      },
+      {
+        "name": "source",
+        "line": 17,
+        "signature": "source(studio, request)",
+        "annotated_return": null,
+        "returns_observed": [
+          "(copy.deepcopy(doc), copy.deepcopy(state['record']))"
+        ],
+        "explicit_raises": [],
+        "docstring": null,
+        "request_exact_key_sets": [
+          "{'project_id', 'expected_revision', 'expected_binding', 'expected_head', 'seed', 'acknowledge_brief'}"
+        ]
+      },
+      {
+        "name": "wrap",
+        "line": 38,
+        "signature": "wrap(text, columns)",
+        "annotated_return": null,
+        "returns_observed": [
+          "''.join(result)"
+        ],
+        "explicit_raises": [],
+        "docstring": null,
+        "request_exact_key_sets": []
+      },
+      {
+        "name": "fitted",
+        "line": 47,
+        "signature": "fitted(text, width, height, preferred)",
+        "annotated_return": null,
+        "returns_observed": [
+          "(value, size)"
+        ],
+        "explicit_raises": [
+          "UIError('director-copy', 'Copy cannot safely fit this composition. Edit the saved brief explicitly; no truncation or font substitution.')"
+        ],
+        "docstring": null,
+        "request_exact_key_sets": []
+      },
+      {
+        "name": "luminance",
+        "line": 57,
+        "signature": "luminance(value)",
+        "annotated_return": null,
+        "returns_observed": [
+          "sum((a * b for a, b in zip(rgb, [0.2126, 0.7152, 0.0722])))"
+        ],
+        "explicit_raises": [],
+        "docstring": null,
+        "request_exact_key_sets": []
+      },
+      {
+        "name": "palette",
+        "line": 60,
+        "signature": "palette(binding)",
+        "annotated_return": null,
+        "returns_observed": [
+          "('#14213D', '#F4B942', True)",
+          "(ordered[0], ordered[-1], len(ordered) > 1)"
+        ],
+        "explicit_raises": [],
+        "docstring": null,
+        "request_exact_key_sets": []
+      },
+      {
+        "name": "document",
+        "line": 67,
+        "signature": "document(identity, plan, binding)",
+        "annotated_return": null,
+        "returns_observed": [
+          "doc"
+        ],
+        "explicit_raises": [],
+        "docstring": null,
+        "request_exact_key_sets": []
+      },
+      {
+        "name": "directions",
+        "line": 79,
+        "signature": "directions(binding, seed)",
+        "annotated_return": null,
+        "returns_observed": [
+          "plans"
+        ],
+        "explicit_raises": [],
+        "docstring": null,
+        "request_exact_key_sets": []
+      },
+      {
+        "name": "generate",
+        "line": 106,
+        "signature": "generate(studio, request)",
+        "annotated_return": null,
+        "returns_observed": [
+          "bundle"
+        ],
+        "explicit_raises": [],
+        "docstring": null,
+        "request_exact_key_sets": []
+      },
+      {
+        "name": "retain",
+        "line": 121,
+        "signature": "retain(studio, bundle)",
+        "annotated_return": null,
+        "returns_observed": [],
+        "explicit_raises": [],
+        "docstring": "Immutable provenance only, never project truth. Orphans remain evidence after failure.",
+        "request_exact_key_sets": []
+      },
+      {
+        "name": "select",
+        "line": 133,
+        "signature": "select(studio, request)",
+        "annotated_return": null,
+        "returns_observed": [
+          "{'project': studio.view(identity), 'bundle_digest': bundle['digest'], 'concept_id': plans[0]['id'], 'approved': False}"
+        ],
+        "explicit_raises": [],
+        "docstring": null,
+        "request_exact_key_sets": [
+          "{'source', 'bundle_digest', 'concept_id', 'acknowledge_rules'}"
+        ]
+      }
+    ]
+  }
+}

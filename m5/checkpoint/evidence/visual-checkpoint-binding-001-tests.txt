@@ -1,0 +1,29 @@
+test_after_publication_restart_reads_whole_new_pair (test_project_bindings.BindingTests.test_after_publication_restart_reads_whole_new_pair) ... ok
+test_binding_revision_confirmation_and_stale_cas (test_project_bindings.BindingTests.test_binding_revision_confirmation_and_stale_cas) ... ok
+test_bound_create_atomic_saved_and_legacy_unchanged (test_project_bindings.BindingTests.test_bound_create_atomic_saved_and_legacy_unchanged) ... ok
+test_bound_export_context_tamper_rejected (test_project_bindings.BindingTests.test_bound_export_context_tamper_rejected) ... ok
+test_bound_manifest_identity_and_stale_export (test_project_bindings.BindingTests.test_bound_manifest_identity_and_stale_export) ... ok
+test_brand_pin_and_snapshot (test_project_bindings.BindingTests.test_brand_pin_and_snapshot) ... ok
+test_corrupted_binding_blocks_project_only (test_project_bindings.BindingTests.test_corrupted_binding_blocks_project_only) ... ok
+test_current_approval_invalidated_historical_preserved (test_project_bindings.BindingTests.test_current_approval_invalidated_historical_preserved) ... ok
+test_explicit_paired_recovery_copy (test_project_bindings.BindingTests.test_explicit_paired_recovery_copy) ... ok
+test_export_identity_tracks_brief_without_changing_core (test_project_bindings.BindingTests.test_export_identity_tracks_brief_without_changing_core) ... ok
+test_geometry_checkpoint_is_paired_and_v3_sticky (test_project_bindings.BindingTests.test_geometry_checkpoint_is_paired_and_v3_sticky) ... ok
+test_interruption_before_publication_preserves_old_pair (test_project_bindings.BindingTests.test_interruption_before_publication_preserves_old_pair) ... ok
+test_later_benign_preferences_preserve_pinned_version (test_project_bindings.BindingTests.test_later_benign_preferences_preserve_pinned_version) ... ok
+test_later_hard_rule_change_blocks_old_pin (test_project_bindings.BindingTests.test_later_hard_rule_change_blocks_old_pin) ... ok
+test_legacy_cannot_be_silently_bound (test_project_bindings.BindingTests.test_legacy_cannot_be_silently_bound) ... ok
+test_legacy_export_identity_unchanged (test_project_bindings.BindingTests.test_legacy_export_identity_unchanged) ... ok
+test_named_history_cannot_be_deleted_by_new_pair (test_project_bindings.BindingTests.test_named_history_cannot_be_deleted_by_new_pair) ... ok
+test_older_manual_reader_cannot_open_bound_project (test_project_bindings.BindingTests.test_older_manual_reader_cannot_open_bound_project) ... ok
+test_poster_rights_scope_required (test_project_bindings.BindingTests.test_poster_rights_scope_required) ... ok
+test_quota_refusal_preserves_head (test_project_bindings.BindingTests.test_quota_refusal_preserves_head) ... ok
+test_raw_checkpoint_recovery_refused_bound (test_project_bindings.BindingTests.test_raw_checkpoint_recovery_refused_bound) ... ok
+test_recovery_retains_prior_binding_versions (test_project_bindings.BindingTests.test_recovery_retains_prior_binding_versions) ... ok
+test_revocation_blocks_scene_and_finish_but_work_can_save (test_project_bindings.BindingTests.test_revocation_blocks_scene_and_finish_but_work_can_save) ... ok
+test_save_stop_resume_exact_pair (test_project_bindings.BindingTests.test_save_stop_resume_exact_pair) ... ok
+
+----------------------------------------------------------------------
+Ran 24 tests in 0.557s
+
+OK

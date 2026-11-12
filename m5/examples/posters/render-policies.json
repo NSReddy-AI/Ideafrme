@@ -1,0 +1,122 @@
+{
+  "editorial": {
+    "background": "#f1efe6",
+    "safe_margin": 64,
+    "required_elements": [
+      "editorial-brand"
+    ],
+    "palette": [
+      "none",
+      "#f1efe6",
+      "#163d36",
+      "#c5dca3",
+      "#ed7049",
+      "#ffffff",
+      "#111b30",
+      "#91adef",
+      "#d4ddef"
+    ],
+    "fonts": {
+      "te": {
+        "family": "Noto Sans Telugu",
+        "script": "te",
+        "weight": 900
+      },
+      "en": {
+        "family": "Inter",
+        "script": "en",
+        "weight": 700
+      }
+    }
+  },
+  "telugu": {
+    "background": "#163d36",
+    "safe_margin": 64,
+    "required_elements": [
+      "telugu-brand"
+    ],
+    "palette": [
+      "none",
+      "#f1efe6",
+      "#163d36",
+      "#c5dca3",
+      "#ed7049",
+      "#ffffff",
+      "#111b30",
+      "#91adef",
+      "#d4ddef"
+    ],
+    "fonts": {
+      "te": {
+        "family": "Noto Sans Telugu",
+        "script": "te",
+        "weight": 900
+      },
+      "en": {
+        "family": "Inter",
+        "script": "en",
+        "weight": 700
+      }
+    }
+  },
+  "cinematic": {
+    "background": "#111b30",
+    "safe_margin": 64,
+    "required_elements": [
+      "cine-brand"
+    ],
+    "palette": [
+      "none",
+      "#f1efe6",
+      "#163d36",
+      "#c5dca3",
+      "#ed7049",
+      "#ffffff",
+      "#111b30",
+      "#91adef",
+      "#d4ddef"
+    ],
+    "fonts": {
+      "te": {
+        "family": "Noto Sans Telugu",
+        "script": "te",
+        "weight": 900
+      },
+      "en": {
+        "family": "Inter",
+        "script": "en",
+        "weight": 700
+      }
+    }
+  },
+  "calibration": {
+    "background": "#f1efe6",
+    "safe_margin": 64,
+    "required_elements": [
+      "cal-brand"
+    ],
+    "palette": [
+      "none",
+      "#f1efe6",
+      "#163d36",
+      "#c5dca3",
+      "#ed7049",
+      "#ffffff",
+      "#111b30",
+      "#91adef",
+      "#d4ddef"
+    ],
+    "fonts": {
+      "te": {
+        "family": "Noto Sans Telugu",
+        "script": "te",
+        "weight": 900
+      },
+      "en": {
+        "family": "Inter",
+        "script": "en",
+        "weight": 700
+      }
+    }
+  }
+}

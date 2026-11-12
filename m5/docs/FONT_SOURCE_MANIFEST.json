@@ -1,0 +1,16 @@
+[
+  {
+    "source": "/Users/Nadish/projects/AI Video Editor./Reel Studio/engine/fonts/NotoSansTelugu-Black.ttf",
+    "destination": "examples/posters/assets/fonts/NotoSansTelugu-Black.ttf",
+    "sha256": "42a3167fc2d8ca089b03dcbfcdfe673ecaa176545944ea9c50377144947ae383",
+    "license": "OFL-1.1",
+    "family": "Noto Sans Telugu"
+  },
+  {
+    "source": "/Users/Nadish/projects/AI Video Editor./Reel Studio/engine/fonts/Inter-Bold.otf",
+    "destination": "examples/posters/assets/fonts/Inter-Bold.otf",
+    "sha256": "00fd6f4691ee8884a33b46bf45851b341927c37c30064f558e1befb242971c49",
+    "license": "OFL-1.1",
+    "family": "Inter"
+  }
+]

@@ -1,0 +1,74 @@
+{
+  "format": "ai-reel-studio/creative@1",
+  "schema_version": 1,
+  "id": "synthetic-project",
+  "revision": 0,
+  "project": {
+    "name": "Synthetic creative project",
+    "outputs": [
+      "poster"
+    ]
+  },
+  "brand": null,
+  "languages": [
+    "te",
+    "en"
+  ],
+  "views": [
+    {
+      "id": "portrait",
+      "width": 1080,
+      "height": 1350,
+      "language": "te"
+    }
+  ],
+  "assets": [
+    {
+      "id": "sample-vector",
+      "path": "assets/sample.svg",
+      "kind": "vector",
+      "sha256": "38cb7ea574cee63a5108fd37cce36405a53eda40105926c01f90b2d3ffe91e47"
+    }
+  ],
+  "content": [
+    {
+      "id": "headline",
+      "text": "కొత్త ఆలోచన / New idea",
+      "language": "te",
+      "kind": "editorial"
+    }
+  ],
+  "elements": [
+    {
+      "id": "title",
+      "type": "text",
+      "view_id": "portrait",
+      "content_id": "headline",
+      "x": 80,
+      "y": 100,
+      "width": 920,
+      "height": 200,
+      "style": {
+        "font_size": 72,
+        "fill": "#ffffff"
+      }
+    },
+    {
+      "id": "symbol",
+      "type": "vector",
+      "view_id": "portrait",
+      "asset_id": "sample-vector",
+      "x": 80,
+      "y": 400,
+      "width": 200,
+      "height": 200,
+      "style": {}
+    }
+  ],
+  "approvals": [],
+  "versions": [],
+  "history": {
+    "cursor": 0,
+    "transactions": []
+  }
+}

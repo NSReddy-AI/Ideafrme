@@ -1,0 +1,54 @@
+[
+  {
+    "command": [
+      "/opt/homebrew/opt/python@3.15/bin/python3.15",
+      "-I",
+      "-B",
+      "tools/run_binding_tests.py",
+      "--run-id",
+      "visual-checkpoint-binding-001"
+    ],
+    "cwd": "/Users/Nadish/projects/AI Video Editor./Codex/AI Studio_M5_checkpoint_2026-11-12_064759",
+    "exit_code": 1,
+    "seconds": 0.05976829200153588,
+    "stdout": "",
+    "stderr": "Traceback (most recent call last):\n  File \"/Users/Nadish/projects/AI Video Editor./Codex/AI Studio_M5_checkpoint_2026-11-12_064759/tools/run_binding_tests.py\", line 18, in <module>\n    if __name__=='__main__':raise SystemExit(main())\n                                             ~~~~^^\n  File \"/Users/Nadish/projects/AI Video Editor./Codex/AI Studio_M5_checkpoint_2026-11-12_064759/tools/run_binding_tests.py\", line 13, in main\n    root.mkdir(exist_ok=False);os.environ['VISUAL_TEST_ROOT']=str(root);before=hashes();rejected,commands=guard(root,child=True)\n    ~~~~~~~~~~^^^^^^^^^^^^^^^^\n  File \"/opt/homebrew/Cellar/python@3.15/3.15.2/Frameworks/Python.framework/Versions/3.15/lib/python3.15/pathlib/__init__.py\", line 1210, in mkdir\n    os.mkdir(self, mode)\n    ~~~~~~~~^^^^^^^^^^^^\nFileNotFoundError: [Errno 2] No such file or directory: '/Users/Nadish/projects/AI Video Editor./Codex/AI Studio_M5_checkpoint_2026-11-12_064759/.runtime/studio-ui/visual-checkpoint-binding-001'\n"
+  },
+  {
+    "command": [
+      "/opt/homebrew/opt/python@3.15/bin/python3.15",
+      "-I",
+      "-B",
+      "tools/run_director_tests.py",
+      "--run-id",
+      "visual-checkpoint-director-001"
+    ],
+    "cwd": "/Users/Nadish/projects/AI Video Editor./Codex/AI Studio_M5_checkpoint_2026-11-12_064759",
+    "exit_code": 1,
+    "seconds": 0.054547540999919875,
+    "stdout": "",
+    "stderr": "Traceback (most recent call last):\n  File \"/Users/Nadish/projects/AI Video Editor./Codex/AI Studio_M5_checkpoint_2026-11-12_064759/tools/run_director_tests.py\", line 18, in <module>\n    if __name__=='__main__':raise SystemExit(main())\n                                             ~~~~^^\n  File \"/Users/Nadish/projects/AI Video Editor./Codex/AI Studio_M5_checkpoint_2026-11-12_064759/tools/run_director_tests.py\", line 13, in main\n    root.mkdir(exist_ok=False);os.environ['VISUAL_TEST_ROOT']=str(root);before=hashes();rejected,commands=guard(root,child=True)\n    ~~~~~~~~~~^^^^^^^^^^^^^^^^\n  File \"/opt/homebrew/Cellar/python@3.15/3.15.2/Frameworks/Python.framework/Versions/3.15/lib/python3.15/pathlib/__init__.py\", line 1210, in mkdir\n    os.mkdir(self, mode)\n    ~~~~~~~~^^^^^^^^^^^^\nFileNotFoundError: [Errno 2] No such file or directory: '/Users/Nadish/projects/AI Video Editor./Codex/AI Studio_M5_checkpoint_2026-11-12_064759/.runtime/studio-ui/visual-checkpoint-director-001'\n"
+  },
+  {
+    "command": [
+      "node",
+      "visual_poster_tests/test_geometry.mjs"
+    ],
+    "cwd": "/Users/Nadish/projects/AI Video Editor./Codex/AI Studio_M5_checkpoint_2026-11-12_064759",
+    "exit_code": 0,
+    "seconds": 0.1514734580014192,
+    "stdout": "{\"checks\":11,\"failures\":0}\n",
+    "stderr": ""
+  },
+  {
+    "command": [
+      "node",
+      "visual_poster_tests/test_text_layout.mjs"
+    ],
+    "cwd": "/Users/Nadish/projects/AI Video Editor./Codex/AI Studio_M5_checkpoint_2026-11-12_064759",
+    "exit_code": 0,
+    "seconds": 0.05500033399948734,
+    "stdout": "{\"checks\":27,\"failures\":0}\n",
+    "stderr": ""
+  }
+]

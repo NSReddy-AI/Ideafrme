@@ -1,0 +1,28 @@
+test_ack_and_unknown_concept_required (test_director.DirectorTests.test_ack_and_unknown_concept_required) ... ok
+test_all_selected_concepts_editable_and_saveable (test_director.DirectorTests.test_all_selected_concepts_editable_and_saveable) ... ok
+test_brand_snapshot_and_rules_review_no_assets_applied (test_director.DirectorTests.test_brand_snapshot_and_rules_review_no_assets_applied) ... ok
+test_exact_copy_combining_marks_no_split_words (test_director.DirectorTests.test_exact_copy_combining_marks_no_split_words) ... ok
+test_exact_reproducible_plans_and_seed (test_director.DirectorTests.test_exact_reproducible_plans_and_seed) ... ok
+test_export_identity_is_deterministic (test_director.DirectorTests.test_export_identity_is_deterministic) ... ok
+test_failed_publication_preserves_source (test_director.DirectorTests.test_failed_publication_preserves_source) ... ok
+test_http_auth_and_open (test_director.DirectorTests.test_http_auth_and_open) ... ok
+test_missing_font_fails_closed (test_director.DirectorTests.test_missing_font_fails_closed) ... ok
+test_multiline_exact_copy_and_single_palette (test_director.DirectorTests.test_multiline_exact_copy_and_single_palette) ... ok
+test_new_project_post_publication_failure_reopens_complete (test_director.DirectorTests.test_new_project_post_publication_failure_reopens_complete) ... ok
+test_no_truncation_long_topic_refused (test_director.DirectorTests.test_no_truncation_long_topic_refused) ... ok
+test_receipt_immutable_and_retained_on_failure (test_director.DirectorTests.test_receipt_immutable_and_retained_on_failure) ... ok
+test_receipt_limit_preserves_source (test_director.DirectorTests.test_receipt_limit_preserves_source) ... ok
+test_reject_duplicate_selection_no_overwrite (test_director.DirectorTests.test_reject_duplicate_selection_no_overwrite) ... ok
+test_reopen_exact_document_binding_svg (test_director.DirectorTests.test_reopen_exact_document_binding_svg) ... ok
+test_revocation_between_plan_and_select_blocks (test_director.DirectorTests.test_revocation_between_plan_and_select_blocks) ... ok
+test_saved_source_required (test_director.DirectorTests.test_saved_source_required) ... ok
+test_seed_strict_and_request_paths_rejected (test_director.DirectorTests.test_seed_strict_and_request_paths_rejected) ... ok
+test_source_unchanged_no_generated_approvals (test_director.DirectorTests.test_source_unchanged_no_generated_approvals) ... ok
+test_stale_binding_and_digest_refused (test_director.DirectorTests.test_stale_binding_and_digest_refused) ... ok
+test_three_compositions_not_palette_swaps (test_director.DirectorTests.test_three_compositions_not_palette_swaps) ... ok
+test_v3_source_preserved_new_project_not_migrated (test_director.DirectorTests.test_v3_source_preserved_new_project_not_migrated) ... ok
+
+----------------------------------------------------------------------
+Ran 23 tests in 1.177s
+
+OK

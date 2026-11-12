@@ -1,0 +1,40 @@
+{
+  "format": "m5-internal-checkpoint@1",
+  "created_utc": "2026-11-12T06:57:06.284423+00:00",
+  "source": "/Users/Nadish/projects/AI Video Editor./Codex/AI Studio",
+  "checkpoint": "/Users/Nadish/projects/AI Video Editor./Codex/AI Studio_M5_checkpoint_2026-11-12_064759",
+  "source_files": 221,
+  "source_payload_bytes": 2522709,
+  "source_before_after_and_posttest_hashes_match": true,
+  "tests_on_exact_copied_source": {
+    "Python": 47,
+    "JavaScript": 38,
+    "failed_initial_setup_commands": 2,
+    "final_test_failures": 0
+  },
+  "test_evidence_full_location": "/Users/Nadish/projects/AI Video Editor./Codex/AI Studio/.runtime/m5-checkpoint-preparation-2026-11-12_064759/checkpoint-test-runtime",
+  "excluded_categories": [
+    ".runtime/** (sessions, databases, evidence, models, profiles, private data)",
+    "hidden paths including .git/.DS_Store",
+    "__pycache__/**, node_modules/**",
+    "output/** (generated prior evidence)",
+    "examples/posters/assets/alpha.png and symbol.svg (not needed for manual workflow; redistribution not qualified)",
+    "all external models, runtimes, tools and private libraries"
+  ],
+  "source_manifest": "checkpoint/source-manifest.json",
+  "handoff": "checkpoint/M5_INTEGRATION_HANDOFF.md",
+  "manifest": "SHA256SUMS",
+  "manifest_excludes": [
+    "SHA256SUMS itself"
+  ],
+  "read_only_policy": "directories0555; regular files0444; Start Studio.command0555",
+  "internal_only": true,
+  "distribution_approved": false,
+  "integration_approved": false,
+  "creative_director_integration": "NO-GO; Phase2E English no JSON; attempted prompt rolled back",
+  "media_gate_a": "BLOCKED; agent OFF",
+  "protected_workspaces_accessed": false,
+  "symlinks_in_payload": false,
+  "corrections_require_new_checkpoint": true,
+  "verification_receipt_outside_checkpoint": "/Users/Nadish/projects/AI Video Editor./Codex/AI Studio/.runtime/m5-checkpoint-preparation-2026-11-12_064759/final-verification.json"
+}

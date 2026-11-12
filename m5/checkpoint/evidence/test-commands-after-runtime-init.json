@@ -1,0 +1,32 @@
+[
+  {
+    "command": [
+      "/opt/homebrew/opt/python@3.15/bin/python3.15",
+      "-I",
+      "-B",
+      "tools/run_binding_tests.py",
+      "--run-id",
+      "visual-checkpoint-binding-001"
+    ],
+    "cwd": "/Users/Nadish/projects/AI Video Editor./Codex/AI Studio_M5_checkpoint_2026-11-12_064759",
+    "exit_code": 0,
+    "seconds": 0.6853445829983684,
+    "stdout": "{\"tests\": 24, \"failures\": 0, \"errors\": 0, \"source_drift\": [], \"rejected\": [], \"commands\": [], \"R1_read\": false, \"media_decoding\": false, \"concept_generation\": false}\n",
+    "stderr": ""
+  },
+  {
+    "command": [
+      "/opt/homebrew/opt/python@3.15/bin/python3.15",
+      "-I",
+      "-B",
+      "tools/run_director_tests.py",
+      "--run-id",
+      "visual-checkpoint-director-001"
+    ],
+    "cwd": "/Users/Nadish/projects/AI Video Editor./Codex/AI Studio_M5_checkpoint_2026-11-12_064759",
+    "exit_code": 0,
+    "seconds": 1.32758612500038,
+    "stdout": "{\"tests\": 23, \"failures\": 0, \"errors\": 0, \"source_drift\": [], \"rejected\": [], \"commands\": [], \"R1_read\": false, \"media_decoding\": false, \"concept_generation\": \"deterministic-only\"}\n",
+    "stderr": ""
+  }
+]

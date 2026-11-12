@@ -1,0 +1,667 @@
+{
+  "format": "ai-reel-studio/creative@1",
+  "schema_version": 1,
+  "id": "phase2-synthetic-posters",
+  "revision": 0,
+  "project": {
+    "name": "Synthetic creative project",
+    "outputs": [
+      "poster"
+    ]
+  },
+  "brand": null,
+  "languages": [
+    "te",
+    "en"
+  ],
+  "views": [
+    {
+      "id": "editorial",
+      "width": 1080,
+      "height": 1350,
+      "language": "en"
+    },
+    {
+      "id": "telugu",
+      "width": 1080,
+      "height": 1920,
+      "language": "te"
+    },
+    {
+      "id": "cinematic",
+      "width": 2160,
+      "height": 3840,
+      "language": "en"
+    },
+    {
+      "id": "calibration",
+      "width": 1080,
+      "height": 1350,
+      "language": "te"
+    }
+  ],
+  "assets": [
+    {
+      "id": "te",
+      "path": "assets/fonts/NotoSansTelugu-Black.ttf",
+      "kind": "font",
+      "sha256": "42a3167fc2d8ca089b03dcbfcdfe673ecaa176545944ea9c50377144947ae383"
+    },
+    {
+      "id": "en",
+      "path": "assets/fonts/Inter-Bold.otf",
+      "kind": "font",
+      "sha256": "00fd6f4691ee8884a33b46bf45851b341927c37c30064f558e1befb242971c49"
+    },
+    {
+      "id": "alpha",
+      "path": "assets/alpha.png",
+      "kind": "image",
+      "sha256": "0101eb2f1fd215a6188c23e1919e83279f2dfa076b4027702cdf61e1df18046d"
+    },
+    {
+      "id": "symbol",
+      "path": "assets/symbol.svg",
+      "kind": "logo",
+      "sha256": "25eba0a57ab00ba8eaaf044a346480ec386ecd813d46f63eb1b06a2c518e624c"
+    }
+  ],
+  "content": [
+    {
+      "id": "editorial-brand",
+      "text": "REEL STUDIO  /  FIELD NOTES",
+      "language": "en",
+      "kind": "editorial"
+    },
+    {
+      "id": "ed-heading",
+      "text": "Ideas deserve\na clear voice.",
+      "language": "en",
+      "kind": "editorial"
+    },
+    {
+      "id": "ed-deck",
+      "text": "A study in type, space and intention.",
+      "language": "en",
+      "kind": "editorial"
+    },
+    {
+      "id": "ed-caption",
+      "text": "01   /   ORIGINAL IDEAS. HUMAN DIRECTION.",
+      "language": "en",
+      "kind": "editorial"
+    },
+    {
+      "id": "ed-footer",
+      "text": "SYNTHETIC POSTER STUDY     •     M5 / PHASE 2",
+      "language": "en",
+      "kind": "editorial"
+    },
+    {
+      "id": "telugu-brand",
+      "text": "REEL STUDIO  /  CREATIVE STUDIES",
+      "language": "en",
+      "kind": "editorial"
+    },
+    {
+      "id": "te-kicker",
+      "text": "తెలుగు / ENGLISH",
+      "language": "te",
+      "kind": "editorial"
+    },
+    {
+      "id": "te-heading",
+      "text": "కొత్త ఆలోచన\nకొత్త దిశ",
+      "language": "te",
+      "kind": "editorial"
+    },
+    {
+      "id": "te-caption",
+      "text": "మన ఆలోచన. మన సృష్టి.",
+      "language": "te",
+      "kind": "editorial"
+    },
+    {
+      "id": "te-footer",
+      "text": "02   /   LOCAL TYPE. ORIGINAL COMPOSITION.",
+      "language": "en",
+      "kind": "editorial"
+    },
+    {
+      "id": "cine-brand",
+      "text": "REEL STUDIO     /     MOTION IN STILLNESS",
+      "language": "en",
+      "kind": "editorial"
+    },
+    {
+      "id": "cine-heading",
+      "text": "MAKE\nSPACE.",
+      "language": "en",
+      "kind": "editorial"
+    },
+    {
+      "id": "cine-deck",
+      "text": "Leave room for the unexpected.",
+      "language": "en",
+      "kind": "editorial"
+    },
+    {
+      "id": "cine-caption",
+      "text": "03  /  A CINEMATIC POSTER EXPERIMENT",
+      "language": "en",
+      "kind": "editorial"
+    },
+    {
+      "id": "cine-footer",
+      "text": "2160 x 3840 STILL IMAGE",
+      "language": "en",
+      "kind": "editorial"
+    },
+    {
+      "id": "cal-brand",
+      "text": "TYPE / ASSET CALIBRATION",
+      "language": "en",
+      "kind": "editorial"
+    },
+    {
+      "id": "cal-te",
+      "text": "అభివృద్ధి • సృష్టి • ప్రకృతి\nక్షేత్రం • విజ్ఞానం • శ్రద్ధ\nత్ర • జ్ఞ • క్ష • శ్రీ\nతెలుగు సంఖ్యలు ౦౧౨౩౪౫౬౭౮౯\nTelugu + English 0123456789\n(తెలుగు) — “ఆలోచన”",
+      "language": "te",
+      "kind": "editorial"
+    },
+    {
+      "id": "cal-en",
+      "text": "AV WA To fi fl\nEnglish typography: 0123456789\nQuotes: “ideas” / (space) / &",
+      "language": "en",
+      "kind": "editorial"
+    }
+  ],
+  "elements": [
+    {
+      "id": "editorial-brand",
+      "type": "text",
+      "view_id": "editorial",
+      "content_id": "editorial-brand",
+      "x": 80,
+      "y": 72,
+      "width": 920,
+      "height": 50,
+      "style": {
+        "font_asset_id": "en",
+        "font_size": 25,
+        "fill": "#163d36"
+      }
+    },
+    {
+      "id": "ed-rule",
+      "type": "shape",
+      "view_id": "editorial",
+      "x": 80,
+      "y": 146,
+      "width": 920,
+      "height": 3,
+      "style": {
+        "shape": "rectangle",
+        "fill": "#163d36"
+      }
+    },
+    {
+      "id": "ed-heading",
+      "type": "text",
+      "view_id": "editorial",
+      "content_id": "ed-heading",
+      "x": 80,
+      "y": 192,
+      "width": 920,
+      "height": 290,
+      "style": {
+        "font_asset_id": "en",
+        "font_size": 90,
+        "fill": "#163d36"
+      }
+    },
+    {
+      "id": "ed-deck",
+      "type": "text",
+      "view_id": "editorial",
+      "content_id": "ed-deck",
+      "x": 84,
+      "y": 503,
+      "width": 910,
+      "height": 70,
+      "style": {
+        "font_asset_id": "en",
+        "font_size": 30,
+        "fill": "#163d36"
+      }
+    },
+    {
+      "id": "ed-panel",
+      "type": "shape",
+      "view_id": "editorial",
+      "x": 80,
+      "y": 640,
+      "width": 920,
+      "height": 480,
+      "style": {
+        "shape": "rectangle",
+        "fill": "#c5dca3"
+      }
+    },
+    {
+      "id": "ed-disc-0",
+      "type": "shape",
+      "view_id": "editorial",
+      "x": 180,
+      "y": 850,
+      "width": 180,
+      "height": 180,
+      "style": {
+        "shape": "ellipse",
+        "fill": "#163d36"
+      }
+    },
+    {
+      "id": "ed-disc-1",
+      "type": "shape",
+      "view_id": "editorial",
+      "x": 365,
+      "y": 760,
+      "width": 230,
+      "height": 230,
+      "style": {
+        "shape": "ellipse",
+        "fill": "#ed7049"
+      }
+    },
+    {
+      "id": "ed-disc-2",
+      "type": "shape",
+      "view_id": "editorial",
+      "x": 615,
+      "y": 680,
+      "width": 290,
+      "height": 290,
+      "style": {
+        "shape": "ellipse",
+        "fill": "#163d36"
+      }
+    },
+    {
+      "id": "ed-caption",
+      "type": "text",
+      "view_id": "editorial",
+      "content_id": "ed-caption",
+      "x": 80,
+      "y": 1180,
+      "width": 920,
+      "height": 60,
+      "style": {
+        "font_asset_id": "en",
+        "font_size": 25,
+        "fill": "#163d36"
+      }
+    },
+    {
+      "id": "ed-footer",
+      "type": "text",
+      "view_id": "editorial",
+      "content_id": "ed-footer",
+      "x": 80,
+      "y": 1245,
+      "width": 920,
+      "height": 32,
+      "style": {
+        "font_asset_id": "en",
+        "font_size": 19,
+        "fill": "#163d36"
+      }
+    },
+    {
+      "id": "telugu-brand",
+      "type": "text",
+      "view_id": "telugu",
+      "content_id": "telugu-brand",
+      "x": 80,
+      "y": 82,
+      "width": 920,
+      "height": 60,
+      "style": {
+        "font_asset_id": "en",
+        "font_size": 26,
+        "fill": "#f1efe6"
+      }
+    },
+    {
+      "id": "te-rule",
+      "type": "shape",
+      "view_id": "telugu",
+      "x": 80,
+      "y": 165,
+      "width": 920,
+      "height": 3,
+      "style": {
+        "shape": "rectangle",
+        "fill": "#c5dca3"
+      }
+    },
+    {
+      "id": "te-kicker",
+      "type": "text",
+      "view_id": "telugu",
+      "content_id": "te-kicker",
+      "x": 80,
+      "y": 230,
+      "width": 920,
+      "height": 110,
+      "style": {
+        "font_asset_id": "te",
+        "font_size": 40,
+        "fill": "#c5dca3"
+      }
+    },
+    {
+      "id": "te-heading",
+      "type": "text",
+      "view_id": "telugu",
+      "content_id": "te-heading",
+      "x": 80,
+      "y": 375,
+      "width": 920,
+      "height": 420,
+      "style": {
+        "font_asset_id": "te",
+        "font_size": 108,
+        "fill": "#f1efe6"
+      }
+    },
+    {
+      "id": "te-disc-outer",
+      "type": "shape",
+      "view_id": "telugu",
+      "x": 190,
+      "y": 925,
+      "width": 700,
+      "height": 700,
+      "style": {
+        "shape": "ellipse",
+        "fill": "#c5dca3"
+      }
+    },
+    {
+      "id": "te-disc-inner",
+      "type": "shape",
+      "view_id": "telugu",
+      "x": 300,
+      "y": 1035,
+      "width": 480,
+      "height": 480,
+      "style": {
+        "shape": "ellipse",
+        "fill": "#163d36"
+      }
+    },
+    {
+      "id": "te-disc-accent",
+      "type": "shape",
+      "view_id": "telugu",
+      "x": 515,
+      "y": 1080,
+      "width": 240,
+      "height": 240,
+      "style": {
+        "shape": "ellipse",
+        "fill": "#ed7049"
+      }
+    },
+    {
+      "id": "te-caption",
+      "type": "text",
+      "view_id": "telugu",
+      "content_id": "te-caption",
+      "x": 80,
+      "y": 1660,
+      "width": 920,
+      "height": 110,
+      "style": {
+        "font_asset_id": "te",
+        "font_size": 45,
+        "fill": "#f1efe6"
+      }
+    },
+    {
+      "id": "te-footer",
+      "type": "text",
+      "view_id": "telugu",
+      "content_id": "te-footer",
+      "x": 80,
+      "y": 1790,
+      "width": 920,
+      "height": 50,
+      "style": {
+        "font_asset_id": "en",
+        "font_size": 24,
+        "fill": "#c5dca3"
+      }
+    },
+    {
+      "id": "cine-brand",
+      "type": "text",
+      "view_id": "cinematic",
+      "content_id": "cine-brand",
+      "x": 160,
+      "y": 150,
+      "width": 1840,
+      "height": 100,
+      "style": {
+        "font_asset_id": "en",
+        "font_size": 48,
+        "fill": "#d4ddef"
+      }
+    },
+    {
+      "id": "cine-rule",
+      "type": "shape",
+      "view_id": "cinematic",
+      "x": 160,
+      "y": 315,
+      "width": 1840,
+      "height": 4,
+      "style": {
+        "shape": "rectangle",
+        "fill": "#91adef"
+      }
+    },
+    {
+      "id": "cine-heading",
+      "type": "text",
+      "view_id": "cinematic",
+      "content_id": "cine-heading",
+      "x": 160,
+      "y": 480,
+      "width": 1840,
+      "height": 900,
+      "style": {
+        "font_asset_id": "en",
+        "font_size": 280,
+        "fill": "#f1efe6"
+      }
+    },
+    {
+      "id": "cine-deck",
+      "type": "text",
+      "view_id": "cinematic",
+      "content_id": "cine-deck",
+      "x": 165,
+      "y": 1420,
+      "width": 1800,
+      "height": 120,
+      "style": {
+        "font_asset_id": "en",
+        "font_size": 60,
+        "fill": "#91adef"
+      }
+    },
+    {
+      "id": "cine-orbit-0",
+      "type": "shape",
+      "view_id": "cinematic",
+      "x": 350,
+      "y": 1800,
+      "width": 1450,
+      "height": 1350,
+      "style": {
+        "shape": "ellipse",
+        "fill": "none",
+        "stroke": "#91adef",
+        "stroke_width": 3
+      }
+    },
+    {
+      "id": "cine-orbit-1",
+      "type": "shape",
+      "view_id": "cinematic",
+      "x": 520,
+      "y": 1910,
+      "width": 1100,
+      "height": 1130,
+      "style": {
+        "shape": "ellipse",
+        "fill": "none",
+        "stroke": "#91adef",
+        "stroke_width": 3
+      }
+    },
+    {
+      "id": "cine-orbit-2",
+      "type": "shape",
+      "view_id": "cinematic",
+      "x": 700,
+      "y": 2080,
+      "width": 730,
+      "height": 790,
+      "style": {
+        "shape": "ellipse",
+        "fill": "none",
+        "stroke": "#91adef",
+        "stroke_width": 3
+      }
+    },
+    {
+      "id": "cine-core",
+      "type": "shape",
+      "view_id": "cinematic",
+      "x": 870,
+      "y": 2300,
+      "width": 410,
+      "height": 410,
+      "style": {
+        "shape": "ellipse",
+        "fill": "#ed7049"
+      }
+    },
+    {
+      "id": "cine-caption",
+      "type": "text",
+      "view_id": "cinematic",
+      "content_id": "cine-caption",
+      "x": 160,
+      "y": 3290,
+      "width": 1840,
+      "height": 120,
+      "style": {
+        "font_asset_id": "en",
+        "font_size": 48,
+        "fill": "#f1efe6"
+      }
+    },
+    {
+      "id": "cine-footer",
+      "type": "text",
+      "view_id": "cinematic",
+      "content_id": "cine-footer",
+      "x": 160,
+      "y": 3500,
+      "width": 1840,
+      "height": 100,
+      "style": {
+        "font_asset_id": "en",
+        "font_size": 40,
+        "fill": "#91adef"
+      }
+    },
+    {
+      "id": "cal-brand",
+      "type": "text",
+      "view_id": "calibration",
+      "content_id": "cal-brand",
+      "x": 80,
+      "y": 80,
+      "width": 920,
+      "height": 80,
+      "style": {
+        "font_asset_id": "en",
+        "font_size": 36,
+        "fill": "#163d36"
+      }
+    },
+    {
+      "id": "cal-te",
+      "type": "text",
+      "view_id": "calibration",
+      "content_id": "cal-te",
+      "x": 80,
+      "y": 220,
+      "width": 920,
+      "height": 520,
+      "style": {
+        "font_asset_id": "te",
+        "font_size": 44,
+        "fill": "#163d36"
+      }
+    },
+    {
+      "id": "cal-en",
+      "type": "text",
+      "view_id": "calibration",
+      "content_id": "cal-en",
+      "x": 80,
+      "y": 780,
+      "width": 920,
+      "height": 240,
+      "style": {
+        "font_asset_id": "en",
+        "font_size": 38,
+        "fill": "#163d36"
+      }
+    },
+    {
+      "id": "cal-logo",
+      "type": "logo",
+      "view_id": "calibration",
+      "asset_id": "symbol",
+      "x": 80,
+      "y": 1090,
+      "width": 140,
+      "height": 140,
+      "style": {}
+    },
+    {
+      "id": "cal-alpha",
+      "type": "image",
+      "view_id": "calibration",
+      "asset_id": "alpha",
+      "x": 350,
+      "y": 1090,
+      "width": 140,
+      "height": 140,
+      "style": {}
+    }
+  ],
+  "approvals": [],
+  "versions": [],
+  "history": {
+    "cursor": 0,
+    "transactions": []
+  }
+}

@@ -1,0 +1,271 @@
+[
+  {
+    "kind": "rights-decision",
+    "payload": {
+      "format": "ai-reel-studio/style-rights-decision@1",
+      "record_id": "00000000-0000-4000-8000-000000000010",
+      "created_at": "2026-11-10T23:00:00Z",
+      "created_by": "00000000-0000-4000-8000-000000000002",
+      "rights_id": "00000000-0000-4000-8000-000000000010",
+      "supersedes": null,
+      "resource_sha256": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+      "decision": "grant",
+      "grantor": "Synthetic fixture owner",
+      "basis": "owned",
+      "evidence_sha256": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
+      "permitted_uses": [
+        "manual-style-authoring"
+      ],
+      "project_ids": null,
+      "outputs": [
+        "poster"
+      ],
+      "valid_from": "2026-01-01T00:00:00Z",
+      "expires_at": null,
+      "obligations": []
+    },
+    "sha256": "9fc90878caaac36ba033f69c95c6efaf0496069dea289a57fae98575303b8395"
+  },
+  {
+    "kind": "dependency",
+    "payload": {
+      "format": "ai-reel-studio/style-dependency@1",
+      "record_id": "00000000-0000-4000-8000-000000000011",
+      "created_at": "2026-11-10T23:00:00Z",
+      "created_by": "00000000-0000-4000-8000-000000000002",
+      "dependency_id": "00000000-0000-4000-8000-000000000011",
+      "kind": "font",
+      "name": "Synthetic pinned font",
+      "version": "1",
+      "content_sha256": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+      "license_expression": null,
+      "notice_sha256": null,
+      "rights_record": {
+        "format": "ai-reel-studio/style-rights-decision@1",
+        "record_id": "00000000-0000-4000-8000-000000000010",
+        "sha256": "9fc90878caaac36ba033f69c95c6efaf0496069dea289a57fae98575303b8395"
+      },
+      "parameters": [],
+      "required": true
+    },
+    "sha256": "1d6c9be37b8df3461a4b657eab07fab05a129e3e7a23a9fd9fd57ed3d4439aa7"
+  },
+  {
+    "kind": "finding",
+    "payload": {
+      "format": "ai-reel-studio/style-finding@1",
+      "record_id": "00000000-0000-4000-8000-000000000012",
+      "created_at": "2026-11-10T23:00:00Z",
+      "created_by": "00000000-0000-4000-8000-000000000002",
+      "finding_id": "00000000-0000-4000-8000-000000000012",
+      "supersedes": null,
+      "property": "palette.primary",
+      "value": {
+        "kind": "color",
+        "rgba": "#3366ffff"
+      },
+      "origin": "user-entered",
+      "confidence": "not-assessed",
+      "explanation": "Manually entered; not measured.",
+      "evidence": [
+        {
+          "format": "ai-reel-studio/style-dependency@1",
+          "record_id": "00000000-0000-4000-8000-000000000011",
+          "sha256": "1d6c9be37b8df3461a4b657eab07fab05a129e3e7a23a9fd9fd57ed3d4439aa7"
+        }
+      ],
+      "source": null,
+      "method": null,
+      "region": null,
+      "interval": null,
+      "correction_reason": null
+    },
+    "sha256": "a4f892b528511e97507f575db42929136b45259158b21b5a6d0b785b34defdd0"
+  },
+  {
+    "kind": "recipe",
+    "payload": {
+      "format": "ai-reel-studio/style-recipe@1",
+      "record_id": "00000000-0000-4000-8000-000000000013",
+      "created_at": "2026-11-10T23:00:00Z",
+      "created_by": "00000000-0000-4000-8000-000000000002",
+      "schema_version": 1,
+      "recipe_id": "00000000-0000-4000-8000-000000000013",
+      "revision_id": "00000000-0000-4000-8000-000000000013",
+      "parent": null,
+      "name": "Frozen Telugu / \u0c24\u0c46\u0c32\u0c41\u0c17\u0c41",
+      "dependencies": [
+        {
+          "format": "ai-reel-studio/style-dependency@1",
+          "record_id": "00000000-0000-4000-8000-000000000011",
+          "sha256": "1d6c9be37b8df3461a4b657eab07fab05a129e3e7a23a9fd9fd57ed3d4439aa7"
+        }
+      ],
+      "brand": null,
+      "findings": [
+        {
+          "format": "ai-reel-studio/style-finding@1",
+          "record_id": "00000000-0000-4000-8000-000000000012",
+          "sha256": "a4f892b528511e97507f575db42929136b45259158b21b5a6d0b785b34defdd0"
+        }
+      ],
+      "protections": [],
+      "properties": [
+        {
+          "property": "palette.primary",
+          "value": {
+            "kind": "color",
+            "rgba": "#3366ffff"
+          },
+          "finding": {
+            "format": "ai-reel-studio/style-finding@1",
+            "record_id": "00000000-0000-4000-8000-000000000012",
+            "sha256": "a4f892b528511e97507f575db42929136b45259158b21b5a6d0b785b34defdd0"
+          }
+        }
+      ],
+      "outputs": [
+        "poster"
+      ],
+      "required_capabilities": []
+    },
+    "sha256": "8430fda7c16a6f61bd5fe788d990c28f619ca99bb41bb3ed44cc4f0605d0288a"
+  },
+  {
+    "kind": "brand",
+    "payload": {
+      "format": "ai-reel-studio/style-brand@1",
+      "record_id": "00000000-0000-4000-8000-000000000014",
+      "created_at": "2026-11-10T23:00:00Z",
+      "created_by": "00000000-0000-4000-8000-000000000002",
+      "brand_id": "00000000-0000-4000-8000-000000000014",
+      "parent": null,
+      "name": "Frozen brand",
+      "hard_rules": [],
+      "guided_rules": [],
+      "protections": []
+    },
+    "sha256": "4e78586f4ea45cb827c326e658971060100703ed7bbde3bfbf1cfec290d13259"
+  },
+  {
+    "kind": "review",
+    "payload": {
+      "format": "ai-reel-studio/style-review@1",
+      "record_id": "00000000-0000-4000-8000-000000000015",
+      "created_at": "2026-11-10T23:00:00Z",
+      "created_by": "00000000-0000-4000-8000-000000000002",
+      "subject": {
+        "format": "ai-reel-studio/style-finding@1",
+        "record_id": "00000000-0000-4000-8000-000000000012",
+        "sha256": "a4f892b528511e97507f575db42929136b45259158b21b5a6d0b785b34defdd0"
+      },
+      "scope": "finding",
+      "decision": "approve",
+      "previous": null,
+      "reason": "Frozen synthetic review",
+      "authority": "A",
+      "reviewed_dependencies": [
+        {
+          "format": "ai-reel-studio/style-dependency@1",
+          "record_id": "00000000-0000-4000-8000-000000000011",
+          "sha256": "1d6c9be37b8df3461a4b657eab07fab05a129e3e7a23a9fd9fd57ed3d4439aa7"
+        }
+      ]
+    },
+    "sha256": "61454d7da33b2a574ac8fe70753e89ea706941e75515ba0fd7d524821fd2b95d"
+  },
+  {
+    "kind": "dependency-event",
+    "payload": {
+      "format": "ai-reel-studio/style-dependency-event@1",
+      "record_id": "00000000-0000-4000-8000-000000000016",
+      "created_at": "2026-11-10T23:00:00Z",
+      "created_by": "00000000-0000-4000-8000-000000000002",
+      "subject": {
+        "format": "ai-reel-studio/style-finding@1",
+        "record_id": "00000000-0000-4000-8000-000000000012",
+        "sha256": "a4f892b528511e97507f575db42929136b45259158b21b5a6d0b785b34defdd0"
+      },
+      "previous": null,
+      "state": "available",
+      "reason": "Frozen availability"
+    },
+    "sha256": "a33beadf120fc5bde04f5a58b652126c77e19cd362ee68331b36f21b17d2a18f"
+  },
+  {
+    "kind": "project-association",
+    "payload": {
+      "format": "ai-reel-studio/style-project-association@1",
+      "record_id": "00000000-0000-4000-8000-000000000017",
+      "created_at": "2026-11-10T23:00:00Z",
+      "created_by": "00000000-0000-4000-8000-000000000002",
+      "association_id": "00000000-0000-4000-8000-000000000017",
+      "parent": null,
+      "project_id": "00000000-0000-4000-8000-000000000003",
+      "creative": {
+        "format": "ai-reel-studio/creative@1",
+        "id": "synthetic-project",
+        "fingerprint": "sha256:cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc"
+      },
+      "recipe": {
+        "format": "ai-reel-studio/style-recipe@1",
+        "record_id": "00000000-0000-4000-8000-000000000013",
+        "sha256": "8430fda7c16a6f61bd5fe788d990c28f619ca99bb41bb3ed44cc4f0605d0288a"
+      },
+      "recipe_id": "00000000-0000-4000-8000-000000000013",
+      "revision_id": "00000000-0000-4000-8000-000000000013",
+      "dependencies": [
+        {
+          "format": "ai-reel-studio/style-dependency@1",
+          "record_id": "00000000-0000-4000-8000-000000000011",
+          "sha256": "1d6c9be37b8df3461a4b657eab07fab05a129e3e7a23a9fd9fd57ed3d4439aa7"
+        }
+      ],
+      "library_recipe": null,
+      "snapshot": {
+        "format": "ai-reel-studio/style-recipe@1",
+        "record_id": "00000000-0000-4000-8000-000000000013",
+        "sha256": "8430fda7c16a6f61bd5fe788d990c28f619ca99bb41bb3ed44cc4f0605d0288a"
+      }
+    },
+    "sha256": "871513155702687fcc88217717619af037730ffd0a01d98e5cde117889829036"
+  },
+  {
+    "kind": "commit",
+    "payload": {
+      "format": "ai-reel-studio/style-commit@1",
+      "record_id": "00000000-0000-4000-8000-000000000018",
+      "created_at": "2026-11-10T23:00:00Z",
+      "created_by": "00000000-0000-4000-8000-000000000002",
+      "previous": null,
+      "sequence": 1,
+      "action": "save",
+      "additions": [
+        {
+          "format": "ai-reel-studio/style-dependency@1",
+          "record_id": "00000000-0000-4000-8000-000000000011",
+          "sha256": "1d6c9be37b8df3461a4b657eab07fab05a129e3e7a23a9fd9fd57ed3d4439aa7"
+        },
+        {
+          "format": "ai-reel-studio/style-finding@1",
+          "record_id": "00000000-0000-4000-8000-000000000012",
+          "sha256": "a4f892b528511e97507f575db42929136b45259158b21b5a6d0b785b34defdd0"
+        },
+        {
+          "format": "ai-reel-studio/style-recipe@1",
+          "record_id": "00000000-0000-4000-8000-000000000013",
+          "sha256": "8430fda7c16a6f61bd5fe788d990c28f619ca99bb41bb3ed44cc4f0605d0288a"
+        }
+      ],
+      "roots": [
+        {
+          "format": "ai-reel-studio/style-recipe@1",
+          "record_id": "00000000-0000-4000-8000-000000000013",
+          "sha256": "8430fda7c16a6f61bd5fe788d990c28f619ca99bb41bb3ed44cc4f0605d0288a"
+        }
+      ],
+      "recovery_from": null
+    },
+    "sha256": "197eb48ce2eff60cf2f3e51da868274a6df0ff88503708231b5749fdc6c9ca0c"
+  }
+]

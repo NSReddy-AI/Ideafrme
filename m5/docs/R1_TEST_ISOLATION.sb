@@ -1,0 +1,7 @@
+(version 1)
+(allow default)
+(deny network*)
+(deny file-write*)
+(allow file-write*
+  (subpath "/Users/Nadish/projects/AI Video Editor./Codex/AI Studio/.runtime/r1")
+  (subpath "/Users/Nadish/projects/AI Video Editor./Codex/AI Studio/r1_data"))

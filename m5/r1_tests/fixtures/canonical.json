@@ -1,0 +1,248 @@
+[
+  {
+    "id": "C01",
+    "raw": "{}",
+    "sha256": "44136fa355b3678a1146ad16f7e8649e94fb4fc21fe77e8310c060f61caaff8a",
+    "bytes": 2
+  },
+  {
+    "id": "C02",
+    "raw": "{\"a\":1,\"b\":2}",
+    "sha256": "43258cff783fe7036d8a43033f830adfc60ec037382473548ac742b888292777",
+    "bytes": 13
+  },
+  {
+    "id": "C03",
+    "raw": "{\"a\":\"0.65\",\"b\":\"\u0c24\u0c46\u0c32\u0c41\u0c17\u0c41\"}",
+    "sha256": "a7993d689a43dc142323436f173c240c22adf5936a8c9e50949033fff69a4741",
+    "bytes": 37
+  },
+  {
+    "id": "C04",
+    "raw": "{\"text\":\"\u00e9\"}",
+    "sha256": "42d3cbf59fdccced04e5dff14433fb52d34d58e385e9770ffd896ff517d63b92",
+    "bytes": 13
+  },
+  {
+    "id": "C05",
+    "raw": "{\"text\":\"e\u0301\"}",
+    "sha256": "9b53287cd41955684903378d2b1b4a3ddea9d80d67dcd026319a7c5a9a8a8b42",
+    "bytes": 14
+  },
+  {
+    "id": "C06",
+    "raw": "{\"text\":\"quote\\\" slash/ backslash\\\\\\b\\t\\n\\f\\r\\u0001\"}",
+    "sha256": "e27bd3fe3f043b360d9c3fe3c1520876f2e3a8a2b6094f39947c3c85a8c66781",
+    "bytes": 53
+  },
+  {
+    "id": "C07",
+    "raw": "{\"\ue000\":1,\"\ud800\udc00\":2}",
+    "sha256": "8706b5798a29d65739b3d1bbb1d009f87d005c71c8130c5353c4990c15ddfec8",
+    "bytes": 18
+  },
+  {
+    "id": "C08",
+    "raw": "{\"array\":[3,1,2],\"flags\":[true,false,null]}",
+    "sha256": "10299df0cbf679bbfb89d73f91b996a4dd80f6498d9580e72f64856b4bbe5f5e",
+    "bytes": 43
+  },
+  {
+    "id": "C09",
+    "raw": "{\"max\":9223372036854775807,\"min\":-9223372036854775808}",
+    "sha256": "161a1dcda7bae00f28f0ba32675f218fd4977065d2aa0439cf451c6d066dbbfb",
+    "bytes": 54
+  },
+  {
+    "id": "C10",
+    "raw": "{\"unit\":\"ratio\",\"value\":\"0.65\"}",
+    "sha256": "235bc7e06d2b22310a32a8068068304506cf569d4a34ea35820d900b94ef62de",
+    "bytes": 31
+  },
+  {
+    "id": "C11",
+    "raw": "{\"unit\":\"px\",\"value\":\"-1.5\"}",
+    "sha256": "98acada3eee348f381eead75b59fe9cda14f0790f890b316c0ffaf6880655567",
+    "bytes": 28
+  },
+  {
+    "id": "C12",
+    "raw": "{\"a\":[],\"z\":{\"a\":\"\u0c24\u0c46\u0c32\u0c41\u0c17\u0c41\",\"b\":\"English\"}}",
+    "sha256": "7b499418b904ed01ae79b075f0c3eb71b91f26c1cf149681f847631ca8bbe665",
+    "bytes": 53
+  },
+  {
+    "id": "C13",
+    "raw": "{\"content_sha256\":\"e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855\",\"created_at\":\"2026-11-10T00:00:00Z\",\"created_by\":\"00000000-0000-4000-8000-000000000002\",\"dependency_id\":\"00000000-0000-4000-8000-000000000003\",\"format\":\"ai-reel-studio/style-dependency@1\",\"kind\":\"font\",\"license_expression\":null,\"name\":\"Synthetic font pin\",\"notice_sha256\":null,\"parameters\":[],\"record_id\":\"00000000-0000-4000-8000-000000000001\",\"required\":true,\"rights_record\":null,\"version\":\"1\"}",
+    "sha256": "9ebc1f671105fecd2260f9510c4e592eeda94ebb1ec3e84f795e18b2ee3dad5d",
+    "bytes": 480
+  },
+  {
+    "id": "N01",
+    "raw": "{\"a\":1,\"a\":2}",
+    "reject": true
+  },
+  {
+    "id": "N02",
+    "raw": "{\"a\":1,\"\\u0061\":2}",
+    "reject": true
+  },
+  {
+    "id": "N03",
+    "raw": "{\"x\":\"\\ud800\"}",
+    "reject": true
+  },
+  {
+    "id": "N04",
+    "raw": "{\"x\":\"\\udc00\"}",
+    "reject": true
+  },
+  {
+    "id": "N05",
+    "raw": "{\"x\":NaN}",
+    "reject": true
+  },
+  {
+    "id": "N06",
+    "raw": "{\"x\":Infinity}",
+    "reject": true
+  },
+  {
+    "id": "N07",
+    "raw": "{\"x\":-Infinity}",
+    "reject": true
+  },
+  {
+    "id": "N08",
+    "raw": "{\"x\":1.0}",
+    "reject": true
+  },
+  {
+    "id": "N09",
+    "raw": "{\"x\":1e0}",
+    "reject": true
+  },
+  {
+    "id": "N10",
+    "raw": "{\"x\":-0}",
+    "reject": true
+  },
+  {
+    "id": "N11",
+    "raw": "{\"x\":01}",
+    "reject": true
+  },
+  {
+    "id": "N12",
+    "raw": "{\"x\":+1}",
+    "reject": true
+  },
+  {
+    "id": "N13",
+    "raw": "{\"x\":9223372036854775808}",
+    "reject": true
+  },
+  {
+    "id": "N14",
+    "raw": "{\"x\":-9223372036854775809}",
+    "reject": true
+  },
+  {
+    "id": "N15",
+    "raw": "\ufeff{}",
+    "reject": true
+  },
+  {
+    "id": "N16",
+    "raw": "{}trailing",
+    "reject": true
+  },
+  {
+    "id": "N17",
+    "raw": "{\"x\":\"\u0001\"}",
+    "reject": true
+  },
+  {
+    "id": "N18",
+    "raw": "[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]",
+    "reject": true
+  },
+  {
+    "id": "E01",
+    "raw": " { \"b\": 2, \"a\": 1 }\n"
+  },
+  {
+    "id": "E02",
+    "raw": "{\"text\":\"\\u00e9\"}"
+  },
+  {
+    "id": "E03",
+    "raw": "{\"2\":2,\"10\":10}"
+  },
+  {
+    "id": "E04",
+    "raw": "{\"text\":\"\u2028\u2029\"}"
+  },
+  {
+    "id": "E05",
+    "raw": "{\"x\":-9223372036854775808}"
+  },
+  {
+    "id": "E06",
+    "raw": "{\"\\ud800\\udc00\":2,\"\\ue000\":1}"
+  },
+  {
+    "id": "R-rights-decision",
+    "raw": "{\"basis\":\"owned\",\"created_at\":\"2026-11-10T23:00:00Z\",\"created_by\":\"00000000-0000-4000-8000-000000000002\",\"decision\":\"grant\",\"evidence_sha256\":\"bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb\",\"expires_at\":null,\"format\":\"ai-reel-studio/style-rights-decision@1\",\"grantor\":\"Synthetic fixture owner\",\"obligations\":[],\"outputs\":[\"poster\"],\"permitted_uses\":[\"manual-style-authoring\"],\"project_ids\":null,\"record_id\":\"00000000-0000-4000-8000-000000000010\",\"resource_sha256\":\"aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa\",\"rights_id\":\"00000000-0000-4000-8000-000000000010\",\"supersedes\":null,\"valid_from\":\"2026-01-01T00:00:00Z\"}",
+    "sha256": "9fc90878caaac36ba033f69c95c6efaf0496069dea289a57fae98575303b8395",
+    "bytes": 655
+  },
+  {
+    "id": "R-dependency",
+    "raw": "{\"content_sha256\":\"aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa\",\"created_at\":\"2026-11-10T23:00:00Z\",\"created_by\":\"00000000-0000-4000-8000-000000000002\",\"dependency_id\":\"00000000-0000-4000-8000-000000000011\",\"format\":\"ai-reel-studio/style-dependency@1\",\"kind\":\"font\",\"license_expression\":null,\"name\":\"Synthetic pinned font\",\"notice_sha256\":null,\"parameters\":[],\"record_id\":\"00000000-0000-4000-8000-000000000011\",\"required\":true,\"rights_record\":{\"format\":\"ai-reel-studio/style-rights-decision@1\",\"record_id\":\"00000000-0000-4000-8000-000000000010\",\"sha256\":\"9fc90878caaac36ba033f69c95c6efaf0496069dea289a57fae98575303b8395\"},\"version\":\"1\"}",
+    "sha256": "1d6c9be37b8df3461a4b657eab07fab05a129e3e7a23a9fd9fd57ed3d4439aa7",
+    "bytes": 657
+  },
+  {
+    "id": "R-finding",
+    "raw": "{\"confidence\":\"not-assessed\",\"correction_reason\":null,\"created_at\":\"2026-11-10T23:00:00Z\",\"created_by\":\"00000000-0000-4000-8000-000000000002\",\"evidence\":[{\"format\":\"ai-reel-studio/style-dependency@1\",\"record_id\":\"00000000-0000-4000-8000-000000000011\",\"sha256\":\"1d6c9be37b8df3461a4b657eab07fab05a129e3e7a23a9fd9fd57ed3d4439aa7\"}],\"explanation\":\"Manually entered; not measured.\",\"finding_id\":\"00000000-0000-4000-8000-000000000012\",\"format\":\"ai-reel-studio/style-finding@1\",\"interval\":null,\"method\":null,\"origin\":\"user-entered\",\"property\":\"palette.primary\",\"record_id\":\"00000000-0000-4000-8000-000000000012\",\"region\":null,\"source\":null,\"supersedes\":null,\"value\":{\"kind\":\"color\",\"rgba\":\"#3366ffff\"}}",
+    "sha256": "a4f892b528511e97507f575db42929136b45259158b21b5a6d0b785b34defdd0",
+    "bytes": 695
+  },
+  {
+    "id": "R-recipe",
+    "raw": "{\"brand\":null,\"created_at\":\"2026-11-10T23:00:00Z\",\"created_by\":\"00000000-0000-4000-8000-000000000002\",\"dependencies\":[{\"format\":\"ai-reel-studio/style-dependency@1\",\"record_id\":\"00000000-0000-4000-8000-000000000011\",\"sha256\":\"1d6c9be37b8df3461a4b657eab07fab05a129e3e7a23a9fd9fd57ed3d4439aa7\"}],\"findings\":[{\"format\":\"ai-reel-studio/style-finding@1\",\"record_id\":\"00000000-0000-4000-8000-000000000012\",\"sha256\":\"a4f892b528511e97507f575db42929136b45259158b21b5a6d0b785b34defdd0\"}],\"format\":\"ai-reel-studio/style-recipe@1\",\"name\":\"Frozen Telugu / \u0c24\u0c46\u0c32\u0c41\u0c17\u0c41\",\"outputs\":[\"poster\"],\"parent\":null,\"properties\":[{\"finding\":{\"format\":\"ai-reel-studio/style-finding@1\",\"record_id\":\"00000000-0000-4000-8000-000000000012\",\"sha256\":\"a4f892b528511e97507f575db42929136b45259158b21b5a6d0b785b34defdd0\"},\"property\":\"palette.primary\",\"value\":{\"kind\":\"color\",\"rgba\":\"#3366ffff\"}}],\"protections\":[],\"recipe_id\":\"00000000-0000-4000-8000-000000000013\",\"record_id\":\"00000000-0000-4000-8000-000000000013\",\"required_capabilities\":[],\"revision_id\":\"00000000-0000-4000-8000-000000000013\",\"schema_version\":1}",
+    "sha256": "8430fda7c16a6f61bd5fe788d990c28f619ca99bb41bb3ed44cc4f0605d0288a",
+    "bytes": 1086
+  },
+  {
+    "id": "R-brand",
+    "raw": "{\"brand_id\":\"00000000-0000-4000-8000-000000000014\",\"created_at\":\"2026-11-10T23:00:00Z\",\"created_by\":\"00000000-0000-4000-8000-000000000002\",\"format\":\"ai-reel-studio/style-brand@1\",\"guided_rules\":[],\"hard_rules\":[],\"name\":\"Frozen brand\",\"parent\":null,\"protections\":[],\"record_id\":\"00000000-0000-4000-8000-000000000014\"}",
+    "sha256": "4e78586f4ea45cb827c326e658971060100703ed7bbde3bfbf1cfec290d13259",
+    "bytes": 317
+  },
+  {
+    "id": "R-review",
+    "raw": "{\"authority\":\"A\",\"created_at\":\"2026-11-10T23:00:00Z\",\"created_by\":\"00000000-0000-4000-8000-000000000002\",\"decision\":\"approve\",\"format\":\"ai-reel-studio/style-review@1\",\"previous\":null,\"reason\":\"Frozen synthetic review\",\"record_id\":\"00000000-0000-4000-8000-000000000015\",\"reviewed_dependencies\":[{\"format\":\"ai-reel-studio/style-dependency@1\",\"record_id\":\"00000000-0000-4000-8000-000000000011\",\"sha256\":\"1d6c9be37b8df3461a4b657eab07fab05a129e3e7a23a9fd9fd57ed3d4439aa7\"}],\"scope\":\"finding\",\"subject\":{\"format\":\"ai-reel-studio/style-finding@1\",\"record_id\":\"00000000-0000-4000-8000-000000000012\",\"sha256\":\"a4f892b528511e97507f575db42929136b45259158b21b5a6d0b785b34defdd0\"}}",
+    "sha256": "61454d7da33b2a574ac8fe70753e89ea706941e75515ba0fd7d524821fd2b95d",
+    "bytes": 668
+  },
+  {
+    "id": "R-dependency-event",
+    "raw": "{\"created_at\":\"2026-11-10T23:00:00Z\",\"created_by\":\"00000000-0000-4000-8000-000000000002\",\"format\":\"ai-reel-studio/style-dependency-event@1\",\"previous\":null,\"reason\":\"Frozen availability\",\"record_id\":\"00000000-0000-4000-8000-000000000016\",\"state\":\"available\",\"subject\":{\"format\":\"ai-reel-studio/style-finding@1\",\"record_id\":\"00000000-0000-4000-8000-000000000012\",\"sha256\":\"a4f892b528511e97507f575db42929136b45259158b21b5a6d0b785b34defdd0\"}}",
+    "sha256": "a33beadf120fc5bde04f5a58b652126c77e19cd362ee68331b36f21b17d2a18f",
+    "bytes": 439
+  },
+  {
+    "id": "R-project-association",
+    "raw": "{\"association_id\":\"00000000-0000-4000-8000-000000000017\",\"created_at\":\"2026-11-10T23:00:00Z\",\"created_by\":\"00000000-0000-4000-8000-000000000002\",\"creative\":{\"fingerprint\":\"sha256:cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc\",\"format\":\"ai-reel-studio/creative@1\",\"id\":\"synthetic-project\"},\"dependencies\":[{\"format\":\"ai-reel-studio/style-dependency@1\",\"record_id\":\"00000000-0000-4000-8000-000000000011\",\"sha256\":\"1d6c9be37b8df3461a4b657eab07fab05a129e3e7a23a9fd9fd57ed3d4439aa7\"}],\"format\":\"ai-reel-studio/style-project-association@1\",\"library_recipe\":null,\"parent\":null,\"project_id\":\"00000000-0000-4000-8000-000000000003\",\"recipe\":{\"format\":\"ai-reel-studio/style-recipe@1\",\"record_id\":\"00000000-0000-4000-8000-000000000013\",\"sha256\":\"8430fda7c16a6f61bd5fe788d990c28f619ca99bb41bb3ed44cc4f0605d0288a\"},\"recipe_id\":\"00000000-0000-4000-8000-000000000013\",\"record_id\":\"00000000-0000-4000-8000-000000000017\",\"revision_id\":\"00000000-0000-4000-8000-000000000013\",\"snapshot\":{\"format\":\"ai-reel-studio/style-recipe@1\",\"record_id\":\"00000000-0000-4000-8000-000000000013\",\"sha256\":\"8430fda7c16a6f61bd5fe788d990c28f619ca99bb41bb3ed44cc4f0605d0288a\"}}",
+    "sha256": "871513155702687fcc88217717619af037730ffd0a01d98e5cde117889829036",
+    "bytes": 1156
+  },
+  {
+    "id": "R-commit",
+    "raw": "{\"action\":\"save\",\"additions\":[{\"format\":\"ai-reel-studio/style-dependency@1\",\"record_id\":\"00000000-0000-4000-8000-000000000011\",\"sha256\":\"1d6c9be37b8df3461a4b657eab07fab05a129e3e7a23a9fd9fd57ed3d4439aa7\"},{\"format\":\"ai-reel-studio/style-finding@1\",\"record_id\":\"00000000-0000-4000-8000-000000000012\",\"sha256\":\"a4f892b528511e97507f575db42929136b45259158b21b5a6d0b785b34defdd0\"},{\"format\":\"ai-reel-studio/style-recipe@1\",\"record_id\":\"00000000-0000-4000-8000-000000000013\",\"sha256\":\"8430fda7c16a6f61bd5fe788d990c28f619ca99bb41bb3ed44cc4f0605d0288a\"}],\"created_at\":\"2026-11-10T23:00:00Z\",\"created_by\":\"00000000-0000-4000-8000-000000000002\",\"format\":\"ai-reel-studio/style-commit@1\",\"previous\":null,\"record_id\":\"00000000-0000-4000-8000-000000000018\",\"recovery_from\":null,\"roots\":[{\"format\":\"ai-reel-studio/style-recipe@1\",\"record_id\":\"00000000-0000-4000-8000-000000000013\",\"sha256\":\"8430fda7c16a6f61bd5fe788d990c28f619ca99bb41bb3ed44cc4f0605d0288a\"}],\"sequence\":1}",
+    "sha256": "197eb48ce2eff60cf2f3e51da868274a6df0ff88503708231b5749fdc6c9ca0c",
+    "bytes": 956
+  }
+]

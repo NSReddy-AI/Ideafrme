@@ -26,6 +26,15 @@ For M6 work only, it replaces the M4 rule "work only in `Reel Studio_dev`".
   M5's pure `.mjs` modules get imported; M5's screens get rewritten as React components.
 - **Workspace:** this sibling folder, under Git.
 
+## M5 code in `m5/`
+- `m5/` is M6's mutable copy of Codex's frozen checkpoint `Codex/AI Studio_M5_checkpoint_2026-11-12_064759`.
+  It may be changed here. Never write to the checkpoint or to `Codex/AI Studio`.
+- M5 keeps its sessions and Brand Library under `m5/.runtime/`. This is M6 data, never Codex's.
+  Never point M6 at Codex's `.runtime` or its accepted libraries.
+- Never run the legacy renderer (`poster_render/backend.mjs`, `tools/run_phase2.py`) or `tests/run_isolated.py`
+  from M6: they are hard-coded to the Codex folder.
+- M5 AI integration is NO-GO (Codex Phase 2E). The Creative Director in M6 stays deterministic until the owner decides otherwise.
+
 ## Running side by side with production
 - Production and this copy both default to port 8765, and each folder has its own `engine/.heavy_model.lock`.
   Never run both apps at once: they would share neither the port nor the heavy-model lock (24 GB RAM).
