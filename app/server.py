@@ -396,7 +396,8 @@ DIST = os.path.join(HERE, "web", "dist")
 if os.path.isdir(DIST):
     app.mount("/assets", StaticFiles(directory=os.path.join(DIST, "assets")), name="assets")
     @app.get("/{rest:path}")
-    def spa(rest: str): return FileResponse(os.path.join(DIST, "index.html"))
+    def spa(rest: str):   # M6: never cache the page itself, so a rebuild's new asset names are always picked up
+        return FileResponse(os.path.join(DIST, "index.html"), headers={"Cache-Control": "no-cache"})
 
 if __name__ == "__main__":
     import uvicorn

@@ -95,6 +95,22 @@ class CreativeRoutes(unittest.TestCase):
         self.assertIsNotNone(self.ok(*self.S.call("GET", "/api/creative/fonts"))["fonts"])
         self.assertIn("analysis", self.ok(*self.S.call("GET", "/api/creative/session")))
 
+    # -- poster QA route (app/poster_qa.py) on the live document
+    def test_poster_qa_route(self):
+        p = self.ok(*self.S.call("POST", "/api/creative/projects", {"name": "QA", "text": "Hello", "language": "en"}), 201)["project"]
+        q = self.ok(*self.S.call("POST", "/api/creative/qa", {"project_id": p["project_id"], "expected_revision": p["revision"]}))
+        self.assertTrue(q["fonts_checked"]); self.assertEqual(q["revision"], p["revision"])
+        self.assertIn("contrast", {c["name"] for c in q["checks"]})
+        p = self.ok(*self.S.call("POST", "/api/creative/action", {"project_id": p["project_id"], "expected_revision": p["revision"], "action": "add_shape", "shape": "rectangle"}))["project"]
+        shape = next(e for e in p["elements"] if e["type"] == "shape")
+        for action, extra in (("reorder", {"view_id": p["view"]["id"], "ordered_element_ids": [shape["id"]] + [e["id"] for e in p["elements"] if e["id"] != shape["id"]], "acknowledge_upgrade": True}),
+                              ("geometry", {"view_id": p["view"]["id"], "targets": [{"element_id": shape["id"], "x": 0, "y": 0, "width": 1080, "height": 1350}], "acknowledge_upgrade": True}),
+                              ("color", {"element_id": shape["id"], "color": "#FFFFFF"})):
+            p = self.ok(*self.S.call("POST", "/api/creative/action", {"project_id": p["project_id"], "expected_revision": p["revision"], "action": action, **extra}))["project"]
+        q = self.ok(*self.S.call("POST", "/api/creative/qa", {"project_id": p["project_id"], "expected_revision": p["revision"]}))
+        self.assertFalse(q["passed"], q)                                 # white text on a white background
+        self.assertEqual(self.S.call("POST", "/api/creative/qa", {"project_id": p["project_id"], "expected_revision": 0})[0], 409)
+
     # -- Brand Library, bound project and deterministic Director
     def test_brand_binding_and_director(self):
         saved = self.ok(*self.S.call("POST", "/api/brands/action", {"action": "save", "brand_id": None, "expected_head": None, "payload": PAYLOAD}))

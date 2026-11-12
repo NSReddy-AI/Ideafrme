@@ -144,6 +144,18 @@ def _scene(s, v):
 @router.post("/api/creative/scene")
 async def scene(request: Request): return await _handle(request, _scene)
 
+def _qa(s, v):
+    """Poster QA (app/poster_qa.py) on the current working document, at the revision the client is looking at."""
+    import poster_qa
+    exact(v, {"project_id", "expected_revision"})
+    identity = project_id(v["project_id"]); s._ready(identity)
+    doc = s.manual.document(identity)
+    if type(v["expected_revision"]) is not int or v["expected_revision"] != doc["revision"]: raise UIError("conflict", "Stale QA revision.", 409)
+    cover = {k: f["coverage"] for k, f in s.fonts.faces.items()} if s.fonts else None
+    return dict(poster_qa.check(doc, cover), revision=doc["revision"], fonts_checked=cover is not None)
+@router.post("/api/creative/qa")
+async def qa(request: Request): return await _handle(request, _qa)
+
 @router.post("/api/creative/export/begin")
 async def export_begin(request: Request): return await _handle(request, lambda s, v: s.begin(v))
 

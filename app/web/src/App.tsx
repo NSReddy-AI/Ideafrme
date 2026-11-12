@@ -1,35 +1,9 @@
 import { useCallback, useEffect, useRef, useState } from 'react'
 import { api, fileUrl, type Catalog, type Job, type Project, type ProjectRow } from './api'
 
-// ------------------------------------------------------------------ small UI pieces
-// Colours, radii, shadows and motion come only from design/tokens/tokens.css (via the
-// short utility names in index.css). Never hard-code them here.
-const cx = (...c: (string | false | null | undefined)[]) => c.filter(Boolean).join(' ')
-const MOTION = 'transition duration-[var(--motion-fast)] ease-[var(--ease-out)]'
-function Btn({ kind = 'primary', className, ...p }: React.ButtonHTMLAttributes<HTMLButtonElement> & { kind?: 'primary' | 'ghost' | 'danger' }) {
-  return <button {...p} className={cx('inline-flex min-h-[var(--control-height)] items-center justify-center rounded-btn px-[var(--control-padding-x)] text-sm font-semibold',
-    MOTION, 'enabled:active:scale-[var(--press-scale)] disabled:cursor-not-allowed disabled:opacity-50',
-    kind === 'primary' && 'bg-act text-on-act enabled:hover:bg-act-hover enabled:active:bg-act-pressed',
-    kind === 'ghost' && 'border border-line-strong bg-raised text-ink enabled:hover:bg-act-subtle',
-    kind === 'danger' && 'bg-bad-solid text-on-act enabled:hover:bg-bad-solid-hover', className)} />
-}
-function Card({ title, step, state, children, right }: { title: string; step?: number; state?: 'done' | 'next' | 'todo'; children: React.ReactNode; right?: React.ReactNode }) {
-  return (
-    <section className={cx('rounded-box border bg-raised p-6 shadow-soft', state === 'next' ? 'border-act ring-1 ring-act' : 'border-line')}>
-      <header className="mb-4 flex flex-wrap items-center gap-3">
-        {step !== undefined && <span className={cx('flex h-7 w-7 items-center justify-center rounded-full text-sm font-semibold',
-          state === 'done' ? 'bg-ok-subtle text-ok' : state === 'next' ? 'bg-act text-on-act' : 'bg-surface text-ink-3')}>{state === 'done' ? '✓' : step}</span>}
-        <h2 className="text-base font-semibold">{title}</h2>
-        <div className="ml-auto">{right}</div>
-      </header>
-      {children}
-    </section>
-  )
-}
-const Pill = ({ ok, children }: { ok?: boolean | null; children: React.ReactNode }) =>
-  <span className={cx('inline-flex items-center rounded-full px-2 py-0.5 text-xs font-medium', ok === true && 'bg-ok-subtle text-ok', ok === false && 'bg-bad-subtle text-bad', ok == null && 'bg-raised text-ink-2 ring-1 ring-inset ring-line')}>{children}</span>
-const Err = ({ msg }: { msg: string | null }) => msg ? <p role="alert" className="mt-2 rounded-field bg-bad-subtle px-3 py-2 text-sm text-bad">{msg}</p> : null
-const Select = ({ className, ...p }: React.SelectHTMLAttributes<HTMLSelectElement>) => <select {...p} className={cx('min-h-9 max-w-full rounded-field border border-line-strong bg-raised px-2 py-1.5 text-sm text-ink', className)} />
+import { Btn, Card, Err, MOTION, PageHead, Pill, Select, cx } from './ui'
+import { PosterEditor, PostersPage } from './Posters'
+
 type Start = (b: Parameters<typeof api.job>[1]) => Promise<void>
 
 // ------------------------------------------------------------------ jobs
@@ -442,27 +416,24 @@ function ProjectList({ rows, onOpen }: { rows: ProjectRow[]; onOpen: (n: string)
   )
 }
 
-function PageHead({ title, sub }: { title: string; sub?: string }) {
-  return <header className="mb-6"><h1 className="font-head text-[length:var(--text-title)] leading-[var(--leading-title)] font-semibold tracking-[var(--tracking-title)]">{title}</h1>
-    {sub && <p className="mt-1 text-sm text-ink-2">{sub}</p>}</header>
-}
-
 // ------------------------------------------------------------------ shell
-// Routes live in the address bar: #/ (home), #/projects, #/settings, #/p/<project>.
+// Routes live in the address bar: #/ (home), #/projects (reels), #/posters, #/settings, #/p/<reel>, #/poster/<id>.
 // An old Reel Studio link (#<project>) still opens that project.
-type Route = { page: 'home' | 'projects' | 'settings' } | { page: 'project'; name: string }
+type Page = 'home' | 'projects' | 'posters' | 'settings'
+type Route = { page: Page } | { page: 'project'; name: string } | { page: 'poster'; id: string }
 const readRoute = (): Route => {
   const h = decodeURIComponent(location.hash.replace(/^#\/?/, ''))
   if (!h) return { page: 'home' }
-  if (h === 'projects' || h === 'settings') return { page: h }
+  if (h === 'projects' || h === 'posters' || h === 'settings') return { page: h }
+  if (h.startsWith('poster/')) return { page: 'poster', id: h.slice(7) }
   return { page: 'project', name: h.startsWith('p/') ? h.slice(2) : h }
 }
-const hrefOf = (r: Route) => r.page === 'project' ? `#/p/${encodeURIComponent(r.name)}` : r.page === 'home' ? '#/' : `#/${r.page}`
+const hrefOf = (r: Route) => r.page === 'project' ? `#/p/${encodeURIComponent(r.name)}` : r.page === 'poster' ? `#/poster/${encodeURIComponent(r.id)}` : r.page === 'home' ? '#/' : `#/${r.page}`
 
-const NAV: { page: 'home' | 'projects' | 'settings'; label: string }[] = [
-  { page: 'home', label: 'Home' }, { page: 'projects', label: 'Projects' }, { page: 'settings', label: 'Settings' }]
+const NAV: { page: Page; label: string }[] = [
+  { page: 'home', label: 'Home' }, { page: 'projects', label: 'Reels' }, { page: 'posters', label: 'Posters' }, { page: 'settings', label: 'Settings' }]
 // Areas that arrive in later M6 steps. Shown so the layout is final, but not clickable.
-const LATER = ['Poster editor', 'Brand Studio', 'Concepts']
+const LATER = ['Brand Studio', 'Concepts']
 
 export default function App() {
   const [cat, setCat] = useState<Catalog | null>(null); const [rows, setRows] = useState<ProjectRow[]>([]); const [showTests, setShowTests] = useState(false)
@@ -474,7 +445,7 @@ export default function App() {
     const on = () => setRoute(readRoute())
     window.addEventListener('hashchange', on); return () => window.removeEventListener('hashchange', on)
   }, [])
-  const section = route.page === 'project' ? 'projects' : route.page
+  const section = route.page === 'project' ? 'projects' : route.page === 'poster' ? 'posters' : route.page
   const recent = rows.filter(r => !r.archived).slice(0, 5)
   return (
     <div className="flex min-h-screen flex-col bg-surface text-ink md:flex-row">
@@ -495,15 +466,20 @@ export default function App() {
         <p className="hidden border-t border-line px-5 py-4 md:block text-xs text-ink-3">Works on this Mac. Nothing is published.</p>
       </aside>
       <main className="min-w-0 flex-1 px-4 py-6 md:px-8 md:py-8">
-        <div className="mx-auto max-w-5xl">
+        <div className={cx('mx-auto', route.page === 'poster' ? 'max-w-7xl' : 'max-w-5xl')}>
           <Err msg={err} />
           {!cat ? <p className="text-sm text-ink-3">Connecting to the local server…</p>
+            : route.page === 'poster' ? <>
+              <a href="#/posters" className="mb-4 inline-block text-sm text-link hover:underline">← Posters</a>
+              <PosterEditor id={route.id} />
+            </>
+            : route.page === 'posters' ? <PostersPage onOpen={id => go({ page: 'poster', id })} />
             : route.page === 'project' ? <>
-              <a href="#/projects" className="mb-4 inline-block text-sm text-link hover:underline">← Projects</a>
+              <a href="#/projects" className="mb-4 inline-block text-sm text-link hover:underline">← Reels</a>
               <ProjectView name={route.name} cat={cat} />
             </>
             : route.page === 'projects' ? <>
-              <PageHead title="Projects" sub="Every reel project on this Mac." />
+              <PageHead title="Reels" sub="Every reel project on this Mac." />
               <label className="mb-3 flex items-center gap-2 text-xs text-ink-2"><input type="checkbox" checked={showTests} onChange={e => setShowTests(e.target.checked)} />Show test and archived projects</label>
               <ProjectList rows={rows} onOpen={n => go({ page: 'project', name: n })} />
             </>
@@ -516,10 +492,13 @@ export default function App() {
               </Card>
             </div>
             : <div className="space-y-6">
-              <PageHead title="Create" sub="Start a reel from your own video, pictures or recording." />
+              <PageHead title="Create" sub="Start a reel from your own video, pictures or recording, or design a poster." />
               <NewProject cat={cat} onMade={n => go({ page: 'project', name: n })} />
+              <Card title="New poster" right={<a href="#/posters" className="text-sm text-link hover:underline">Open Posters</a>}>
+                <p className="text-sm text-ink-2">Editable 1080 × 1350 posters in Telugu and English, with poster QA before export.</p>
+              </Card>
               <section>
-                <div className="mb-2 flex items-baseline gap-3"><h2 className="text-base font-semibold">Recent projects</h2><a href="#/projects" className="text-sm text-link hover:underline">All projects</a></div>
+                <div className="mb-2 flex items-baseline gap-3"><h2 className="text-base font-semibold">Recent reels</h2><a href="#/projects" className="text-sm text-link hover:underline">All reels</a></div>
                 <ProjectList rows={recent} onOpen={n => go({ page: 'project', name: n })} />
               </section>
             </div>}
