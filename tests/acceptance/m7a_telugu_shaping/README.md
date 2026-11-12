@@ -37,7 +37,7 @@ The fonts were measured with Pillow at a 1000 px em (the pinned Inter Bold and N
 - WCAG "large" bold text is 14 pt, which is 18.66 CSS px. On a 390 px phone that is poster font_size **51.7**, so 52 is the WCAG boundary.
 - Telugu letter bodies are 0.75 em: 1.33 times Inter's lowercase height and slightly taller than its capitals. At the
   same font size, Telugu looks larger than English, so 52 px is conservative for Telugu and exact for English.
-- **Owner decision point:** on smaller 360 px phones the WCAG boundary is font_size 56. Keep 52 (390 px reference) or raise it to 56.
+- **Owner decision (12 Nov 2026): keep 52 px**, with a 390 px phone as the reference. On 360 px phones the WCAG boundary would be 56; this is recorded and accepted.
 
 ## 3. Measured-text QA in the poster editor
 

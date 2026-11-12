@@ -4,7 +4,8 @@ Like engine/qa.py for reels, it reports PASS/FAIL with every check listed. It ne
 not block export; the editor shows it before export. Checks that need the browser's real text shaping
 (text overflowing its box, overlapping lines) stay in M5's browser inspectScene, which already refuses export.
 
-Rules (values are proposals for owner review, kept together here):
+Rules (owner decisions 12 Nov 2026: 64 px safe margin as initial default; 52 px large text kept, 390 px phone reference -
+see tests/acceptance/m7a_telugu_shaping/README.md):
   canvas     every layer lies fully inside the poster (error)
   safe_area  text stays SAFE_MARGIN px inside each edge (warning)
   contrast   text against the layer it sits on, WCAG 2.2: 4.5:1, or 3:1 for large text (error).
@@ -15,8 +16,8 @@ Rules (values are proposals for owner review, kept together here):
   empty      a text layer has visible text (warning)
   overlap    two text layers do not overlap (warning)"""
 
-SAFE_MARGIN = 64                      # [proposed] 6 % of the 1080 px width
-PHONE_SCALE = 390 / 1080              # [proposed] typical phone width in CSS px
+SAFE_MARGIN = 64                      # owner-approved initial default (6 % of the 1080 px width)
+PHONE_SCALE = 390 / 1080              # owner-approved reference phone width in CSS px (gives 52 px)
 LARGE_PX = 18.66                      # WCAG large bold text, 14 pt
 
 
