@@ -1,0 +1,44 @@
+{
+  "brand": "jagan_for_andhra",
+  "platform": "instagram",
+  "style": "news_speech",
+  "provider": null,
+  "brief": "M4 product demo - not for publishing",
+  "video": null,
+  "title_seconds": 2.0,
+  "hook": {
+    "line1": "అసలు జగన్ ఏం చేశాడు?",
+    "line2": "“24 గంటలు సరిపోవు”",
+    "line3": "ఇదీ అభివృద్ధి!",
+    "tag_top": "31 లక్షల",
+    "tag_bottom": "ఇళ్ల పట్టాలు"
+  },
+  "title": [
+    "జగన్ చేసింది చెప్పాలంటే..",
+    "24 గంటలు సరిపోవు!"
+  ],
+  "title_person": "../2026-11-03_reel_002_development/inputs/jag_4k_rgba_soft.png",
+  "title_bg": "../2026-11-03_reel_002_development/inputs/bg_aerial.png",
+  "face_tracking": false,
+  "approved": true,
+  "status": "demo",
+  "history": [
+    "2026-11-11 12:31 created by tools/demo_product.py (title page = reel_002's approved hook/headline)",
+    "2026-11-11 12:31 narration set: ai prakash news 1.0x",
+    "2026-11-11 12:31 narration script prepared from /Users/Nadish/projects/AI Video Editor./Reel Studio_dev/projects/demo_news_prakash/inputs/script.txt",
+    "2026-11-11 12:31 narration script approved (9 sentences, 8268c46e0bcf)",
+    "2026-11-11 12:53 narration (ai, prakash news 1.0x) -> build/narration.wav 39.648 s",
+    "2026-11-11 12:57 app job narrate done (228.4 s, peak 17.08 GB, job d9be1be8d5)",
+    "2026-11-11 13:43 narration set: ai prakash news 1.0x",
+    "2026-11-11 13:43 narration script prepared from /Users/Nadish/projects/AI Video Editor./Reel Studio_dev/projects/demo_news_prakash/inputs/script.txt",
+    "2026-11-11 13:43 narration script approved (9 sentences, 8268c46e0bcf)",
+    "2026-11-11 13:43 narration (ai, prakash news 1.0x) -> build/narration.wav 39.648 s",
+    "2026-11-11 13:43 edit built: slides (ai), 39.63 s",
+    "2026-11-11 13:44 rendered v1 for instagram, youtube, facebook (job d46f9236405f)"
+  ],
+  "narration": "ai",
+  "narrator": "prakash",
+  "narrator_style": "news",
+  "narration_speed": 1.0,
+  "narration_hash": "8268c46e0bcf1112bf8a49a22c013355f30c0d1be667e710c955f69170b47523"
+}

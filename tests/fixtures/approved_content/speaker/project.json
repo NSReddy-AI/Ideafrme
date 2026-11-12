@@ -1,0 +1,39 @@
+{
+  "brand": "jagan_for_andhra",
+  "platform": "instagram",
+  "style": "news_speech",
+  "provider": null,
+  "brief": "M4 integration check - DEMO approval (hook A) by Claude Code, not a user approval; not for publishing",
+  "video": "inputs/source.mov",
+  "title_seconds": 2.0,
+  "hook": {
+    "line1": "అసలు ఎందుకు పోటీ పెట్టారు?",
+    "line2": "“ఇరవై స్థానాల్లోనే మనల్ని”",
+    "line3": "ఇదీ అభివృద్ధి!",
+    "tag_top": "40",
+    "tag_bottom": "స్థానాలు"
+  },
+  "title": [
+    "పోటీ పెట్టినందుకు కారణం ఏంటి?",
+    "ఇది సాక్ష్యం!"
+  ],
+  "title_person": null,
+  "title_bg": null,
+  "face_tracking": false,
+  "approved": true,
+  "status": "new",
+  "history": [
+    "2026-11-11 12:57 created",
+    "2026-11-11 12:57 app: uploaded inputs/source.mov (video)",
+    "2026-11-11 13:03 app job plan failed (348.3 s, peak 17.42 GB, job 92215acd15)",
+    "2026-11-11 13:37 app job plan done (313.4 s, peak 11.02 GB, job fc2ef6b865)",
+    "2026-11-11 13:37 app: brief updated",
+    "2026-11-11 13:37 plan approved (hook A, qwen3:14b)",
+    "2026-11-11 13:37 app job approve done (0.1 s, peak 0.03 GB, job d685f500ce)",
+    "2026-11-11 13:37 edit built: speaker (approved plan), 54.76 s",
+    "2026-11-11 13:37 app job build done (29.1 s, peak 0.78 GB, job 46ca63e16f)",
+    "2026-11-11 13:38 rendered v1 for instagram, youtube, facebook (job 9e9fc37f15e4)",
+    "2026-11-11 13:38 app job render done (52.8 s, peak 1.38 GB, job 2afa3f05ee)"
+  ],
+  "plan_hash": "ff5d2adf56ee01098b6dde35d3ba7e1b673db86781d52e88ac37284c3efba936"
+}

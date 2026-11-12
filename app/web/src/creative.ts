@@ -19,6 +19,12 @@ export type QACheck = { name: string; level: 'error' | 'warning'; passed: boolea
 export type PosterQA = { passed: boolean; errors: number; warnings: number; checks: QACheck[]; revision: number; fonts_checked: boolean; rules: Record<string, number> }
 export type ExportReceipt = { directory: string; manifest: { svg_sha256: string; png_sha256: string | null; revision: number } }
 
+// Step 6: approved reel words (app/approved_content.py) and where they sit on a poster.
+export type ApprovedItem = { id: string; kind: 'hook' | 'quote' | 'headline' | 'tag' | 'number' | 'post' | 'script'; text: string; language: 'en' | 'te'; verbatim: boolean; sha256: string }
+export type ApprovedDoc = { format: string; source: { project: string; brand: string }; approvals: { type: 'plan' | 'narration' | 'project'; hash: string | null }[]; items: ApprovedItem[]; fingerprint: string }
+export type ReelRow = { project: string; ok: boolean; approvals?: string[]; items?: number; code?: string; detail?: string }
+export type ContentLink = { element_id: string; content_id: string; reel: string; item_id: string; kind: string; ok: boolean; detail: string }
+
 /** A refused request keeps M5's error code, so the screen can react to e.g. "upgrade-required" or "conflict". */
 export class CreativeError extends Error {
   code: string; status: number
@@ -46,4 +52,9 @@ export const creative = {
   exportFinish: (b: { token: string; revision: number; png: string | null; qa: { fonts_loaded: boolean; overflow: string[]; parity: boolean; embedded_fonts: boolean } }) =>
     call<ExportReceipt>('POST', '/api/creative/export/finish', b),
   exportCancel: () => call<{ cancelled: boolean }>('POST', '/api/creative/export/cancel', {}),
+  approvedReels: () => call<{ reels: ReelRow[] }>('GET', '/api/creative/approved/reels').then(r => r.reels),
+  approvedReel: (name: string) => call<ApprovedDoc>('GET', `/api/creative/approved/reels/${encodeURIComponent(name)}`),
+  insertApproved: (p: PosterProject, doc: ApprovedDoc, item: ApprovedItem) =>
+    call<{ project: PosterProject; link: ContentLink }>('POST', '/api/creative/approved/insert', { ...at(p), reel: doc.source.project, item_id: item.id, expected_fingerprint: doc.fingerprint }),
+  links: (p: PosterProject) => call<{ links: ContentLink[] }>('GET', `/api/creative/approved/links/${encodeURIComponent(p.project_id)}`).then(r => r.links),
 }

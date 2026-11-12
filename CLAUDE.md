@@ -40,6 +40,8 @@ For M6 work only, it replaces the M4 rule "work only in `Reel Studio_dev`".
   DRAFTS (`tools/m6_brands.py`, `app/brand_bridge.py`), each with its exact files and an engine profile. Their rights are
   "unknown" until the owner records them. Never grant rights or approve a brand for the owner. Export to the engine only
   from an approved brand, into a new folder, never into `brands/`.
+- Approved reel words on posters: `docs/APPROVED_CONTENT_CONTRACT.md`. Derived read-only from M4 approvals (same checks as the
+  render gate); never relax those checks, and never insert reel words into a poster any other way.
 - M5 AI integration is NO-GO (Codex Phase 2E). The Creative Director in M6 stays deterministic until the owner decides otherwise.
 
 ## Running side by side with production

@@ -25,6 +25,10 @@ from studio_manual_ui.service import RUNTIME, UIError, decode, exact, project_id
 
 SESSION = RUNTIME / os.environ.get("IDEAFRAME_M6_SESSION", "m6-studio")
 BRANDS = os.environ.get("IDEAFRAME_M6_BRANDS")          # None = M5's default Brand Library folder (brand-library)
+LINKS = RUNTIME / os.environ.get("IDEAFRAME_M6_LINKS", "m6-content-links")       # step 6: approved words placed on posters
+WORKSPACE = Path(__file__).resolve().parents[1]
+REELS = Path(os.environ.get("IDEAFRAME_M6_REELS") or WORKSPACE / "projects")      # M4 reel projects (tests point elsewhere)
+ENGINE = str(WORKSPACE / "engine")
 
 DEFAULT_LIMIT = 64 * 1024                                # studio_manual_ui/server.py MAX_REQUEST
 LIMITS = {"/api/creative/export/finish": 12 * 1024 * 1024, "/api/brands/asset": 12 * 1024 * 1024,
@@ -152,7 +156,12 @@ def _qa(s, v):
     doc = s.manual.document(identity)
     if type(v["expected_revision"]) is not int or v["expected_revision"] != doc["revision"]: raise UIError("conflict", "Stale QA revision.", 409)
     cover = {k: f["coverage"] for k, f in s.fonts.faces.items()} if s.fonts else None
-    return dict(poster_qa.check(doc, cover), revision=doc["revision"], fonts_checked=cover is not None)
+    result = poster_qa.check(doc, cover)
+    for row in _link_status(doc):                          # step 6: approved words must stay exactly as approved
+        result["checks"].append(dict(name="approved_text", level="error", passed=row["ok"], element_id=row["element_id"],
+                                     detail=f"{row['item_id']} from {row['reel']}: {row['detail']}"))
+        if not row["ok"]: result["errors"] += 1; result["passed"] = False
+    return dict(result, revision=doc["revision"], fonts_checked=cover is not None)
 @router.post("/api/creative/qa")
 async def qa(request: Request): return await _handle(request, _qa)
 
@@ -240,3 +249,90 @@ async def brands_restore_preview(request: Request): return await _handle(request
 
 @router.post("/api/brands/restore")
 async def brands_restore(request: Request): return await _handle(request, _portability("restore"))
+
+
+# ---------------------------------------------------------------- step 6: approved reel words on posters
+def _reel_dir(name):
+    if not isinstance(name, str) or not name or "/" in name or "\\" in name or name.startswith("."): raise UIError("reel", "Unknown reel project.", 404)
+    d = REELS / name
+    if not (d / "project.json").is_file(): raise UIError("reel", "Unknown reel project.", 404)
+    return d
+
+
+def _derive(name):
+    import approved_content as A
+    try: return A.derive(_reel_dir(name), ENGINE)
+    except A.ApprovalError as e: raise UIError(e.code.lower().replace("_", "-"), str(e), 409)
+
+
+def _link_status(doc):
+    """Every recorded link on this poster whose layer still exists, checked against a fresh derivation."""
+    import approved_content as A
+    from content_links import Links
+    text = {c["id"]: c["text"] for c in doc["content"]}; layers = {e["id"]: e for e in doc["elements"]}
+    out, cache = [], {}
+    for r in Links(LINKS).get(doc["id"]):
+        e = layers.get(r["element_id"])
+        if not e or e.get("content_id") != r["content_id"]: continue
+        if r["reel"] not in cache:
+            try: cache[r["reel"]] = A.derive(_reel_dir(r["reel"]), ENGINE)
+            except (A.ApprovalError, UIError) as exc: cache[r["reel"]] = exc
+        ok, detail = A.item_status(cache[r["reel"]], r["item_id"], r["item_sha256"], text.get(r["content_id"]))
+        out.append(dict(r, ok=ok, detail=detail))
+    return out
+
+
+def _reels(s):
+    import approved_content as A
+    rows = []
+    for d in sorted(p for p in REELS.iterdir() if (p / "project.json").is_file()):
+        try:
+            doc = A.derive(d, ENGINE)
+            rows.append(dict(project=d.name, ok=True, approvals=[a["type"] for a in doc["approvals"]], items=len(doc["items"]), fingerprint=doc["fingerprint"]))
+        except A.ApprovalError as e: rows.append(dict(project=d.name, ok=False, code=e.code, detail=str(e)))
+    return {"reels": rows}
+@router.get("/api/creative/approved/reels")
+async def approved_reels(request: Request): return await _handle(request, _reels, body=False)
+
+@router.get("/api/creative/approved/reels/{name}")
+async def approved_reel(name: str, request: Request): return await _handle(request, lambda s: _derive(name), body=False)
+
+def _links(identity):
+    def run(s):
+        identity_ = project_id(identity); s._ready(identity_)
+        return {"links": _link_status(s.manual.document(identity_))}
+    return run
+@router.get("/api/creative/approved/links/{identity}")
+async def approved_links(identity: str, request: Request): return await _handle(request, _links(identity), body=False)
+
+def _insert(s, v):
+    """Place one approved line on a poster as a new text layer, exactly as approved, and record the link."""
+    from content_links import Links
+    exact(v, {"project_id", "expected_revision", "reel", "item_id", "expected_fingerprint"})
+    doc = _derive(v["reel"])
+    if v["expected_fingerprint"] != doc["fingerprint"]: raise UIError("stale-approval", "The reel's approved content changed; reload it and choose again.", 409)
+    item = next((x for x in doc["items"] if x["id"] == v["item_id"]), None)
+    if item is None: raise UIError("item", "Unknown approved line.", 404)
+    with s.manual.lock:
+        before = s.view(project_id(v["project_id"]))
+        if before["revision"] != v["expected_revision"]: raise UIError("conflict", "Stale poster revision.", 409)
+        added = s.action({"project_id": before["project_id"], "expected_revision": before["revision"], "action": "add_text", "language": item["language"]})
+        new = [e for e in added["elements"] if e["id"] not in {x["id"] for x in before["elements"]}]
+        if len(new) != 1: raise UIError("insert", "Could not identify the new text layer.", 500)
+        try:
+            done = s.action({"project_id": added["project_id"], "expected_revision": added["revision"], "action": "edit_text", "element_id": new[0]["id"], "text": item["text"]})
+        except Exception:
+            s.action({"project_id": added["project_id"], "expected_revision": added["revision"], "action": "undo"}); raise
+        element = next(e for e in done["elements"] if e["id"] == new[0]["id"])
+        others = [e for e in done["elements"] if e["id"] != element["id"] and e["type"] == "text"]
+        below = max((e["y"] + e["height"] for e in others), default=None)        # place it under existing text, not on top of it
+        if below is not None and below + 24 + element["height"] <= done["view"]["height"] - 64:
+            done = s.action({"project_id": done["project_id"], "expected_revision": done["revision"], "action": "move", "element_id": element["id"], "x": element["x"], "y": below + 24})
+            element = next(e for e in done["elements"] if e["id"] == element["id"])
+        content = next(c for c in done["content"] if c["id"] == element["content_id"])
+        if content["text"] != item["text"]: raise UIError("insert", "The poster did not keep the approved text exactly.", 500)
+        link = Links(LINKS).add(done["project_id"], dict(element_id=element["id"], content_id=content["id"], reel=v["reel"], item_id=item["id"], kind=item["kind"],
+                                                          item_sha256=item["sha256"], source_fingerprint=doc["fingerprint"], approvals=[a["type"] for a in doc["approvals"]]))
+        return {"project": done, "link": link}
+@router.post("/api/creative/approved/insert")
+async def approved_insert(request: Request): return await _handle(request, _insert)

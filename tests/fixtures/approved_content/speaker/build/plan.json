@@ -1,0 +1,263 @@
+{
+  "meta": {
+    "project": "2026-11-11_speaker_said",
+    "provider": "local",
+    "model": "qwen3:14b",
+    "backup": false,
+    "auto_publish_allowed": null,
+    "creative_provider": null,
+    "creative_model": null,
+    "seconds": 77.9,
+    "tries": 2,
+    "transcript": "transcript.json",
+    "holdout": null
+  },
+  "facts": {
+    "beats": [
+      {
+        "from_word": 0,
+        "to_word": 32,
+        "graphic": {
+          "type": "number",
+          "number_word": 30,
+          "number": "40",
+          "label": "స్థానాలు",
+          "spoken": {
+            "words": [
+              30,
+              30
+            ],
+            "s": 28.6,
+            "e": 30.1,
+            "text": "నలభై స్థానాలకు కేవలం"
+          }
+        },
+        "claim": 1
+      },
+      {
+        "from_word": 33,
+        "to_word": 41,
+        "graphic": {
+          "type": "number",
+          "number_word": 33,
+          "number": "20",
+          "label": "స్థానాల్లోనే మనల్ని",
+          "spoken": {
+            "words": [
+              33,
+              33
+            ],
+            "s": 31.06,
+            "e": 31.38,
+            "text": "ఇరవై స్థానాల్లోనే మనల్ని"
+          }
+        },
+        "claim": 2
+      },
+      {
+        "from_word": 42,
+        "to_word": 48,
+        "graphic": {
+          "type": "number",
+          "number_word": 47,
+          "number": "20",
+          "label": "స్థానాలు",
+          "spoken": {
+            "words": [
+              47,
+              47
+            ],
+            "s": 39.6,
+            "e": 39.98,
+            "text": "ఇరవై స్థానాలు"
+          }
+        },
+        "claim": 3
+      },
+      {
+        "from_word": 49,
+        "to_word": 64,
+        "graphic": {
+          "type": "number",
+          "number_word": 49,
+          "number": "20",
+          "label": "స్థానాలు",
+          "spoken": {
+            "words": [
+              49,
+              49
+            ],
+            "s": 40.5,
+            "e": 40.94,
+            "text": "ఇరవై స్థానాలతో మున్సిపల్‌"
+          }
+        },
+        "claim": 4
+      },
+      {
+        "from_word": 65,
+        "to_word": 71,
+        "graphic": {
+          "type": "number",
+          "number_word": 67,
+          "number": "7",
+          "label": "వాళ్ళు పోటీకి",
+          "spoken": {
+            "words": [
+              67,
+              67
+            ],
+            "s": 51.25,
+            "e": 51.57,
+            "text": "ఏడు స్థానాల్లో వాళ్ళు"
+          }
+        },
+        "claim": 5
+      },
+      {
+        "from_word": 72,
+        "to_word": 89,
+        "graphic": {
+          "type": "none"
+        }
+      }
+    ],
+    "tag": {
+      "number_word": 30,
+      "label": "స్థానాలు",
+      "number": "40",
+      "text": "40 — స్థానాలు"
+    },
+    "post": {
+      "hashtags": [
+        "#అందర్నీకూడా",
+        "#తిరగబడండి",
+        "#పులివెందుల్లో",
+        "#కొడితేక్షంప",
+        "#గూగుల్అనిపిస్తే",
+        "#రాష్ట్రంలో",
+        "#స్మోగాలసౌండ్"
+      ],
+      "caption": "ఇలా పోటీ పెట్టినందుకు కారణం ఏంటి? చూడండి.\n• 40 — స్థానాలు\n• 20 — స్థానాల్లోనే మనల్ని\n• 20 — స్థానాలు\n• 20 — స్థానాలు\n• 7 — వాళ్ళు పోటీకి"
+    },
+    "feature": [
+      1,
+      2,
+      3,
+      4,
+      5
+    ],
+    "claims_by_code": true,
+    "adjusted": [
+      "hashtags left out (not from the speaker's words, filler, or over 8): #40స్థానాలు"
+    ],
+    "corrections": []
+  },
+  "creative": {
+    "openers": [
+      "అసలు ఎందుకు పోటీ పెట్టారు?",
+      "మనల్ని ఎందుకు పోటీ పెట్టారు?",
+      "ఎందుకు మనల్ని పోటీ పెట్టారు?",
+      "40 స్థానాలకు ఎందుకు?",
+      "మనల్ని ఎందుకు పోటీ పెట్టినట్టు?",
+      "పోటీ పెట్టినట్టు ఎందుకు?",
+      "ఇది ఎందుకు జరుగుతోంది?",
+      "ఎందుకు పోటీ పెట్టినట్టు?",
+      "పోటీ ఎందుకు జరుగుతోంది?",
+      "పోటీ పెట్టినట్టు ఎందుకు?"
+    ],
+    "payoffs": [
+      "ఇదీ అభివృద్ధి!",
+      "ఇదీ సత్యం!",
+      "ఇదీ స్పష్టత!",
+      "ఇదీ ఆధిక్యం!",
+      "ఇదీ మార్పు!",
+      "ఇదీ సాక్ష్యం!",
+      "ఇదీ సాధ్యం!",
+      "ఇదీ సంఖ్య!",
+      "ఇదీ స్థానం!",
+      "ఇదీ పోటీ!"
+    ],
+    "post_intro": "ఇలా పోటీ పెట్టినందుకు కారణం ఏంటి? చూడండి.",
+    "quotes": [
+      {
+        "from_word": 33,
+        "to_word": 34
+      },
+      {
+        "from_word": 54,
+        "to_word": 55
+      },
+      {
+        "from_word": 69,
+        "to_word": 70
+      }
+    ],
+    "headlines": [
+      {
+        "line1": "పోటీ పెట్టినందుకు కారణం ఏంటి?",
+        "line2": "ఇది సాక్ష్యం!"
+      },
+      {
+        "line1": "మనల్ని ఎందుకు పోటీ పెట్టారు?",
+        "line2": "ఇదీ అభివృద్ధి!"
+      },
+      {
+        "line1": "ఇలా పోటీ పెట్టినందుకు కారణం ఏంటి?",
+        "line2": "ఇదీ స్పష్టత!"
+      }
+    ],
+    "hooks": [
+      {
+        "line1": "అసలు ఎందుకు పోటీ పెట్టారు?",
+        "line2": "“ఇరవై స్థానాల్లోనే మనల్ని”",
+        "line3": "ఇదీ అభివృద్ధి!",
+        "headline": [
+          "పోటీ పెట్టినందుకు కారణం ఏంటి?",
+          "ఇది సాక్ష్యం!"
+        ]
+      },
+      {
+        "line1": "మనల్ని ఎందుకు పోటీ పెట్టారు?",
+        "line2": "“ఇరవై స్థానాల్లోనే మనల్ని”",
+        "line3": "ఇదీ సత్యం!",
+        "headline": [
+          "ఇలా పోటీ పెట్టినందుకు కారణం ఏంటి?",
+          "ఇదీ స్పష్టత!"
+        ]
+      },
+      {
+        "line1": "ఎందుకు మనల్ని పోటీ పెట్టారు?",
+        "line2": "“ఇరవై స్థానాల్లోనే మనల్ని”",
+        "line3": "ఇదీ స్పష్టత!",
+        "headline": [
+          "మనల్ని ఎందుకు పోటీ పెట్టారు?",
+          "ఇదీ అభివృద్ధి!"
+        ]
+      }
+    ],
+    "rejected": [
+      "quote 'ఇరవై స్థానాల్లోనే': ends on 'స్థానాల్లోనే' - the phrase is not finished",
+      "quote 'దిగేట్టుగా చేస్తున్నారో': is not a complete statement or a complete number claim",
+      "quote 'వాళ్ళు పోటీకి': ends on 'పోటీకి' - the phrase is not finished"
+    ]
+  },
+  "issues": [],
+  "flags": [
+    "hashtag #అందర్నీకూడా is not about any card, the tag or the brand - is it relevant?",
+    "hashtag #తిరగబడండి is not about any card, the tag or the brand - is it relevant?",
+    "hashtag #పులివెందుల్లో is not about any card, the tag or the brand - is it relevant?",
+    "hashtag #కొడితేక్షంప is not about any card, the tag or the brand - is it relevant?",
+    "hashtag #గూగుల్అనిపిస్తే is not about any card, the tag or the brand - is it relevant?",
+    "hashtag #రాష్ట్రంలో is not about any card, the tag or the brand - is it relevant?",
+    "hashtag #స్మోగాలసౌండ్ is not about any card, the tag or the brand - is it relevant?",
+    "option A: words not from the speech: ఎందుకు, ఏంటి?, కారణం - check they add no new claim",
+    "option B: words not from the speech: ఎందుకు, ఏంటి?, కారణం, సత్యం!, స్పష్టత! - check they add no new claim",
+    "option C: words not from the speech: ఎందుకు, స్పష్టత! - check they add no new claim",
+    "post intro: words not from the speech: ఏంటి?, కారణం - check they add no new claim"
+  ],
+  "approved": true,
+  "hook_choice": "A",
+  "approved_at": "2026-11-11 13:37",
+  "approved_hash": "ff5d2adf56ee01098b6dde35d3ba7e1b673db86781d52e88ac37284c3efba936"
+}

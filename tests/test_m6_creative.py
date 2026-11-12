@@ -3,7 +3,7 @@ Starts a real server (M4 Python, spare port) with its OWN throwaway session and 
 m5/.runtime/studio-ui/ (IDEAFRAME_M6_SESSION / IDEAFRAME_M6_BRANDS), and deletes them afterwards.
 No engine job, render or model runs. Run from the M6 folder:
     ~/.venvs/reelstudio/bin/python -B tests/test_m6_creative.py"""
-import json, os, shutil, socket, subprocess, sys, time, unittest, uuid
+import json, os, shutil, socket, subprocess, sys, tempfile, time, unittest, uuid
 import urllib.request, urllib.error
 from pathlib import Path
 
@@ -21,12 +21,15 @@ def free_port():
 class Server:
     def __init__(self):
         tag = uuid.uuid4().hex[:8]
-        self.session, self.brands = f"m6-test-{tag}", f"m6-test-brands-{tag}"
+        self.session, self.brands, self.links = f"m6-test-{tag}", f"m6-test-brands-{tag}", f"m6-test-links-{tag}"
+        self.reels = Path(tempfile.mkdtemp(prefix="m6-test-reels-"))      # copies of approved M4 fixtures (may be tampered)
+        shutil.copytree(ROOT / "tests" / "fixtures" / "approved_content", self.reels, dirs_exist_ok=True)
         self.port = free_port(); self.proc = None
 
     def start(self):
         env = dict(os.environ, RS_PORT=str(self.port), PYTHONDONTWRITEBYTECODE="1",
-                   IDEAFRAME_M6_SESSION=self.session, IDEAFRAME_M6_BRANDS=self.brands)
+                   IDEAFRAME_M6_SESSION=self.session, IDEAFRAME_M6_BRANDS=self.brands,
+                   IDEAFRAME_M6_LINKS=self.links, IDEAFRAME_M6_REELS=str(self.reels))
         self.proc = subprocess.Popen([sys.executable, "-B", str(ROOT / "app" / "server.py")], cwd=ROOT, env=env,
                                      stdout=subprocess.DEVNULL, stderr=subprocess.PIPE, text=True)
         for _ in range(100):
@@ -43,9 +46,10 @@ class Server:
         if self.proc and self.proc.stderr: self.stderr = self.proc.stderr.read(); self.proc.stderr.close()
 
     def clean(self):
-        for name in (self.session, self.brands):
+        for name in (self.session, self.brands, self.links):
             p = RUNTIME / name
             if p.exists() and p.resolve().is_relative_to(RUNTIME.resolve()): shutil.rmtree(p)
+        shutil.rmtree(self.reels, ignore_errors=True)
 
     def call(self, method, path, body=None, headers=None, raw=None):
         data = raw if raw is not None else (json.dumps(body, ensure_ascii=False).encode() if body is not None else None)
@@ -110,6 +114,33 @@ class CreativeRoutes(unittest.TestCase):
         q = self.ok(*self.S.call("POST", "/api/creative/qa", {"project_id": p["project_id"], "expected_revision": p["revision"]}))
         self.assertFalse(q["passed"], q)                                 # white text on a white background
         self.assertEqual(self.S.call("POST", "/api/creative/qa", {"project_id": p["project_id"], "expected_revision": 0})[0], 409)
+
+    # -- step 6: approved reel words placed on a poster, and kept honest by QA
+    def test_approved_content_insert_and_qa(self):
+        reels = {r["project"]: r for r in self.ok(*self.S.call("GET", "/api/creative/approved/reels"))["reels"]}
+        self.assertTrue(reels["speaker"]["ok"] and reels["narrated"]["ok"], reels)
+        doc = self.ok(*self.S.call("GET", "/api/creative/approved/reels/speaker"))
+        quote = next(i for i in doc["items"] if i["kind"] == "quote")
+        p = self.ok(*self.S.call("POST", "/api/creative/projects", {"name": "From reel", "text": "Title", "language": "te"}), 201)["project"]
+        stale = self.S.call("POST", "/api/creative/approved/insert", {"project_id": p["project_id"], "expected_revision": p["revision"], "reel": "speaker", "item_id": quote["id"], "expected_fingerprint": "0" * 64})
+        self.assertEqual(stale[0], 409, stale)
+        r = self.ok(*self.S.call("POST", "/api/creative/approved/insert", {"project_id": p["project_id"], "expected_revision": p["revision"], "reel": "speaker", "item_id": quote["id"], "expected_fingerprint": doc["fingerprint"]}))
+        p, link = r["project"], r["link"]
+        self.assertEqual(next(c["text"] for c in p["content"] if c["id"] == link["content_id"]), quote["text"])     # exact words
+        qa = lambda: self.ok(*self.S.call("POST", "/api/creative/qa", {"project_id": p["project_id"], "expected_revision": p["revision"]}))
+        check = lambda q: next(c for c in q["checks"] if c["name"] == "approved_text" and c["element_id"] == link["element_id"])
+        self.assertTrue(check(qa())["passed"])
+        links = self.ok(*self.S.call("GET", f"/api/creative/approved/links/{p['project_id']}"))["links"]
+        self.assertEqual([l["item_id"] for l in links], [quote["id"]])
+        p = self.ok(*self.S.call("POST", "/api/creative/action", {"project_id": p["project_id"], "expected_revision": p["revision"], "action": "edit_text", "element_id": link["element_id"], "text": quote["text"] + " (edited)"}))["project"]
+        q = qa(); self.assertFalse(check(q)["passed"]); self.assertFalse(q["passed"]); self.assertIn("edited", check(q)["detail"])
+        p = self.ok(*self.S.call("POST", "/api/creative/action", {"project_id": p["project_id"], "expected_revision": p["revision"], "action": "undo"}))["project"]
+        self.assertTrue(check(qa())["passed"])                                                    # back to the approved words
+        plan = self.S.reels / "speaker" / "build" / "plan.json"                                   # the reel's approval is withdrawn
+        P = json.loads(plan.read_text(encoding="utf-8")); P["approved"] = False; plan.write_text(json.dumps(P, ensure_ascii=False), encoding="utf-8")
+        q = qa(); self.assertFalse(check(q)["passed"]); self.assertIn("no longer valid", check(q)["detail"])
+        self.assertEqual(self.S.call("GET", "/api/creative/approved/reels/speaker")[0], 409)
+        self.assertEqual(self.S.call("GET", "/api/creative/approved/reels/..")[0], 404)
 
     # -- Brand Library, bound project and deterministic Director
     def test_brand_binding_and_director(self):

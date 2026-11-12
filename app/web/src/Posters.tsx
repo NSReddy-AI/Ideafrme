@@ -6,7 +6,7 @@ import { useCallback, useEffect, useRef, useState } from 'react'
 import { comparePng, inspectScene, loadFonts, qualifyEmbedded, raster } from '@m5/visual_poster_tests/browser_acceptance.js'
 import { alignPosition, clippedBox } from '@m5/visual_poster_studio/layout.mjs'
 import { resizeBox } from '@m5/visual_poster_studio/geometry.mjs'
-import { creative, CreativeError, type ExportReceipt, type Face, type Layer, type PosterProject, type PosterQA, type PosterRow, type Scene } from './creative'
+import { creative, CreativeError, type ApprovedDoc, type ContentLink, type ExportReceipt, type Face, type Layer, type PosterProject, type PosterQA, type PosterRow, type ReelRow, type Scene } from './creative'
 import { Btn, Card, Err, Field, MOTION, PageHead, Pill, Select, cx } from './ui'
 
 const SAFE_MARGIN = 64   // same proposed value as app/poster_qa.py
@@ -55,7 +55,7 @@ export function PosterEditor({ id }: { id: string }) {
   const [faces, setFaces] = useState<Record<string, Face> | null>(null); const [pngOk, setPngOk] = useState(false); const [fontNote, setFontNote] = useState('Loading pinned fonts…')
   const [scene, setScene] = useState<Scene | null>(null); const [preview, setPreview] = useState<string | null>(null)
   const [overflow, setOverflow] = useState<string[]>([]); const [previewErr, setPreviewErr] = useState<string | null>(null)
-  const [qa, setQa] = useState<PosterQA | null>(null)
+  const [qa, setQa] = useState<PosterQA | null>(null); const [links, setLinks] = useState<ContentLink[]>([])
   const [gesture, setGesture] = useState<Gesture | null>(null)
   const [exporting, setExporting] = useState(false); const [receipt, setReceipt] = useState<ExportReceipt | null>(null)
   const frame = useRef<HTMLDivElement>(null); const seq = useRef(0)
@@ -79,6 +79,7 @@ export function PosterEditor({ id }: { id: string }) {
       setPreview(old => { if (old) URL.revokeObjectURL(old); return URL.createObjectURL(new Blob([s.svg], { type: 'image/svg+xml' })) })
     }).catch(e => { if (n === seq.current) { setScene(null); setPreviewErr(msg(e)) } })
     creative.qa(p).then(q => { if (n === seq.current) setQa(q) }).catch(() => { if (n === seq.current) setQa(null) })
+    creative.links(p).then(l => { if (n === seq.current) setLinks(l) }).catch(() => {})
   }, [p, faces])
   useEffect(() => () => { if (preview) URL.revokeObjectURL(preview) }, [preview])
   useEffect(() => {   // do not lose unsaved work by closing the window
@@ -182,6 +183,7 @@ export function PosterEditor({ id }: { id: string }) {
           <ol className="space-y-1">
             {[...layers].reverse().map(l => <li key={l.id}><button onClick={() => setSel(l.id)} aria-pressed={sel === l.id} aria-label={l.type === 'text' ? `Text layer: ${textOf(l)?.text.split('\n')[0] || 'empty'}` : `${l.style.shape === 'ellipse' ? 'Ellipse' : 'Rectangle'} layer`}
               className={cx('w-full truncate rounded-field px-2 py-1.5 text-left text-sm', MOTION, sel === l.id ? 'bg-act-subtle text-link' : 'hover:bg-raised')}>
+              {links.some(k => k.element_id === l.id) && <span title="Approved words from a reel" className={cx('mr-1 text-xs font-semibold', links.find(k => k.element_id === l.id)?.ok ? 'text-ok' : 'text-bad')}>✓A</span>}
               {l.type === 'text' ? <span className={textOf(l)?.language === 'te' ? 'te' : undefined}>{textOf(l)?.text.split('\n')[0] || '(empty text)'}</span> : <span className="text-ink-2">{l.style.shape === 'ellipse' ? 'Ellipse' : 'Rectangle'}</span>}
             </button></li>)}
           </ol>
@@ -222,7 +224,7 @@ export function PosterEditor({ id }: { id: string }) {
           <div className="rounded-box bg-surface p-3">
             <h2 className="mb-2 text-xs font-semibold tracking-wide text-ink-3">INSPECTOR</h2>
             {!el ? <p className="text-sm text-ink-3">Select a layer on the poster or in the list.</p>
-              : <Inspector key={`${el.id}-${p.revision}`} p={p} el={el} text={textOf(el)} locked={locked} act={act} />}
+              : <Inspector key={`${el.id}-${p.revision}`} p={p} el={el} text={textOf(el)} link={links.find(k => k.element_id === el.id)} locked={locked} act={act} />}
           </div>
           <div className="rounded-box bg-surface p-3">
             <div className="mb-2 flex items-center gap-2"><h2 className="text-xs font-semibold tracking-wide text-ink-3">POSTER QA</h2>
@@ -233,6 +235,7 @@ export function PosterEditor({ id }: { id: string }) {
                 <span className={c.level === 'error' ? 'font-semibold text-bad' : 'font-semibold text-warn'}>{c.level === 'error' ? 'Error' : 'Warning'} · {c.name.replace('_', ' ')}</span>
                 <span className="block text-ink-2">{c.detail}</span></button></li>)}</ul>}
           </div>
+          <ApprovedPanel p={p} locked={locked} onInserted={(np, id) => { setP(np); setSel(id) }} />
         </aside>
       </div>
     </div>
@@ -240,7 +243,7 @@ export function PosterEditor({ id }: { id: string }) {
 }
 
 // ------------------------------------------------------------------ inspector for one layer
-function Inspector({ p, el, text, locked, act }: { p: PosterProject; el: Layer; text?: { text: string; language: string }; locked: boolean; act: (a: string, x?: Record<string, unknown>) => Promise<void> }) {
+function Inspector({ p, el, text, link, locked, act }: { p: PosterProject; el: Layer; text?: { text: string; language: string }; link?: ContentLink; locked: boolean; act: (a: string, x?: Record<string, unknown>) => Promise<void> }) {
   const [draft, setDraft] = useState(text?.text ?? ''); const [composing, setComposing] = useState(false)
   const [size, setSize] = useState(String(el.style.font_size ?? '')); const [fill, setFill] = useState(el.style.fill)
   const [box, setBox] = useState({ x: String(el.x), y: String(el.y), width: String(el.width), height: String(el.height) })
@@ -254,6 +257,8 @@ function Inspector({ p, el, text, locked, act }: { p: PosterProject; el: Layer; 
   const label = 'block text-xs text-ink-2'
   return (
     <div className="space-y-3 text-sm">
+      {link && <p className={cx('rounded-field px-2 py-1.5 text-xs', link.ok ? 'bg-ok-subtle text-ok' : 'bg-bad-subtle text-bad')}>
+        Approved words ({link.kind}) from reel {link.reel}: {link.detail}.{link.ok ? ' Do not change them.' : ' Undo the edit, or remove this layer and insert the line again.'}</p>}
       {el.type === 'text' && <>
         <label className={label}>Text
           <textarea value={draft} onChange={e => setDraft(e.target.value)} rows={4} onCompositionStart={() => setComposing(true)} onCompositionEnd={() => setComposing(false)}
@@ -286,6 +291,41 @@ function Inspector({ p, el, text, locked, act }: { p: PosterProject; el: Layer; 
       </div>
       <Err msg={err} />
       <Btn kind="danger" className="w-full" disabled={locked} onClick={() => { if (window.confirm('Remove this layer? You can undo it.')) act('remove', { element_id: el.id }) }}>Remove layer</Btn>
+    </div>
+  )
+}
+
+// ------------------------------------------------------------------ step 6: approved reel words
+const KIND_LABEL: Record<string, string> = { hook: 'Hook', quote: 'Quote (speaker\'s words)', headline: 'Headline', tag: 'Tag', number: 'Number card', post: 'Post intro', script: 'Script line' }
+
+function ApprovedPanel({ p, locked, onInserted }: { p: PosterProject; locked: boolean; onInserted: (p: PosterProject, elementId: string) => void }) {
+  const [reels, setReels] = useState<ReelRow[] | null>(null); const [reel, setReel] = useState('')
+  const [doc, setDoc] = useState<ApprovedDoc | null>(null); const [err, setErr] = useState<string | null>(null); const [busy, setBusy] = useState(false)
+  useEffect(() => { creative.approvedReels().then(r => setReels(r.filter(x => x.ok))).catch(e => setErr(msg(e))) }, [])
+  useEffect(() => { setDoc(null); setErr(null); if (reel) creative.approvedReel(reel).then(setDoc).catch(e => setErr(msg(e))) }, [reel])
+  const insert = async (i: ApprovedDoc['items'][number]) => {
+    if (!doc) return
+    setBusy(true); setErr(null)
+    try { const r = await creative.insertApproved(p, doc, i); onInserted(r.project, r.link.element_id) }
+    catch (e) { setErr(msg(e)); if (e instanceof CreativeError && e.code === 'stale-approval') creative.approvedReel(reel).then(setDoc).catch(() => {}) }
+    finally { setBusy(false) }
+  }
+  return (
+    <div className="rounded-box bg-surface p-3">
+      <h2 className="mb-2 text-xs font-semibold tracking-wide text-ink-3">APPROVED REEL WORDS</h2>
+      {!reels ? <p className="text-xs text-ink-3">{err ?? 'Loading…'}</p> : !reels.length ? <p className="text-xs text-ink-3">No reel has approved words yet. Approve a plan or script in Reels first.</p> : <>
+        <Select className="w-full" value={reel} onChange={e => setReel(e.target.value)} aria-label="Reel with approved words">
+          <option value="">Choose a reel…</option>{reels.map(r => <option key={r.project} value={r.project}>{r.project} ({r.items})</option>)}</Select>
+        {doc && <>
+          <p className="mt-2 text-xs text-ink-3">{doc.approvals.map(a => a.type === 'project' ? 'hand-approved project (no fingerprint)' : `${a.type} approval ${a.hash?.slice(0, 10)}`).join(' · ')}</p>
+          <ul className="mt-2 max-h-72 space-y-1 overflow-auto">{doc.items.map(i => <li key={i.id} className="rounded-field bg-raised p-2">
+            <div className="flex items-center gap-2"><span className="text-xs text-ink-3">{KIND_LABEL[i.kind] ?? i.kind}</span>
+              <Btn kind="quiet" className="ml-auto" disabled={locked || busy} onClick={() => insert(i)}>Insert</Btn></div>
+            <div className={cx('text-sm', i.language === 'te' && 'te')}>{i.text}</div></li>)}</ul>
+          <p className="mt-2 text-xs text-ink-3">Inserted exactly as approved. Poster QA flags any later edit.</p>
+        </>}
+      </>}
+      <Err msg={err} />
     </div>
   )
 }
