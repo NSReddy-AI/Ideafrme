@@ -386,6 +386,12 @@ def files(path: str):
     if not any(full.startswith(os.path.realpath(x) + os.sep) for x in (PROJECTS, EXPORTS)) or not os.path.isfile(full): raise HTTPException(404, "not found")
     return FileResponse(full)
 
+# M6 step 3: M5 poster editing, Brand Library and deterministic Creative Director (app/creative.py, code in ../m5).
+# Included before the page fallback below so its routes win.
+sys.path.insert(0, HERE)
+import creative
+app.include_router(creative.router)
+
 DIST = os.path.join(HERE, "web", "dist")
 if os.path.isdir(DIST):
     app.mount("/assets", StaticFiles(directory=os.path.join(DIST, "assets")), name="assets")
