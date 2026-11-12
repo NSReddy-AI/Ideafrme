@@ -1,0 +1,42 @@
+[
+ {
+  "img": null,
+  "text": "7 FREE Google AI tools",
+  "sub": "checked today",
+  "dur": 2.0
+ },
+ {
+  "img": "inputs/shot_21.png",
+  "badge": "1",
+  "text": "AI Studio + Veo",
+  "sub": "AI B-roll clips",
+  "dur": 3.0
+ },
+ {
+  "img": "inputs/shot_22.5.png",
+  "badge": "2",
+  "text": "Gemini Notebook",
+  "sub": "research your sources",
+  "dur": 3.0
+ },
+ {
+  "img": "inputs/shot_24.png",
+  "badge": "3",
+  "text": "Antigravity",
+  "sub": "free coding agent",
+  "dur": 3.0
+ },
+ {
+  "img": "inputs/shot_33.png",
+  "badge": "4",
+  "text": "Jules",
+  "sub": "15 tasks a day free",
+  "dur": 3.0
+ },
+ {
+  "img": null,
+  "text": "Save this & follow",
+  "sub": "more free tools daily",
+  "dur": 2.5
+ }
+]

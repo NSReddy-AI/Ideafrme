@@ -1,0 +1,13 @@
+{
+  "name": "reel_002 development, locked Milestone 2 baseline (Mac render, 2026-11-09)",
+  "project": "2026-11-03_reel_002_development",
+  "frames": 1849,
+  "duration_s": 61.667,
+  "size_bytes": 70398694,
+  "size_min": 63358825,
+  "size_max": 77438563,
+  "loudness_lufs": [-14.5, -13.5],
+  "true_peak_max_db": -1.0,
+  "black_frames": "none",
+  "render_time_s_mac": 29
+}

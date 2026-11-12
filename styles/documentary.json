@@ -1,0 +1,39 @@
+{
+  "name": "Documentary",
+  "inputs": [
+    "text",
+    "url",
+    "images",
+    "video"
+  ],
+  "pacing": {
+    "change_every_s": [
+      2.0,
+      4.0
+    ]
+  },
+  "structure": [
+    "question hook",
+    "context",
+    "evidence (photos, documents, numbers)",
+    "conclusion"
+  ],
+  "captions": {
+    "mode": "sentence",
+    "verbatim": true
+  },
+  "graphics": [
+    "lower thirds",
+    "document highlight",
+    "map"
+  ],
+  "music": {
+    "energy": "low",
+    "duck_db": 16
+  },
+  "transitions": [
+    "cross-dissolve (short)",
+    "hard cut"
+  ],
+  "voiceover": true
+}

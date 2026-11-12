@@ -1,0 +1,5 @@
+@import "tailwindcss";
+
+:root { font-family: ui-sans-serif, system-ui, -apple-system, "Kohinoor Telugu", "Telugu Sangam MN", sans-serif; }
+body { @apply bg-zinc-50 text-zinc-900; }
+.te { font-family: "Kohinoor Telugu", "Telugu Sangam MN", "Noto Sans Telugu", sans-serif; }

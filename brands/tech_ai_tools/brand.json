@@ -1,0 +1,52 @@
+{
+  "name": "Tech & AI Tools",
+  "handle": "@YOUR_TECH_HANDLE",
+  "language": "en",
+  "category": "tech / AI tools lists",
+  "assets": {
+    "bg": null,
+    "logo_left": null,
+    "logo_right": null,
+    "ribbon": null,
+    "end_card": null,
+    "icon_facebook": "assets/icon_facebook.png",
+    "icon_youtube": "assets/icon_youtube.png",
+    "icon_instagram": "assets/icon_instagram.png"
+  },
+  "title": {
+    "grad_top": "#0B1020",
+    "grad_bottom": "#000000",
+    "glow": "#3D7BFF",
+    "fade": "#05070F",
+    "band1": "#1F4BFF",
+    "band2": "#F5F7FF",
+    "band2_text": "#0B1020",
+    "accent": "#FFE14D",
+    "sign": "#1F4BFF"
+  },
+  "frame": {
+    "type": "fullscreen",
+    "social_y": 1790
+  },
+  "captions": {
+    "font": "ui",
+    "size": 96,
+    "color": "#FFFFFF",
+    "highlight": "#FFE14D",
+    "box_w": 900
+  },
+  "music": {
+    "bpm": 120,
+    "style": "upbeat electronic"
+  },
+  "rules": [
+    "Verify every tool/link/price on the day before rendering; mark anything unverifiable.",
+    "Say 'alternative to', not 'replaces', unless the vendor says so."
+  ],
+  "default_style": "listicle",
+  "default_platforms": [
+    "instagram",
+    "youtube",
+    "facebook"
+  ]
+}

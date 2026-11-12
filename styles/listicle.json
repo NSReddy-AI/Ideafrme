@@ -1,0 +1,39 @@
+{
+  "name": "Listicle",
+  "inputs": [
+    "url",
+    "images",
+    "text"
+  ],
+  "pacing": {
+    "beat_s": [
+      2,
+      4
+    ],
+    "change_every_s": [
+      0.8,
+      1.5
+    ]
+  },
+  "structure": [
+    "hook question/claim (≤1 s)",
+    "one item per beat: badge + name + one-line benefit",
+    "CTA: save / follow"
+  ],
+  "captions": {
+    "mode": "headline_per_beat",
+    "verbatim": false
+  },
+  "graphics": [
+    "number badge",
+    "screenshot card with push-in"
+  ],
+  "music": {
+    "energy": "medium-high",
+    "duck_db": 14
+  },
+  "transitions": [
+    "hard cut",
+    "whoosh"
+  ]
+}

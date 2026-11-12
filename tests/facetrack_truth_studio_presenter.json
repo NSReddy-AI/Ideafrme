@@ -1,0 +1,95 @@
+{
+  "source": "tests/clips/studio_presenter.mp4",
+  "clip": {
+    "ss": 0,
+    "t": 30,
+    "fps": 25
+  },
+  "kind": "studio presenter: mostly steady camera, one speaker who walks, photo of another face on the studio screen, people in background B-roll",
+  "labelled_by": "Claude, by eye from frames 60, 180, 300, 390, 445, 500, 555, 586, 620, 700 (2026-11-10); re-checked against a 10% grid at frames 175, 389, 446, 498, 555, 586, 623, 699",
+  "note": "Speaker = the presenter. cx = horizontal centre of his face, 0-1 of the 16:9 source; between labelled frames of one shot the position is interpolated.",
+  "shots": [
+    {
+      "frames": [
+        0,
+        351
+      ],
+      "points": {
+        "60": 0.3,
+        "180": 0.28,
+        "300": 0.35
+      },
+      "tolerance": 0.05
+    },
+    {
+      "frames": [
+        351,
+        427
+      ],
+      "points": {
+        "390": 0.39
+      },
+      "tolerance": 0.06
+    },
+    {
+      "frames": [
+        427,
+        466
+      ],
+      "points": {
+        "445": 0.445
+      },
+      "tolerance": 0.05
+    },
+    {
+      "frames": [
+        466,
+        530
+      ],
+      "points": {
+        "500": 0.53
+      },
+      "tolerance": 0.05
+    },
+    {
+      "frames": [
+        530,
+        581
+      ],
+      "points": {
+        "555": 0.545
+      },
+      "tolerance": 0.05
+    },
+    {
+      "frames": [
+        581,
+        592
+      ],
+      "points": {
+        "586": 0.55
+      },
+      "tolerance": 0.05
+    },
+    {
+      "frames": [
+        592,
+        654
+      ],
+      "points": {
+        "620": 0.535
+      },
+      "tolerance": 0.05
+    },
+    {
+      "frames": [
+        654,
+        745
+      ],
+      "points": {
+        "700": 0.545
+      },
+      "tolerance": 0.05
+    }
+  ]
+}

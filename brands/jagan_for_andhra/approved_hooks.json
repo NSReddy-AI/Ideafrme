@@ -1,0 +1,9 @@
+{
+ "note": "Title pages the user approved. The planner shows them to the model as style examples (the facts in them belong to their own reel only). 'source' = project the example came from; tests hold it out.",
+ "examples": [
+  {"source": "2026-11-03_reel_002_development",
+   "hook": {"line1": "అసలు జగన్ ఏం చేశాడు?", "line2": "“24 గంటలు సరిపోవు”", "line3": "ఇదీ అభివృద్ధి!"},
+   "tag": "31 లక్షలు — ఇళ్ల పట్టాలు",
+   "headline": ["జగన్ చేసింది చెప్పాలంటే..", "24 గంటలు సరిపోవు!"]}
+ ]
+}

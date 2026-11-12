@@ -1,0 +1,63 @@
+{
+  "name": "Jagan For Andhra",
+  "handle": "@JaganannaForAndhra",
+  "language": "te",
+  "category": "political news",
+  "assets": {
+    "bg": "assets/bg_crowd.png",
+    "logo_left": "assets/logo_topleft_round.png",
+    "logo_right": "assets/logo_topright_party.png",
+    "ribbon": "assets/ribbon_bottom.png",
+    "end_card": "assets/end_card.mp4",
+    "icon_facebook": "assets/icon_facebook.png",
+    "icon_youtube": "assets/icon_youtube.png",
+    "icon_instagram": "assets/icon_instagram.png"
+  },
+  "title": {
+    "grad_top": "#0459A8",
+    "grad_bottom": "#00502A",
+    "glow": "#E8F4FF",
+    "fade": "#003A1F",
+    "band1": "#8E0B12",
+    "band2": "#F6F4EE",
+    "band2_text": "#3A050A",
+    "accent": "#FFD400",
+    "sign": "#5A0E16"
+  },
+  "frame": {
+    "type": "framed",
+    "window": {
+      "x": 40,
+      "y": 568,
+      "size": 1000
+    },
+    "border_px": 8,
+    "border_color": "#368E8F",
+    "headline_top": 340,
+    "headline_max": 72,
+    "social_y": 1610
+  },
+  "captions": {
+    "font": "te",
+    "size": 104,
+    "color": "#F5F3EE",
+    "highlight": "#D6A45B",
+    "box_w": 900
+  },
+  "music": {
+    "bpm": 128,
+    "style": "cinematic trailer"
+  },
+  "rules": [
+    "Never put words in the speaker's mouth: captions are verbatim (spelling fixes only).",
+    "No broadcaster logos/watermarks in any shot.",
+    "Title page 2 s, end card unchanged.",
+    "Every Telugu line approved by the user before render."
+  ],
+  "default_style": "news_speech",
+  "default_platforms": [
+    "instagram",
+    "youtube",
+    "facebook"
+  ]
+}

@@ -1,0 +1,38 @@
+{
+  "name": "Showcase",
+  "inputs": [
+    "video",
+    "images",
+    "url",
+    "text"
+  ],
+  "pacing": {
+    "change_every_s": [
+      0.8,
+      1.5
+    ]
+  },
+  "structure": [
+    "bold text hook from frame 1",
+    "'hey I'm <name>' intro card",
+    "proof of work",
+    "resources/screens",
+    "comment-keyword CTA"
+  ],
+  "captions": {
+    "mode": "word_by_word",
+    "verbatim": true,
+    "max_words": 2
+  },
+  "graphics": [
+    "typewriter intro card",
+    "screen recording frames"
+  ],
+  "music": {
+    "energy": "chill",
+    "duck_db": 14
+  },
+  "transitions": [
+    "hard cut"
+  ]
+}

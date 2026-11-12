@@ -1,0 +1,11 @@
+{
+  "source": "tests/clips/Selfie.MOV",
+  "clip": {"ss": 0, "t": 30, "fps": 30},
+  "axis": "y",
+  "kind": "phone selfie: iPhone portrait (stored rotated), handheld, one person, small changes of distance and angle, no cuts, no one in the background",
+  "labelled_by": "Claude, by eye from frames 15, 189, 363, 537, 711, 885 against a 10% grid (2026-11-10)",
+  "note": "Tall source, so tracking moves up/down. cy = height of the nose tip (centre of the face), 0-1 of the upright 1080x1920 frame; interpolated between labelled frames.",
+  "shots": [
+    {"frames": [0, 900], "points": {"15": 0.47, "189": 0.51, "363": 0.49, "537": 0.49, "711": 0.53, "885": 0.52}, "tolerance": 0.04}
+  ]
+}

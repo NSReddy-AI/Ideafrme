@@ -1,0 +1,40 @@
+{
+  "name": "YouTube Shorts",
+  "width": 1080,
+  "height": 1920,
+  "fps": 30,
+  "video_kbps": 10000,
+  "audio_kbps": 192,
+  "loudness_lufs": -14,
+  "safe_area": {
+    "left": 90,
+    "right": 990,
+    "top": 250,
+    "bottom": 1600
+  },
+  "max_seconds": 180,
+  "post": {
+    "title_max_chars": 100,
+    "title_target_chars": 60,
+    "description_max_chars": 5000,
+    "hashtags": [
+      3,
+      5
+    ],
+    "fields": [
+      "title",
+      "description",
+      "hashtags"
+    ],
+    "note": "Title = hook; #shorts optional."
+  },
+  "limits_verified": false,
+  "limits_note": "Length/title limits change; confirm before relying on them.",
+  "safe_area_strict": {
+    "top": 120,
+    "bottom": 1620,
+    "left": 48,
+    "right": 984,
+    "source": "NOT official: commonly published estimate - top 120 px, bottom 300 px, right 96 px (adaptlypost.com 2026 guide, 'conservative calculations'); left 48 px. Advisory only. Read 11 Nov 2026."
+  }
+}

@@ -1,0 +1,36 @@
+{
+  "default": "local",
+  "providers": {
+    "local": {
+      "name": "Local model (Ollama + Qwen3, free, offline)",
+      "key_env": null,
+      "model": "qwen3:14b",
+      "fallback_model": "qwen3:8b",
+      "url": "http://localhost:11434",
+      "licence": "Ollama MIT, Qwen3 Apache-2.0"
+    },
+    "claude": {
+      "name": "Claude (Anthropic)",
+      "key_env": "ANTHROPIC_API_KEY",
+      "model": "claude-sonnet-4-5",
+      "enabled": false
+    },
+    "gemini": {
+      "name": "Gemini (Google)",
+      "key_env": "GEMINI_API_KEY",
+      "model": "gemini-3.8-flash",
+      "fallback_model": "gemini-3.6-flash",
+      "checked": "10 Nov 2026: free tier (no billing on the project, so it cannot be charged). Free-tier content may be used by Google to improve its products.",
+      "enabled": false
+    },
+    "openai": {
+      "name": "ChatGPT (OpenAI)",
+      "key_env": "OPENAI_API_KEY",
+      "model": "gpt-6.1-sol",
+      "fallback_model": "gpt-6.1-terra",
+      "checked": "10 Nov 2026: both listed for this key",
+      "enabled": false
+    }
+  },
+  "note": "Default = local (free). Claude / Gemini / OpenAI are switched OFF (enabled: false). User decision 10 Nov 2026: test paid models later. Keys are read from the shell environment only."
+}

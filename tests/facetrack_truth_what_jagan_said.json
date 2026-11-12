@@ -1,0 +1,51 @@
+{
+  "source": "../raw footage/What jagan said.mov",
+  "clip": {
+    "ss": 0,
+    "t": 30,
+    "fps": 25
+  },
+  "labelled_by": "Claude, by eye from frames 150, 330, 420, 490, 580, 630, 700, 740 (2026-11-10)",
+  "note": "Speaker = Jagan holding the microphone. cx = horizontal centre of his face, 0-1 of the 16:9 source. Crowd cutaways have no speaker.",
+  "shots": [
+    {
+      "frames": [
+        0,
+        294
+      ],
+      "speaker_cx": 0.5,
+      "tolerance": 0.06
+    },
+    {
+      "frames": [
+        294,
+        380
+      ],
+      "speaker_cx": null
+    },
+    {
+      "frames": [
+        380,
+        601
+      ],
+      "speaker_cx": 0.45,
+      "tolerance": 0.05
+    },
+    {
+      "frames": [
+        601,
+        662
+      ],
+      "speaker_cx": null
+    },
+    {
+      "frames": [
+        662,
+        750
+      ],
+      "speaker_cx": 0.45,
+      "tolerance": 0.05
+    }
+  ],
+  "kind": "news event: handheld broadcast camera, speaker holding a microphone, people standing beside him, crowd cutaways"
+}

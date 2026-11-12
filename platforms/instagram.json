@@ -1,0 +1,37 @@
+{
+  "name": "Instagram Reels",
+  "width": 1080,
+  "height": 1920,
+  "fps": 30,
+  "video_kbps": 10000,
+  "audio_kbps": 192,
+  "loudness_lufs": -14,
+  "safe_area": {
+    "left": 90,
+    "right": 990,
+    "top": 250,
+    "bottom": 1600
+  },
+  "max_seconds": 180,
+  "post": {
+    "caption_max_chars": 2200,
+    "hashtags": [
+      8,
+      15
+    ],
+    "fields": [
+      "caption",
+      "hashtags"
+    ],
+    "note": "First line = hook; CTA (save/share/comment keyword)."
+  },
+  "limits_verified": false,
+  "limits_note": "Length/caption limits change; confirm before relying on them.",
+  "safe_area_strict": {
+    "top": 269,
+    "bottom": 1248,
+    "left": 65,
+    "right": 1015,
+    "source": "Meta guidance published as percentages - top 14%, bottom 35%, sides 6% (reported by hopperhq.com, 18 Sep 2026; Meta page not linked). Advisory only, not enforced. Read 11 Nov 2026."
+  }
+}

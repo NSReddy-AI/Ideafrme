@@ -1,0 +1,1033 @@
+{
+ "python": "3.12.16 (main, Oct 25 2026, 18:24:37) [Clang 21.0.0 (clang-2100.3.34.2)]",
+ "executable": "/Users/Nadish/.venvs/reelstudio/bin/python",
+ "mac": "macOS-26.6.2-arm64-arm-64bit",
+ "machine": "arm64",
+ "packages": [
+  {
+   "name": "absl-py",
+   "version": "2.5.1",
+   "license": "",
+   "license_expression": "Apache-2.0",
+   "classifiers": [
+    "License :: OSI Approved :: Apache Software License"
+   ],
+   "home": null,
+   "urls": [
+    "Changelog, https://github.com/abseil/abseil-py/blob/main/CHANGELOG.md",
+    "Documentation, https://abseil.io/docs/python/",
+    "Issues, https://github.com/abseil/abseil-py/issues",
+    "Source, https://github.com/abseil/abseil-py"
+   ],
+   "requires": null
+  },
+  {
+   "name": "certifi",
+   "version": "2026.10.23",
+   "license": "MPL-2.0",
+   "license_expression": null,
+   "classifiers": [
+    "License :: OSI Approved :: Mozilla Public License 2.0 (MPL 2.0)"
+   ],
+   "home": "https://github.com/certifi/python-certifi",
+   "urls": [
+    "Source, https://github.com/certifi/python-certifi"
+   ],
+   "requires": null
+  },
+  {
+   "name": "cffi",
+   "version": "2.1.1",
+   "license": "",
+   "license_expression": "MIT-0",
+   "classifiers": [],
+   "home": null,
+   "urls": [
+    "Documentation, https://cffi.readthedocs.io/",
+    "Changelog, https://cffi.readthedocs.io/en/latest/whatsnew.html",
+    "Download, https://github.com/python-cffi/cffi/releases",
+    "Contact, https://groups.google.com/forum/#!forum/python-cffi",
+    "Source Code, https://github.com/python-cffi/cffi",
+    "Issue Tracker, https://github.com/python-cffi/cffi/issues"
+   ],
+   "requires": [
+    "pycparser; implementation_name != \"PyPy\""
+   ]
+  },
+  {
+   "name": "contourpy",
+   "version": "1.4.0",
+   "license": "",
+   "license_expression": "BSD-3-Clause",
+   "classifiers": [],
+   "home": null,
+   "urls": [
+    "Homepage, https://github.com/contourpy/contourpy",
+    "Changelog, https://contourpy.readthedocs.io/en/latest/changelog.html",
+    "Documentation, https://contourpy.readthedocs.io",
+    "Repository, https://github.com/contourpy/contourpy"
+   ],
+   "requires": [
+    "numpy>=2.0",
+    "myst-parser; extra == \"docs\"",
+    "sphinx; extra == \"docs\"",
+    "sphinx-book-theme; extra == \"docs\"",
+    "sphinx-copybutton; extra == \"docs\"",
+    "bokeh; extra == \"bokeh\"",
+    "selenium; extra == \"bokeh\"",
+    "contourpy[bokeh,docs]; extra == \"mypy\"",
+    "bokeh; extra == \"mypy\"",
+    "docutils-stubs; extra == \"mypy\"",
+    "mypy==2.1.0; extra == \"mypy\"",
+    "types-Pillow; extra == \"mypy\"",
+    "contourpy[test-no-images]; extra == \"test\"",
+    "matplotlib; extra == \"test\"",
+    "pre-commit; extra == \"test\"",
+    "Pillow; extra == \"test\"",
+    "pytest; extra == \"test-no-images\"",
+    "pytest-cov; extra == \"test-no-images\"",
+    "pytest-rerunfailures<16; extra == \"test-no-images\"",
+    "pytest-xdist; extra == \"test-no-images\"",
+    "wurlitzer; extra == \"test-no-images\""
+   ]
+  },
+  {
+   "name": "cycler",
+   "version": "0.12.1",
+   "license": "Copyright (c) 2015, matplotlib project\nAll rights reserved.\n\nRedistribution and use in source and binary forms, with or without\nmodification, are permitted provided that the following conditions are m",
+   "license_expression": null,
+   "classifiers": [
+    "License :: OSI Approved :: BSD License"
+   ],
+   "home": null,
+   "urls": [
+    "homepage, https://matplotlib.org/cycler/",
+    "repository, https://github.com/matplotlib/cycler"
+   ],
+   "requires": [
+    "ipython ; extra == 'docs'",
+    "matplotlib ; extra == 'docs'",
+    "numpydoc ; extra == 'docs'",
+    "sphinx ; extra == 'docs'",
+    "pytest ; extra == 'tests'",
+    "pytest-cov ; extra == 'tests'",
+    "pytest-xdist ; extra == 'tests'"
+   ]
+  },
+  {
+   "name": "flatbuffers",
+   "version": "25.12.19",
+   "license": "Apache 2.0",
+   "license_expression": null,
+   "classifiers": [
+    "License :: OSI Approved :: Apache Software License"
+   ],
+   "home": "https://google.github.io/flatbuffers/",
+   "urls": [
+    "Documentation, https://google.github.io/flatbuffers/",
+    "Source, https://github.com/google/flatbuffers"
+   ],
+   "requires": null
+  },
+  {
+   "name": "fonttools",
+   "version": "4.68.0",
+   "license": "MIT",
+   "license_expression": null,
+   "classifiers": [],
+   "home": "http://github.com/fonttools/fonttools",
+   "urls": null,
+   "requires": [
+    "lxml>=4.0; extra == \"lxml\"",
+    "brotli>=1.2.1; platform_python_implementation == \"CPython\" and extra == \"woff\"",
+    "brotlicffi>=1.2.1.0; platform_python_implementation != \"CPython\" and extra == \"woff\"",
+    "zopfli>=0.1.4; extra == \"woff\"",
+    "unicodedata2>=18.0.0; python_version <= \"3.15\" and extra == \"unicode\"",
+    "lz4>=1.7.4.2; extra == \"graphite\"",
+    "scipy; platform_python_implementation != \"PyPy\" and extra == \"interpolatable\"",
+    "munkres; platform_python_implementation == \"PyPy\" and extra == \"interpolatable\"",
+    "pycairo; extra == \"interpolatable\"",
+    "matplotlib; extra == \"plot\"",
+    "sympy; extra == \"symfont\"",
+    "xattr; sys_platform == \"darwin\" and extra == \"type1\"",
+    "skia-pathops>=0.5.0; extra == \"pathops\"",
+    "uharfbuzz>=0.45.0; extra == \"repacker\"",
+    "lxml>=4.0; extra == \"all\"",
+    "brotli>=1.2.1; platform_python_implementation == \"CPython\" and extra == \"all\"",
+    "brotlicffi>=1.2.1.0; platform_python_implementation != \"CPython\" and extra == \"all\"",
+    "zopfli>=0.1.4; extra == \"all\"",
+    "unicodedata2>=18.0.0; python_version <= \"3.15\" and extra == \"all\"",
+    "lz4>=1.7.4.2; extra == \"all\"",
+    "scipy; platform_python_implementation != \"PyPy\" and extra == \"all\"",
+    "munkres; platform_python_implementation == \"PyPy\" and extra == \"all\"",
+    "pycairo; extra == \"all\"",
+    "matplotlib; extra == \"all\"",
+    "sympy; extra == \"all\"",
+    "xattr; sys_platform == \"darwin\" and extra == \"all\"",
+    "skia-pathops>=0.5.0; extra == \"all\"",
+    "uharfbuzz>=0.45.0; extra == \"all\""
+   ]
+  },
+  {
+   "name": "kiwisolver",
+   "version": "1.5.1",
+   "license": "=========================\n The Kiwi licensing terms\n=========================\nKiwi is licensed under the terms of the Modified BSD License (also known as\nNew or Revised BSD), as follows:\n\nCopyright (c",
+   "license_expression": null,
+   "classifiers": [
+    "License :: OSI Approved :: BSD License"
+   ],
+   "home": null,
+   "urls": [
+    "homepage, https://github.com/nucleic/kiwi",
+    "documentation, https://kiwisolver.readthedocs.io/en/latest/",
+    "repository, https://github.com/nucleic/kiwi",
+    "changelog, https://github.com/nucleic/kiwi/blob/main/releasenotes.rst"
+   ],
+   "requires": null
+  },
+  {
+   "name": "matplotlib",
+   "version": "3.11.2",
+   "license": "License agreement for matplotlib versions 1.3.0 and later\n =========================================================\n\n 1. This LICENSE AGREEMENT is between the Matplotlib Development Team\n (\"MDT\"), an",
+   "license_expression": null,
+   "classifiers": [
+    "License :: OSI Approved :: Python Software Foundation License"
+   ],
+   "home": null,
+   "urls": [
+    "Homepage, https://matplotlib.org",
+    "Download, https://matplotlib.org/stable/install/index.html",
+    "Documentation, https://matplotlib.org",
+    "Source Code, https://github.com/matplotlib/matplotlib",
+    "Bug Tracker, https://github.com/matplotlib/matplotlib/issues",
+    "Forum, https://discourse.matplotlib.org/",
+    "Donate, https://numfocus.org/donate-to-matplotlib"
+   ],
+   "requires": [
+    "contourpy>=1.0.1",
+    "cycler>=0.10",
+    "fonttools>=4.28.2",
+    "kiwisolver>=1.3.1",
+    "numpy>=1.25",
+    "packaging>=20.0",
+    "pillow>=9",
+    "pyparsing>=3",
+    "python-dateutil>=2.7"
+   ]
+  },
+  {
+   "name": "mediapipe",
+   "version": "1.2.2",
+   "license": "Apache 2.0",
+   "license_expression": null,
+   "classifiers": [
+    "License :: OSI Approved :: Apache Software License"
+   ],
+   "home": "https://github.com/google/mediapipe",
+   "urls": null,
+   "requires": [
+    "absl-py~=2.3",
+    "certifi",
+    "numpy",
+    "sounddevice~=0.5",
+    "flatbuffers~=25.9",
+    "opencv-contrib-python",
+    "matplotlib"
+   ]
+  },
+  {
+   "name": "numpy",
+   "version": "2.5.4",
+   "license": "",
+   "license_expression": "BSD-3-Clause AND 0BSD AND MIT AND Zlib AND CC0-1.0",
+   "classifiers": [],
+   "home": null,
+   "urls": [
+    "homepage, https://numpy.org",
+    "documentation, https://numpy.org/doc/",
+    "source, https://github.com/numpy/numpy",
+    "download, https://pypi.org/project/numpy/#files",
+    "tracker, https://github.com/numpy/numpy/issues",
+    "release notes, https://numpy.org/doc/stable/release"
+   ],
+   "requires": null
+  },
+  {
+   "name": "onnxruntime",
+   "version": "1.31.1",
+   "license": "MIT License",
+   "license_expression": null,
+   "classifiers": [
+    "License :: OSI Approved :: MIT License"
+   ],
+   "home": "https://onnxruntime.ai",
+   "urls": null,
+   "requires": [
+    "flatbuffers",
+    "numpy>=1.21.6",
+    "packaging",
+    "protobuf>=4.25.8",
+    "sympy; extra == \"symbolic\"",
+    "ml_dtypes; extra == \"quantization\""
+   ]
+  },
+  {
+   "name": "opencv-contrib-python",
+   "version": "5.0.0.93",
+   "license": "Apache 2.0",
+   "license_expression": null,
+   "classifiers": [
+    "License :: OSI Approved :: Apache Software License"
+   ],
+   "home": "https://github.com/opencv/opencv-python",
+   "urls": null,
+   "requires": [
+    "numpy<2.0; python_version < \"3.9\"",
+    "numpy>=2; python_version >= \"3.9\""
+   ]
+  },
+  {
+   "name": "opencv-python",
+   "version": "5.0.0.93",
+   "license": "Apache 2.0",
+   "license_expression": null,
+   "classifiers": [
+    "License :: OSI Approved :: Apache Software License"
+   ],
+   "home": "https://github.com/opencv/opencv-python",
+   "urls": null,
+   "requires": [
+    "numpy<2.0; python_version < \"3.9\"",
+    "numpy>=2; python_version >= \"3.9\""
+   ]
+  },
+  {
+   "name": "packaging",
+   "version": "26.3",
+   "license": "",
+   "license_expression": "Apache-2.0 OR BSD-2-Clause",
+   "classifiers": [],
+   "home": null,
+   "urls": [
+    "Documentation, https://packaging.pypa.io/",
+    "Source, https://github.com/pypa/packaging"
+   ],
+   "requires": null
+  },
+  {
+   "name": "pillow",
+   "version": "13.0.0",
+   "license": "",
+   "license_expression": "MIT-CMU",
+   "classifiers": [],
+   "home": null,
+   "urls": [
+    "Release notes, https://pillow.readthedocs.io/en/stable/releasenotes/index.html",
+    "Changelog, https://github.com/python-pillow/Pillow/releases",
+    "Documentation, https://pillow.readthedocs.io",
+    "Funding, https://tidelift.com/lifter/search/pypi/pillow",
+    "Homepage, https://python-pillow.org",
+    "Mastodon, https://fosstodon.org/@pillow",
+    "Security, https://pillow.readthedocs.io/en/stable/handbook/security.html",
+    "Source, https://github.com/python-pillow/Pillow"
+   ],
+   "requires": [
+    "furo; extra == \"docs\"",
+    "olefile; extra == \"docs\"",
+    "sphinx>=8.2; extra == \"docs\"",
+    "sphinx-autobuild; extra == \"docs\"",
+    "sphinx-copybutton; extra == \"docs\"",
+    "sphinx-inline-tabs; extra == \"docs\"",
+    "sphinxext-opengraph; extra == \"docs\"",
+    "olefile; extra == \"fpx\"",
+    "olefile; extra == \"mic\"",
+    "arro3-compute; extra == \"test-arrow\"",
+    "arro3-core; extra == \"test-arrow\"",
+    "nanoarrow; extra == \"test-arrow\"",
+    "pyarrow; extra == \"test-arrow\"",
+    "coverage>=7.4.2; extra == \"tests\"",
+    "defusedxml; extra == \"tests\"",
+    "markdown2; extra == \"tests\"",
+    "olefile; extra == \"tests\"",
+    "packaging; extra == \"tests\"",
+    "psutil; (sys_platform == \"linux\" or sys_platform == \"darwin\") and extra == \"tests\"",
+    "pytest; extra == \"tests\"",
+    "pytest-cov; extra == \"tests\"",
+    "pytest-timeout; extra == \"tests\"",
+    "pytest-xdist; extra == \"tests\"",
+    "setuptools; extra == \"tests\"",
+    "trove-classifiers>=2024.10.12; extra == \"tests\"",
+    "defusedxml; extra == \"xmp\""
+   ]
+  },
+  {
+   "name": "pip",
+   "version": "26.3",
+   "license": "",
+   "license_expression": "MIT",
+   "classifiers": [],
+   "home": null,
+   "urls": [
+    "Changelog, https://pip.pypa.io/en/stable/news/",
+    "Documentation, https://pip.pypa.io",
+    "Homepage, https://pip.pypa.io/",
+    "Source, https://github.com/pypa/pip"
+   ],
+   "requires": null
+  },
+  {
+   "name": "protobuf",
+   "version": "7.36.2",
+   "license": "3-Clause BSD License",
+   "license_expression": null,
+   "classifiers": [],
+   "home": "https://developers.google.com/protocol-buffers/",
+   "urls": null,
+   "requires": null
+  },
+  {
+   "name": "pycparser",
+   "version": "3.12",
+   "license": "",
+   "license_expression": "BSD-3-Clause",
+   "classifiers": [],
+   "home": null,
+   "urls": [
+    "Homepage, https://github.com/eliben/pycparser"
+   ],
+   "requires": null
+  },
+  {
+   "name": "pyparsing",
+   "version": "3.3.3",
+   "license": "",
+   "license_expression": "MIT",
+   "classifiers": [],
+   "home": null,
+   "urls": [
+    "Documentation, https://pyparsing-docs.readthedocs.io/en/latest/",
+    "Homepage, https://github.com/pyparsing/pyparsing/",
+    "Source, https://github.com/pyparsing/pyparsing.git"
+   ],
+   "requires": [
+    "railroad-diagrams ; extra == \"diagrams\"",
+    "jinja2 ; extra == \"diagrams\""
+   ]
+  },
+  {
+   "name": "python-dateutil",
+   "version": "4.0.0",
+   "license": "",
+   "license_expression": "BSD-3-Clause",
+   "classifiers": [],
+   "home": null,
+   "urls": [
+    "Homepage, https://github.com/dateutil/dateutil",
+    "Documentation, https://dateutil.readthedocs.io/en/stable/",
+    "Source, https://github.com/dateutil/dateutil"
+   ],
+   "requires": [
+    "tzdata"
+   ]
+  },
+  {
+   "name": "scipy",
+   "version": "1.18.1",
+   "license": "Copyright (c) 2001-2002 Enthought, Inc. 2003, SciPy Developers.\n All rights reserved.\n\n Redistribution and use in source and binary forms, with or without\n modification, are permitted provided that th",
+   "license_expression": null,
+   "classifiers": [
+    "License :: OSI Approved :: BSD License"
+   ],
+   "home": null,
+   "urls": [
+    "homepage, https://scipy.org/",
+    "documentation, https://docs.scipy.org/doc/scipy/",
+    "source, https://github.com/scipy/scipy",
+    "download, https://github.com/scipy/scipy/releases",
+    "tracker, https://github.com/scipy/scipy/issues"
+   ],
+   "requires": [
+    "numpy<2.8,>=2.0.0",
+    "pytest>=8.0.0; extra == \"test\"",
+    "pytest-cov; extra == \"test\"",
+    "pytest-timeout; extra == \"test\"",
+    "pytest-xdist; extra == \"test\"",
+    "asv; extra == \"test\"",
+    "mpmath; extra == \"test\"",
+    "gmpy2; extra == \"test\"",
+    "threadpoolctl; extra == \"test\"",
+    "scikit-umfpack; extra == \"test\"",
+    "pooch; extra == \"test\"",
+    "hypothesis>=6.30; extra == \"test\"",
+    "array-api-strict>=2.3.1; extra == \"test\"",
+    "Cython; extra == \"test\"",
+    "meson; extra == \"test\"",
+    "ninja; sys_platform != \"emscripten\" and extra == \"test\"",
+    "scipy-doctest>=2.0.0; extra == \"test\"",
+    "sphinx<8.2.0,>=5.0.0; extra == \"doc\"",
+    "intersphinx_registry; extra == \"doc\"",
+    "pydata-sphinx-theme>=0.15.2; extra == \"doc\"",
+    "sphinx-copybutton; extra == \"doc\"",
+    "sphinx-design>=0.4.0; extra == \"doc\"",
+    "matplotlib>=3.5; extra == \"doc\"",
+    "numpydoc; extra == \"doc\"",
+    "jupytext; extra == \"doc\"",
+    "myst-nb>=1.2.0; extra == \"doc\"",
+    "pooch; extra == \"doc\"",
+    "jupyterlite-sphinx>=0.19.1; extra == \"doc\"",
+    "jupyterlite-pyodide-kernel; extra == \"doc\"",
+    "linkify-it-py; extra == \"doc\"",
+    "tabulate; extra == \"doc\"",
+    "click<8.3.0; extra == \"dev\"",
+    "spin; extra == \"dev\"",
+    "mypy==1.19.1; extra == \"dev\"",
+    "pyrefly==0.63.0; extra == \"dev\"",
+    "typing_extensions; extra == \"dev\"",
+    "types-psutil; extra == \"dev\"",
+    "pycodestyle; extra == \"dev\"",
+    "ruff>=0.12.0; extra == \"dev\"",
+    "cython-lint>=0.12.2; extra == \"dev\""
+   ]
+  },
+  {
+   "name": "sounddevice",
+   "version": "0.5.6",
+   "license": "",
+   "license_expression": "MIT",
+   "classifiers": [],
+   "home": null,
+   "urls": [
+    "Documentation, https://python-sounddevice.readthedocs.io/",
+    "Repository, https://github.com/spatialaudio/python-sounddevice/",
+    "Issues, https://github.com/spatialaudio/python-sounddevice/issues"
+   ],
+   "requires": [
+    "cffi",
+    "numpy; extra == \"numpy\""
+   ]
+  },
+  {
+   "name": "tzdata",
+   "version": "2026.6",
+   "license": "Apache-2.0",
+   "license_expression": null,
+   "classifiers": [],
+   "home": "https://github.com/python/tzdata",
+   "urls": [
+    "Bug Reports, https://github.com/python/tzdata/issues",
+    "Source, https://github.com/python/tzdata",
+    "Documentation, https://tzdata.python.org"
+   ],
+   "requires": null
+  }
+ ],
+ "tools": {
+  "ffmpeg": {
+   "path": "/opt/homebrew/bin/ffmpeg",
+   "version": [
+    "ffmpeg version 9.0.2 Copyright (c) 2000-2026 the FFmpeg developers",
+    "built with Apple clang version 21.0.0 (clang-2100.3.34.2)",
+    "configuration: --prefix=/opt/homebrew/Cellar/ffmpeg/9.0.2_1 --enable-shared --enable-pthreads --enable-version3 --cc=clang --host-cflags= --host-ldflags= --enable-ffplay --enable-gpl --enable-libsvtav1 --enable-libopus --enable-libx264 --enable-libmp3lame --enable-libdav1d --enable-libvmaf --enable-libvpx --enable-libx265 --enable-openssl --enable-videotoolbox --enable-audiotoolbox --enable-neon"
+   ]
+  },
+  "ffprobe": {
+   "path": "/opt/homebrew/bin/ffprobe"
+  },
+  "node": {
+   "path": "/opt/homebrew/bin/node",
+   "version": "v26.13.0"
+  },
+  "npx": {
+   "path": "/opt/homebrew/bin/npx"
+  },
+  "whisper": {
+   "path": "/Users/Nadish/.local/bin/whisper",
+   "python": "#!/bin/sh",
+   "packages": ""
+  },
+  "brew": {
+   "path": "/opt/homebrew/bin/brew"
+  },
+  "hyperframes": {
+   "version": "0.9.9"
+  },
+  "whisper-cli": {
+   "path": "/opt/homebrew/bin/whisper-cli",
+   "brew": "whisper.cpp 1.9.5"
+  },
+  "deep-filter": {
+   "path": "/Users/Nadish/.cache/rs_tools/deep-filter",
+   "version": "deep_filter 0.5.6"
+  }
+ },
+ "brew": {
+  "ffmpeg": "ffmpeg 9.0.2_1",
+  "node": "node 26.13.0_2",
+  "libraqm": "libraqm 0.11.0",
+  "python@3.12": "python@3.12 3.12.16",
+  "harfbuzz": "harfbuzz 15.1.0",
+  "fribidi": "fribidi 1.0.18",
+  "freetype": "freetype 2.13.3 2.15.0"
+ },
+ "models_fonts": [
+  {
+   "path": "engine/models/RealESRGAN_x4plus.pth",
+   "bytes": 67040989,
+   "sha256": "4fa0d38905f75ac06eb49a7951b426670021be3018265fd191d2125df9d682f1"
+  },
+  {
+   "path": "engine/models/blaze_face_short_range.tflite",
+   "bytes": 229746,
+   "sha256": "b4578f35940bf5a1a655214a1cce5cab13eba73c1297cd78e1a04c2380b0152f"
+  },
+  {
+   "path": "engine/models/face_landmarker.task",
+   "bytes": 3758596,
+   "sha256": "64184e229b263107bc2b804c6625db1341ff2bb731874b0bcc2fe6544e0bc9ff"
+  },
+  {
+   "path": "engine/models/pose_landmarker_lite.task",
+   "bytes": 5777746,
+   "sha256": "59929e1d1ee95287735ddd833b19cf4ac46d29bc7afddbbf6753c459690d574a"
+  },
+  {
+   "path": "engine/models/rvm.onnx",
+   "bytes": 14975696,
+   "sha256": "88d4531297118f595bf2fd60f6f566aec2e559393802d1f436c380f0cbbd2828"
+  },
+  {
+   "path": "engine/fonts/Anton-Regular.ttf",
+   "bytes": 170812,
+   "sha256": "a4ba3a92350ebb031da0cb47630ac49eb265082ca1bc0450442f4a83ab947cab"
+  },
+  {
+   "path": "engine/fonts/DejaVuSans-Bold.ttf",
+   "bytes": 708920,
+   "sha256": "5c1247acef7f2b8522a31742c76d6adcb5569bacc0be7ceaa4dc39dd252ce895"
+  },
+  {
+   "path": "engine/fonts/Inter-Bold.otf",
+   "bytes": 626056,
+   "sha256": "00fd6f4691ee8884a33b46bf45851b341927c37c30064f558e1befb242971c49"
+  },
+  {
+   "path": "engine/fonts/NotoSansTelugu-Black.ttf",
+   "bytes": 247048,
+   "sha256": "42a3167fc2d8ca089b03dcbfcdfe673ecaa176545944ea9c50377144947ae383"
+  },
+  {
+   "path": "engine/fonts/SixCaps.ttf",
+   "bytes": 46388,
+   "sha256": "7b54a46671722fb670647c9c3951e6e618b6a9d876fc5d9ae34dfd311628ae5a"
+  }
+ ],
+ "npm_global": "{\n  \"name\": \"lib\",\n  \"dependencies\": {\n    \"hyperframes\": {\n      \"version\": \"0.9.9\",\n      \"overridden\": false\n    },\n    \"npm\": {\n      \"version\": \"11.20.0\",\n      \"overridden\": false\n    }\n  }\n}",
+ "asr_packages": [
+  {
+   "name": "annotated-doc",
+   "version": "0.0.5",
+   "license": "",
+   "license_expression": "MIT",
+   "classifiers": []
+  },
+  {
+   "name": "annotated-types",
+   "version": "0.8.0",
+   "license": "",
+   "license_expression": "MIT",
+   "classifiers": [
+    "License :: OSI Approved :: MIT License"
+   ]
+  },
+  {
+   "name": "anyio",
+   "version": "4.16.0",
+   "license": "",
+   "license_expression": "MIT",
+   "classifiers": []
+  },
+  {
+   "name": "av",
+   "version": "19.0.2",
+   "license": "",
+   "license_expression": "BSD-3-Clause",
+   "classifiers": []
+  },
+  {
+   "name": "click",
+   "version": "8.5.1",
+   "license": "",
+   "license_expression": "BSD-3-Clause",
+   "classifiers": []
+  },
+  {
+   "name": "ctranslate2",
+   "version": "4.8.5",
+   "license": "MIT",
+   "license_expression": null,
+   "classifiers": []
+  },
+  {
+   "name": "faster-whisper",
+   "version": "1.2.1",
+   "license": "MIT",
+   "license_expression": null,
+   "classifiers": [
+    "License :: OSI Approved :: MIT License"
+   ]
+  },
+  {
+   "name": "filelock",
+   "version": "4.2.10",
+   "license": "",
+   "license_expression": "MIT",
+   "classifiers": []
+  },
+  {
+   "name": "flatbuffers",
+   "version": "25.12.19",
+   "license": "Apache 2.0",
+   "license_expression": null,
+   "classifiers": [
+    "License :: OSI Approved :: Apache Software License"
+   ]
+  },
+  {
+   "name": "fsspec",
+   "version": "2026.9.0",
+   "license": "",
+   "license_expression": "BSD-3-Clause",
+   "classifiers": []
+  },
+  {
+   "name": "h11",
+   "version": "0.16.0",
+   "license": "MIT",
+   "license_expression": null,
+   "classifiers": [
+    "License :: OSI Approved :: MIT License"
+   ]
+  },
+  {
+   "name": "hf-xet",
+   "version": "1.8.0",
+   "license": "",
+   "license_expression": "Apache-2.0",
+   "classifiers": [
+    "License :: OSI Approved :: Apache Software License"
+   ]
+  },
+  {
+   "name": "httpcore2",
+   "version": "2.16.0",
+   "license": "",
+   "license_expression": "BSD-3-Clause",
+   "classifiers": [
+    "License :: OSI Approved :: BSD License"
+   ]
+  },
+  {
+   "name": "httpx2",
+   "version": "2.16.0",
+   "license": "",
+   "license_expression": "BSD-3-Clause",
+   "classifiers": [
+    "License :: OSI Approved :: BSD License"
+   ]
+  },
+  {
+   "name": "huggingface_hub",
+   "version": "2.4.0",
+   "license": "Apache-2.0",
+   "license_expression": null,
+   "classifiers": [
+    "License :: OSI Approved :: Apache Software License"
+   ]
+  },
+  {
+   "name": "idna",
+   "version": "3.20",
+   "license": "",
+   "license_expression": "BSD-3-Clause",
+   "classifiers": []
+  },
+  {
+   "name": "Jinja2",
+   "version": "3.1.6",
+   "license": "",
+   "license_expression": null,
+   "classifiers": [
+    "License :: OSI Approved :: BSD License"
+   ]
+  },
+  {
+   "name": "markdown-it-py",
+   "version": "4.2.0",
+   "license": "",
+   "license_expression": null,
+   "classifiers": [
+    "License :: OSI Approved :: MIT License"
+   ]
+  },
+  {
+   "name": "MarkupSafe",
+   "version": "3.0.4",
+   "license": "",
+   "license_expression": "BSD-3-Clause",
+   "classifiers": []
+  },
+  {
+   "name": "mdurl",
+   "version": "0.1.2",
+   "license": "",
+   "license_expression": null,
+   "classifiers": [
+    "License :: OSI Approved :: MIT License"
+   ]
+  },
+  {
+   "name": "mpmath",
+   "version": "1.3.0",
+   "license": "BSD",
+   "license_expression": null,
+   "classifiers": [
+    "License :: OSI Approved :: BSD License"
+   ]
+  },
+  {
+   "name": "networkx",
+   "version": "3.7",
+   "license": "",
+   "license_expression": "BSD-3-Clause",
+   "classifiers": []
+  },
+  {
+   "name": "numpy",
+   "version": "2.5.4",
+   "license": "",
+   "license_expression": "BSD-3-Clause AND 0BSD AND MIT AND Zlib AND CC0-1.0",
+   "classifiers": []
+  },
+  {
+   "name": "onnxruntime",
+   "version": "1.31.1",
+   "license": "MIT License",
+   "license_expression": null,
+   "classifiers": [
+    "License :: OSI Approved :: MIT License"
+   ]
+  },
+  {
+   "name": "opencv-python",
+   "version": "5.0.0.93",
+   "license": "Apache 2.0",
+   "license_expression": null,
+   "classifiers": [
+    "License :: OSI Approved :: Apache Software License"
+   ]
+  },
+  {
+   "name": "packaging",
+   "version": "26.3",
+   "license": "",
+   "license_expression": "Apache-2.0 OR BSD-2-Clause",
+   "classifiers": []
+  },
+  {
+   "name": "pip",
+   "version": "26.2.2",
+   "license": "",
+   "license_expression": "MIT",
+   "classifiers": []
+  },
+  {
+   "name": "platformdirs",
+   "version": "4.14.5",
+   "license": "",
+   "license_expression": "MIT",
+   "classifiers": []
+  },
+  {
+   "name": "protobuf",
+   "version": "7.36.2",
+   "license": "3-Clause BSD License",
+   "license_expression": null,
+   "classifiers": []
+  },
+  {
+   "name": "pydantic",
+   "version": "2.14.3",
+   "license": "",
+   "license_expression": "MIT",
+   "classifiers": []
+  },
+  {
+   "name": "pydantic_core",
+   "version": "2.50.4",
+   "license": "",
+   "license_expression": "MIT",
+   "classifiers": []
+  },
+  {
+   "name": "Pygments",
+   "version": "2.21.0",
+   "license": "",
+   "license_expression": "BSD-2-Clause",
+   "classifiers": []
+  },
+  {
+   "name": "PyYAML",
+   "version": "6.0.3",
+   "license": "MIT",
+   "license_expression": null,
+   "classifiers": [
+    "License :: OSI Approved :: MIT License"
+   ]
+  },
+  {
+   "name": "regex",
+   "version": "2026.11.9",
+   "license": "",
+   "license_expression": "Apache-2.0 AND CNRI-Python",
+   "classifiers": []
+  },
+  {
+   "name": "rich",
+   "version": "15.0.0",
+   "license": "MIT",
+   "license_expression": null,
+   "classifiers": [
+    "License :: OSI Approved :: MIT License"
+   ]
+  },
+  {
+   "name": "safetensors",
+   "version": "0.8.0",
+   "license": "",
+   "license_expression": null,
+   "classifiers": [
+    "License :: OSI Approved :: Apache Software License"
+   ]
+  },
+  {
+   "name": "scenedetect",
+   "version": "0.7.3",
+   "license": "",
+   "license_expression": "BSD-3-Clause",
+   "classifiers": []
+  },
+  {
+   "name": "setuptools",
+   "version": "84.2.1",
+   "license": "",
+   "license_expression": "MIT",
+   "classifiers": []
+  },
+  {
+   "name": "shellingham",
+   "version": "1.5.4",
+   "license": "ISC License",
+   "license_expression": null,
+   "classifiers": [
+    "License :: OSI Approved :: ISC License (ISCL)"
+   ]
+  },
+  {
+   "name": "sympy",
+   "version": "1.14.0",
+   "license": "BSD",
+   "license_expression": null,
+   "classifiers": [
+    "License :: OSI Approved :: BSD License"
+   ]
+  },
+  {
+   "name": "tokenizers",
+   "version": "0.23.3",
+   "license": "",
+   "license_expression": null,
+   "classifiers": [
+    "License :: OSI Approved :: Apache Software License"
+   ]
+  },
+  {
+   "name": "torch",
+   "version": "2.15.0",
+   "license": "",
+   "license_expression": "Apache-2.0 AND Apache-2.0 WITH LLVM-exception AND BSD-2-Clause AND BSD-3-Clause AND BSL-1.0 AND ISC AND MIT AND Zlib",
+   "classifiers": []
+  },
+  {
+   "name": "tqdm",
+   "version": "4.70.1",
+   "license": "MPL-2.0 AND MIT",
+   "license_expression": null,
+   "classifiers": []
+  },
+  {
+   "name": "transformers",
+   "version": "5.22.2",
+   "license": "Apache 2.0 License",
+   "license_expression": null,
+   "classifiers": []
+  },
+  {
+   "name": "truststore",
+   "version": "0.10.5",
+   "license": "",
+   "license_expression": "MIT",
+   "classifiers": []
+  },
+  {
+   "name": "typer",
+   "version": "0.29.0",
+   "license": "",
+   "license_expression": "MIT",
+   "classifiers": []
+  },
+  {
+   "name": "typing-inspection",
+   "version": "0.4.5",
+   "license": "",
+   "license_expression": "MIT",
+   "classifiers": []
+  },
+  {
+   "name": "typing_extensions",
+   "version": "4.16.0",
+   "license": "",
+   "license_expression": "PSF-2.0",
+   "classifiers": []
+  }
+ ],
+ "external_models": [
+  {
+   "path": "~/.cache/rs_asr/ggml-large-v3-turbo.bin",
+   "bytes": 1624555275
+  },
+  {
+   "path": "~/.cache/rs_asr/ggml-large-v3.bin",
+   "bytes": 3095033483
+  },
+  {
+   "path": "~/.cache/rs_asr/ggml-te-small.bin",
+   "bytes": 190085487
+  },
+  {
+   "path": "~/.cache/huggingface/hub/models--Systran--faster-whisper-large-v3",
+   "bytes": 6181672394
+  },
+  {
+   "path": "~/.cache/huggingface/hub/models--mobiuslabsgmbh--faster-whisper-large-v3-turbo",
+   "bytes": 3243332956
+  },
+  {
+   "path": "~/.cache/huggingface/hub/models--openai--whisper-large-v2",
+   "bytes": 8628
+  },
+  {
+   "path": "~/.cache/huggingface/hub/models--vasista22--whisper-telugu-large-v2",
+   "bytes": 24697584796
+  }
+ ]
+}

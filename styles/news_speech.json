@@ -1,0 +1,44 @@
+{
+  "name": "News speech",
+  "inputs": [
+    "video"
+  ],
+  "pacing": {
+    "cut_silence_over_s": 0.25,
+    "keep_air_s": 0.08,
+    "change_every_s": [
+      0.6,
+      1.0
+    ],
+    "avg_shot_s": [
+      1.5,
+      2.5
+    ]
+  },
+  "structure": [
+    "hook: strongest line first",
+    "statements with number cards",
+    "crowd/B-roll cutaways",
+    "closing line + brand ending"
+  ],
+  "captions": {
+    "mode": "word_by_word",
+    "verbatim": true,
+    "max_words": 2
+  },
+  "graphics": [
+    "number counter cards",
+    "text-mask numbers",
+    "stacked panels",
+    "map pin"
+  ],
+  "music": {
+    "energy": "high",
+    "duck_db": 14
+  },
+  "transitions": [
+    "hard cut",
+    "white flash",
+    "whip"
+  ]
+}

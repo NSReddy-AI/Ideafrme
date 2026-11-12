@@ -1,0 +1,14 @@
+Shared-environment compatibility check for the M3 production release - 2026-11-11 15:15:20 (read-only)
+reelstudio: production M3 inventory lists 24 packages; same version installed now: 23; different/missing: [('pip', '26.3', None)]
+   installed now that M3 does not list (added later): ['annotated-doc', 'annotated-types', 'anyio', 'click', 'fastapi', 'h11', 'idna', 'opentelemetry-api', 'pydantic', 'pydantic-core', 'starlette', 'typing-extensions', 'typing-inspection', 'uvicorn']
+rs_asr: production M3 inventory lists 48 packages; same version installed now: 47; different/missing: [('pip', '26.2.2', None)]
+   installed now that M3 does not list (added later): []
+production engine/adapter.py check (read-only, no bytecode):
+   ok: True | telugu layout: True | python packages: {'PIL': True, 'numpy': True, 'scipy': True, 'cv2': True, 'onnxruntime': True}
+   rs_asr imports for M3 speech-to-text: transformers 5.22.2 torch 2.15.0
+   pip check reelstudio: No broken requirements found.
+   pip check rs_asr: No broken requirements found.
+   pip check rs_tts: No broken requirements found.
+production files written today: 0
+new __pycache__ dirs: 0
+production unchanged after the check: 127/127 identical

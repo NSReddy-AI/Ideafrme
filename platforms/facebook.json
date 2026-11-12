@@ -1,0 +1,37 @@
+{
+  "name": "Facebook Reels",
+  "width": 1080,
+  "height": 1920,
+  "fps": 30,
+  "video_kbps": 10000,
+  "audio_kbps": 192,
+  "loudness_lufs": -14,
+  "safe_area": {
+    "left": 90,
+    "right": 990,
+    "top": 250,
+    "bottom": 1600
+  },
+  "max_seconds": 90,
+  "post": {
+    "caption_max_chars": 2200,
+    "hashtags": [
+      3,
+      8
+    ],
+    "fields": [
+      "caption",
+      "hashtags"
+    ],
+    "note": "Readable captions; assume sound-off viewing."
+  },
+  "limits_verified": false,
+  "limits_note": "Length limit is a conservative placeholder; confirm.",
+  "safe_area_strict": {
+    "top": 269,
+    "bottom": 1248,
+    "left": 65,
+    "right": 1015,
+    "source": "Meta Reels guidance (same as Instagram): top 14%, bottom 35%, sides 6%. Advisory only, not enforced. Read 11 Nov 2026."
+  }
+}

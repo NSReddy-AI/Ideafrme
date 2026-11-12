@@ -1,0 +1,36 @@
+{
+  "name": "Cinematic",
+  "inputs": [
+    "video",
+    "images"
+  ],
+  "pacing": {
+    "change_every_s": [
+      1.5,
+      3.0
+    ]
+  },
+  "structure": [
+    "slow atmospheric open",
+    "one idea per shot",
+    "title reveal",
+    "quiet ending"
+  ],
+  "captions": {
+    "mode": "phrase",
+    "verbatim": true
+  },
+  "graphics": [
+    "gold serif titles",
+    "letterbox"
+  ],
+  "music": {
+    "energy": "building",
+    "duck_db": 12
+  },
+  "transitions": [
+    "dip to black",
+    "slow push"
+  ],
+  "grade": "cinematic DSLR (teal/gold)"
+}

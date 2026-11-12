@@ -1,0 +1,31 @@
+{
+  "te": {
+    "engine": "hf",
+    "model": "vasista22/whisper-telugu-large-v2",
+    "licence": "Apache-2.0 (IIT Madras Speech Lab), fine-tuned from OpenAI Whisper (MIT)",
+    "python": "~/.venvs/rs_asr/bin/python",
+    "audio": "raw",
+    "piece_seconds": [
+      8,
+      15
+    ],
+    "measured": "M3 test 10 Nov: 17.5% character errors on approved Telugu captions (current Whisper: 66%), about 3.4 s per second of audio on the M4 Pro",
+    "memory_limit_gb": 10,
+    "memory_note": "M4 11 Nov: CPU, 5 beams (as in M3), word times measured in one pass after decoding (asr_worker.py 'forced'). M3 reference: 17.5% character errors (same as M3), peak 4.4 GB, 227 s for 41.4 s of audio. Before the fix: 18-24 GB and heavy swapping. Stopped above memory_limit_gb (physical footprint) with ASR_MEMORY_LIMIT.",
+    "model_revision": "ba19a24bf6530de184860de2b8ba968595b9b18a",
+    "model_weights_sha256": "1c3388d44fabeaf6521230b1be101116910efde072f948f03742eddd97f7c79a",
+    "base_config_revision": "ae4642769ce2ad8fc292556ccea8e901f1530655",
+    "revision_note": "Pinned 11 Nov 2026 (M4 release prep) to the snapshot every M4 check used: refs/main ba19a24b (config, tokenizer, pytorch_model.bin sha256 1c3388d4...). The cached refs/pr/2 safetensors copy (70e457dd) is not used. Generation config + alignment heads from openai/whisper-large-v2 ae464276 (MIT)."
+  },
+  "en": {
+    "engine": "whisper.cpp",
+    "model": "~/.cache/rs_asr/ggml-large-v3-turbo.bin",
+    "licence": "MIT (whisper.cpp and OpenAI Whisper weights)",
+    "audio": "raw",
+    "piece_seconds": [
+      8,
+      15
+    ]
+  },
+  "note": "Every caption is still reviewed by the user before rendering. Words marked 'review' are the tool's own doubts, not a guarantee that the rest is right."
+}

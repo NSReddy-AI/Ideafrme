@@ -1,0 +1,51 @@
+{
+  "name": "Video Editing & Freelancing",
+  "handle": "@YOUR_EDITING_HANDLE",
+  "language": "en",
+  "category": "editing tips / resources / freelancing",
+  "assets": {
+    "bg": null,
+    "logo_left": null,
+    "logo_right": null,
+    "ribbon": null,
+    "end_card": null,
+    "icon_facebook": "assets/icon_facebook.png",
+    "icon_youtube": "assets/icon_youtube.png",
+    "icon_instagram": "assets/icon_instagram.png"
+  },
+  "title": {
+    "grad_top": "#111111",
+    "grad_bottom": "#000000",
+    "glow": "#2E7BFF",
+    "fade": "#050505",
+    "band1": "#2E7BFF",
+    "band2": "#FFFFFF",
+    "band2_text": "#111111",
+    "accent": "#FFFFFF",
+    "sign": "#2E7BFF"
+  },
+  "frame": {
+    "type": "fullscreen",
+    "social_y": 1790
+  },
+  "captions": {
+    "font": "ui",
+    "size": 96,
+    "color": "#FFFFFF",
+    "highlight": "#2E7BFF",
+    "box_w": 900
+  },
+  "music": {
+    "bpm": 110,
+    "style": "lofi / chill hip-hop"
+  },
+  "rules": [
+    "Hook text on screen from frame 1."
+  ],
+  "default_style": "showcase",
+  "default_platforms": [
+    "instagram",
+    "youtube",
+    "facebook"
+  ]
+}

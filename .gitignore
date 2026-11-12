@@ -1,0 +1,15 @@
+# Large binaries: tracked by M6_BASELINE.sha256, not by Git
+engine/models/
+tests/clips/
+projects/*/build/
+# Generated or local
+exports/*
+!exports/.keep
+tests/out/
+__pycache__/
+*.pyc
+.DS_Store
+.heavy_model.lock
+engine/.heavy_model.lock
+*.render.lock
+.claude/settings.local.json
