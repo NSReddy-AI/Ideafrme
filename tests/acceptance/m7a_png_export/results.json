@@ -1,0 +1,186 @@
+{
+ "manifest": {
+  "revision": 19,
+  "svg_sha256": "593bf05888c60fb16216abb2f6381281cd0ca94096b3805898a054eabecb930a",
+  "png_sha256": "2266d0d106837cc48635da0427ba1786132ed5d17d1d61c581df0943f5d4f883",
+  "browser_reported_qa": {
+   "embedded_fonts": true,
+   "fonts_loaded": true,
+   "overflow": [],
+   "parity": true
+  }
+ },
+ "png_sha_ok": true,
+ "svg_sha_ok": true,
+ "png_mode_size": [
+  "RGBA",
+  [
+   1080,
+   1350
+  ]
+ ],
+ "edge_ink_px": 0,
+ "layers": [
+  {
+   "layer": "title",
+   "measured": [
+    80,
+    103.4,
+    464.6,
+    105
+   ],
+   "png_ink": [
+    81,
+    109,
+    543,
+    196
+   ],
+   "ink_inside_measured_box_2px": true,
+   "left_offset_px": 1
+  },
+  {
+   "layer": "l2",
+   "measured": [
+    64,
+    303.2,
+    492.5,
+    87
+   ],
+   "png_ink": [
+    65,
+    308,
+    557,
+    390
+   ],
+   "ink_inside_measured_box_2px": true,
+   "left_offset_px": 1
+  },
+  {
+   "layer": "l3",
+   "measured": [
+    80,
+    503.2,
+    611.3,
+    87
+   ],
+   "png_ink": [
+    81,
+    508,
+    690,
+    586
+   ],
+   "ink_inside_measured_box_2px": true,
+   "left_offset_px": 1
+  },
+  {
+   "layer": "l4",
+   "measured": [
+    80,
+    709.2,
+    450.8,
+    81
+   ],
+   "png_ink": [
+    82,
+    722,
+    531,
+    762
+   ],
+   "ink_inside_measured_box_2px": true,
+   "left_offset_px": 2
+  },
+  {
+   "layer": "l5",
+   "measured": [
+    80,
+    902.6,
+    756.7,
+    81.5
+   ],
+   "png_ink": [
+    84,
+    911,
+    835,
+    967
+   ],
+   "ink_inside_measured_box_2px": true,
+   "left_offset_px": 4
+  },
+  {
+   "layer": "l6",
+   "measured": [
+    300,
+    1123.3,
+    469.4,
+    93
+   ],
+   "png_ink": [
+    300,
+    1137,
+    768,
+    1215
+   ],
+   "ink_inside_measured_box_2px": true,
+   "left_offset_px": 0
+  }
+ ],
+ "stray_ink_px_outside_layer_bands": 0,
+ "shaping": [
+  {
+   "layer": "title",
+   "word": "శ్రీకాకుళం",
+   "match": 0.9995
+  },
+  {
+   "layer": "title",
+   "word": "క్షేత్రం",
+   "match": 0.9986
+  },
+  {
+   "layer": "l2",
+   "word": "అక్కచెల్లెమ్మలకు",
+   "match": 0.9999
+  },
+  {
+   "layer": "l2",
+   "word": "స్త్రీ",
+   "match": 0.9995
+  },
+  {
+   "layer": "l3",
+   "word": "ఇన్‌స్టాగ్రామ్",
+   "match": 1.0
+  },
+  {
+   "layer": "l3",
+   "word": "కార్‌",
+   "match": 1.0
+  },
+  {
+   "layer": "l3",
+   "word": "దుఃఖం",
+   "match": 1.0
+  },
+  {
+   "layer": "l4",
+   "word": "౦౧౨౩౪౫౬౭౮౯",
+   "match": 1.0
+  },
+  {
+   "layer": "l6",
+   "word": "కృష్ణ",
+   "match": 0.9992
+  },
+  {
+   "layer": "l6",
+   "word": "బ్రహ్మ",
+   "match": 0.9625
+  },
+  {
+   "layer": "l6",
+   "word": "జ్ఞానం",
+   "match": 0.9996
+  }
+ ],
+ "shaping_min": 0.9625
+}

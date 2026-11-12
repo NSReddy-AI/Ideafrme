@@ -1,0 +1,26 @@
+{
+  "browser_reported_qa": {
+    "embedded_fonts": true,
+    "fonts_loaded": true,
+    "overflow": [],
+    "parity": true
+  },
+  "draft": true,
+  "font_hashes": {
+    "en": "00fd6f4691ee8884a33b46bf45851b341927c37c30064f558e1befb242971c49",
+    "te": "42a3167fc2d8ca089b03dcbfcdfe673ecaa176545944ea9c50377144947ae383"
+  },
+  "png_sha256": "2266d0d106837cc48635da0427ba1786132ed5d17d1d61c581df0943f5d4f883",
+  "power_loss_durability": "unverified",
+  "profile": {
+    "background": "transparent",
+    "baseline": 1.02,
+    "height": 1350,
+    "id": "visual-poster-draft@1",
+    "line_height": 1.65,
+    "width": 1080
+  },
+  "revision": 19,
+  "source_fingerprint": "sha256:086119db9ea21dd1774d379d3cb523f75fd2ad8a6cc76e85573844d5fb8e35f8",
+  "svg_sha256": "593bf05888c60fb16216abb2f6381281cd0ca94096b3805898a054eabecb930a"
+}
