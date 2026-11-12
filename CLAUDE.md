@@ -36,6 +36,10 @@ For M6 work only, it replaces the M4 rule "work only in `Reel Studio_dev`".
 - The M6 server reaches M5 only through `app/creative.py` (routes `/api/creative/*` and `/api/brands/*`). It calls M5 as a library,
   with one owner and one lock, and never runs M5's own HTTP server. M6's live session is `m5/.runtime/studio-ui/m6-studio`.
   Test with `~/.venvs/reelstudio/bin/python -B tests/test_m6_creative.py`: it uses throwaway folders and cleans up after itself.
+- Content brands: `brands/<id>/` stays the engine's source today. The three M4 brands are also in M6's Brand Library as
+  DRAFTS (`tools/m6_brands.py`, `app/brand_bridge.py`), each with its exact files and an engine profile. Their rights are
+  "unknown" until the owner records them. Never grant rights or approve a brand for the owner. Export to the engine only
+  from an approved brand, into a new folder, never into `brands/`.
 - M5 AI integration is NO-GO (Codex Phase 2E). The Creative Director in M6 stays deterministic until the owner decides otherwise.
 
 ## Running side by side with production
