@@ -6,6 +6,7 @@ import { PosterEditor, PostersPage } from './Posters'
 import { BrandStudio } from './BrandStudio'
 import { DesignReference } from './DesignReference'
 import { Create } from './Create'
+import { Home } from './Home'
 import { Concepts } from './Concepts'
 
 type Start = (b: Parameters<typeof api.job>[1]) => Promise<void>
@@ -501,10 +502,7 @@ export default function App() {
               </Card>
             </div>
             : <div className="space-y-6">
-              <PageHead title="Home" sub="Posters and reels, made on this Mac." />
-              <Card title="Start something new" right={<a href="#/create" className="inline-flex min-h-[var(--control-height)] items-center rounded-btn bg-act px-[var(--control-padding-x)] text-sm font-semibold text-on-act hover:bg-act-hover">Create</a>}>
-                <p className="text-sm text-ink-2">Describe your idea, then choose a poster, a reel, or both.</p>
-              </Card>
+              <Home onConcepts={id => go({ page: 'concepts', id })} reelForm={<NewProject cat={cat} onMade={n => go({ page: 'project', name: n })} />} />
               <section>
                 <div className="mb-2 flex items-baseline gap-3"><h2 className="text-base font-semibold">Recent reels</h2><a href="#/projects" className="text-sm text-link hover:underline">All reels</a></div>
                 <ProjectList rows={recent} onOpen={n => go({ page: 'project', name: n })} />
