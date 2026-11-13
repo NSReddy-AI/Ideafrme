@@ -5,6 +5,9 @@ import { loadFonts } from '@m5/visual_poster_tests/browser_acceptance.js'
 import { conceptSvg, nextConcept } from './concepts-logic'
 import { creative, CreativeError, type Binding, type ConceptBundle, type ConceptRequest, type PosterProject } from './creative'
 import { Btn, Card, MOTION, Notice, PageHead, cx } from './ui'
+import { report } from './tasks'
+import { TaskSteps } from './TaskTracker'
+import { useTask } from './use-task'
 
 const msg = (e: unknown) => (e as Error).message
 // Proposed wording for the owner's review (M7-B decision point): what made these concepts, and that nothing is approved yet.
@@ -15,7 +18,8 @@ export function Concepts({ id, onOpen }: { id: string; onOpen: (posterId: string
   const [briefOk, setBriefOk] = useState(false); const [seed, setSeed] = useState(7); const [busy, setBusy] = useState(false)
   const [bundle, setBundle] = useState<ConceptBundle | null>(null); const [req, setReq] = useState<ConceptRequest | null>(null)
   const [chosen, setChosen] = useState(0); const [rulesOk, setRulesOk] = useState(false); const [fonts, setFonts] = useState(false)
-  const cards = useRef<(HTMLDivElement | null)[]>([])
+  const cards = useRef<(HTMLDivElement | null)[]>([]); const [tick, setTick] = useState(0)
+  const tracked = useTask({ poster: id }, tick); const task = tracked.task && !tracked.task.cancelled ? tracked.task : null
   useEffect(() => { creative.view(id).then(setP).catch(e => setErr(msg(e))) }, [id])
   useEffect(() => { creative.fonts().then(f => f.fonts && loadFonts(f.fonts)).then(() => setFonts(true)).catch(() => setFonts(true)) }, [])
 
@@ -26,13 +30,16 @@ export function Concepts({ id, onOpen }: { id: string; onOpen: (posterId: string
   const generate = async (s: number) => {
     setBusy(true); setErr(null); setRulesOk(false)
     const r: ConceptRequest = { project_id: p.project_id, expected_revision: p.revision, expected_binding: b.hash, expected_head: b.published_head, seed: s, acknowledge_brief: true }
-    try { setBundle(await creative.concepts(r)); setReq(r); setSeed(s); setChosen(0) } catch (e) { setErr(msg(e)) } finally { setBusy(false) }
+    await report(task, 'concepts', 'running')
+    try { const made = await creative.concepts(r); setBundle(made); setReq(r); setSeed(s); setChosen(0); await report(task, 'concepts', 'done', { detail: `${made.concepts.length} concepts by layout rules (variation ${s})` }) }
+    catch (e) { await report(task, 'concepts', 'failed', { error: msg(e) }); setErr(msg(e)) } finally { setBusy(false); setTick(t => t + 1) }
   }
   const open = async () => {
     if (!bundle || !req) return
     setBusy(true); setErr(null)
-    try { onOpen((await creative.chooseConcept(req, bundle, bundle.concepts[chosen].id)).project.project_id) }
-    catch (e) { setErr(e instanceof CreativeError && /already exists/.test(e.message) ? `${e.message} Try other variations to get new concepts.` : msg(e)) }
+    await report(task, 'choose', 'done', { detail: `You chose "${bundle.concepts[chosen].name}"` }); await report(task, 'poster', 'running')
+    try { const made = (await creative.chooseConcept(req, bundle, bundle.concepts[chosen].id)).project.project_id; await report(task, 'poster', 'done', { poster: made, detail: 'Opened as an unapproved draft' }); onOpen(made) }
+    catch (e) { await report(task, 'poster', 'failed', { error: msg(e) }); setTick(t => t + 1); setErr(e instanceof CreativeError && /already exists/.test(e.message) ? `${e.message} Try other variations to get new concepts.` : msg(e)) }
     finally { setBusy(false) }
   }
   const key = (e: React.KeyboardEvent, i: number) => {
@@ -55,6 +62,7 @@ export function Concepts({ id, onOpen }: { id: string; onOpen: (posterId: string
         </div>
       </Card>
 
+      {task && <Card title="Where this stands"><TaskSteps task={task} onChange={tracked.setTask} /></Card>}
       <Notice tone="info">{CONCEPTS_ORIGIN}</Notice>
       {err && <Notice tone="error">{err}</Notice>}
 

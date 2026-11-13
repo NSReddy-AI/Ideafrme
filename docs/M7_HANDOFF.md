@@ -35,3 +35,18 @@ Checked (`tests/test_tasks.py`, 9 tests, no engine job run)
 Open
 - Engine jobs still live in server memory; after a restart their step is reported as interrupted and can be queued again. That is honest, not seamless.
 - No clean-up of old task files yet.
+
+## B4C-2 - real orchestration interface
+
+Changed
+- `app/web/src/tasks.ts` (client and pure helpers), `use-task.ts` (keeps a task fresh), `TaskTracker.tsx` (step list, one-line strip, and the dark progress page at `#/task/<id>`).
+- The brief form creates one task per creation and reports interpret and brief. Concepts reports concepts, choose and poster. The editor reports review, QA numbers and export, and shows a one-line strip while the task is open. A reel page shows the reel's task; its steps come from the server's mirror of engine jobs.
+- Percentages appear only when the engine reported one. The ring on the progress page turns only while a step is running, and not at all with reduced motion.
+
+Checked
+- `tests/web/test_tasks_logic.mjs` (41 checks).
+- Browser, real poster operations: steps moved brief -> concepts -> waiting for your choice -> poster -> review -> QA -> export -> completed. A forced failure of the concept call showed "Make three concepts: Failed" with the error; a page reload showed the same failed state; doing the step again for real cleared it.
+
+Open
+- Reel steps were not exercised with a live engine job in this stage (the mirror is covered by `tests/test_tasks.py`); a real build and render is part of B4C-4/B5.
+- Posters made before this stage have no task and show no strip.

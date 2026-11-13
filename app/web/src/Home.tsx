@@ -56,7 +56,7 @@ export function Home({ reelForm, onConcepts }: { reelForm: React.ReactNode; onCo
         {output === 'reel' ? <>
           <Notice tone="info">Reels start from your own video, pictures or recording, and use the reel brands in Reels. Nothing is rendered until you approve the plan or script there. Your request above is not copied into the reel; add what you need as notes after creating it.</Notice>
           {reelForm}
-        </> : <BriefForm both={output === 'both'} onConcepts={onConcepts} title={output === 'both' ? 'Your brief (poster first, then a reel from it)' : 'Your brief'}
+        </> : <BriefForm both={output === 'both'} onConcepts={onConcepts} prompt={it.original} title={output === 'both' ? 'Your brief (poster first, then a reel from it)' : 'Your brief'}
           initial={{ name: it.name.value, topic: it.topic.value, purpose: it.purpose.value, audience: it.audience.value, instructions: it.instructions.value, language: it.language, brand: read.brand }}
           sources={{ name: it.name.source, topic: it.topic.source, purpose: it.purpose.source, audience: it.audience.source, instructions: it.instructions.value ? it.instructions.source : undefined }} />}
       </div>

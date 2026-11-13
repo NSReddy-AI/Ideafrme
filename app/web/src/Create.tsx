@@ -5,6 +5,7 @@ import { useState } from 'react'
 import { useBrandChoices } from './brand-choices'
 import { creative } from './creative'
 import { SOURCE_LABEL, missing, type Source } from './intent-logic'
+import { report, tasks } from './tasks'
 import { Btn, Card, Field, FormRow, Notice, PageHead, Select, Tabs, TextArea } from './ui'
 
 type Output = 'poster' | 'reel' | 'both'
@@ -30,12 +31,12 @@ const FIELD_LABEL: Record<BriefField, string> = { name: 'a project name', topic:
 
 /** The one brief form. Advanced Create opens it empty; Home opens it filled from the Omnibar, with `sources` saying
  *  where each value came from. Either way it calls the same M5 brief workflow and keeps the same acknowledgement. */
-export function BriefForm({ both, onConcepts, initial, sources, title }: { both: boolean; onConcepts: (id: string) => void
-  initial?: Partial<BriefValues>; sources?: Partial<Record<BriefField, Source>>; title?: string }) {
+export function BriefForm({ both, onConcepts, initial, sources, title, prompt }: { both: boolean; onConcepts: (id: string) => void
+  initial?: Partial<BriefValues>; sources?: Partial<Record<BriefField, Source>>; title?: string; prompt?: string }) {
   const [name, setName] = useState(initial?.name ?? ''); const [topic, setTopic] = useState(initial?.topic ?? ''); const [purpose, setPurpose] = useState(initial?.purpose ?? '')
   const [audience, setAudience] = useState(initial?.audience ?? ''); const [instructions, setInstructions] = useState(initial?.instructions ?? ''); const [language, setLanguage] = useState<'te' | 'en'>(initial?.language ?? 'te')
   const [brand, setBrand] = useState(initial?.brand ?? ''); const [ack, setAck] = useState(false); const [busy, setBusy] = useState(false); const [err, setErr] = useState<string | null>(null)
-  const [edited, setEdited] = useState<Partial<Record<BriefField, boolean>>>({})
+  const [edited, setEdited] = useState<Partial<Record<BriefField, boolean>>>({}); const [taskKey] = useState(() => `brief-${crypto.randomUUID()}`)
   const { usable, unavailable } = useBrandChoices()
   const need = missing({ name, topic, purpose, audience })   // the concept step refuses a brief without purpose and audience
   const ready = !need.length && ack
@@ -44,11 +45,16 @@ export function BriefForm({ both, onConcepts, initial, sources, title }: { both:
   const hint = (k: BriefField, help?: string) => [sources && !edited[k] && sources[k] ? SOURCE_LABEL[sources[k]] : null, help].filter(Boolean).join(' · ') || undefined
   const start = async () => {
     setBusy(true); setErr(null)
+    // B4C-2: a task records the real steps. If it cannot be recorded, the poster is still made.
+    const task = await tasks.create({ kind: both ? 'both' : 'poster', key: taskKey, meta: { prompt: prompt?.trim() || undefined, output: both ? 'both' : 'poster', title: name.trim() } }).catch(() => null)
+    await report(task, 'interpret', 'done', { detail: prompt ? 'Read by fixed rules, then checked by you' : 'Typed by you in Advanced Create' })
+    await report(task, 'brief', 'running')
     try {
       const p = await creative.createFromBrief({ name: name.trim(), text: topic.trim(), language, acknowledge: true, brand_hash: brand || null,
         brief: { topic: topic.trim(), purpose: purpose.trim(), audience: audience.trim(), instructions: instructions.trim(), format: 'poster' } })
+      await report(task, 'brief', 'done', { poster: p.project_id })
       onConcepts(p.project_id)
-    } catch (e) { setErr(msg(e)) } finally { setBusy(false) }
+    } catch (e) { await report(task, 'brief', 'failed', { error: msg(e) }); setErr(msg(e)) } finally { setBusy(false) }
   }
   return (
     <Card title={title ?? (both ? 'Your idea (poster first, then a reel from it)' : 'Your idea')}>

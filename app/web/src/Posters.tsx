@@ -12,6 +12,9 @@ import { Btn, Card, Err, Field, MOTION, Notice, PageHead, Pill, Select, Tabs, Te
 import { PHASES, readiness, savedFiles, type ItemState, type Phase } from './export-logic'
 import { readLinks } from './project-links'
 import { reelHref, reelStatusLabel } from './projects-logic'
+import { report } from './tasks'
+import { TaskStrip } from './TaskTracker'
+import { useTask } from './use-task'
 import { api, type Catalog } from './api'
 import { measureText, measuredChecks, type MeasuredCheck } from './measure'
 
@@ -83,6 +86,7 @@ export function PosterEditor({ id }: { id: string }) {
   const frame = useRef<HTMLDivElement>(null); const seq = useRef(0)
   const composing = useRef(false); const layerBtns = useRef<(HTMLButtonElement | null)[]>([])
   const root = useRef<HTMLDivElement>(null); const [narrow, setNarrow] = useState(false)
+  const [tick, setTick] = useState(0); const tracked = useTask({ poster: id }, tick); const task = tracked.task && !tracked.task.cancelled ? tracked.task : null
 
   useEffect(() => { setP(null); setSel(null); creative.view(id).then(setP).catch(e => setErr(msg(e))) }, [id])
   useEffect(() => {   // M5's pinned fonts, then M5's own probe that decides whether PNG export is trustworthy here
@@ -216,6 +220,10 @@ export function PosterEditor({ id }: { id: string }) {
   // ---- export: M5's own handshake and browser checks, unchanged (the phase is only reported, never decided, here)
   const exportDraft = async (withPng: boolean) => {
     setExporting(true); setErr(null); setExportErr(null); setReceipt(null); setRun({ png: withPng, phase: 'begin' })
+    // B4C-2: exporting ends the review; the QA numbers recorded are the ones on screen for this revision
+    await report(task, 'review', 'done', { detail: `Revision ${p.revision}` })
+    if (qa && qa.revision === p.revision) await report(task, 'qa', 'done', { detail: `${failing.filter(c => c.level === 'error').length} errors, ${failing.filter(c => c.level !== 'error').length} warnings on revision ${p.revision}` })
+    await report(task, 'export', 'running', { detail: withPng ? 'SVG and PNG' : 'SVG' })
     try {
       if (!current) throw Error('The preview is not current yet.')
       const start = await creative.exportBegin(p)
@@ -234,9 +242,9 @@ export function PosterEditor({ id }: { id: string }) {
       setRun({ png: withPng, phase: 'save' })
       const saved = await creative.exportFinish({ token: start.token, revision: start.scene.revision, png, qa: { fonts_loaded: check.fonts_loaded, overflow: check.overflow, parity, embedded_fonts: pngOk } })
       if (saved.manifest.svg_sha256 !== start.scene.svg_sha256) throw Error('Saved SVG does not match the preview.')
-      setReceipt(saved)
-    } catch (e) { setExportErr(`Export refused: ${msg(e)}`); creative.exportCancel().catch(() => {}) }
-    finally { setExporting(false) }
+      setReceipt(saved); await report(task, 'export', 'done', { detail: `${saved.manifest.png_sha256 ? 'SVG and PNG' : 'SVG'} saved, revision ${saved.manifest.revision}` })
+    } catch (e) { setExportErr(`Export refused: ${msg(e)}`); creative.exportCancel().catch(() => {}); await report(task, 'export', 'failed', { error: msg(e) }) }
+    finally { setExporting(false); setTick(t => t + 1) }
   }
 
   // Server QA (declared boxes) + measured-ink QA from this browser. With a current preview, the measured safe-area check
@@ -304,6 +312,7 @@ export function PosterEditor({ id }: { id: string }) {
         <Btn kind="quiet" disabled={locked || !p.can_redo} onClick={() => act('redo')} title={`Redo (${MOD}Shift+Z)`.replace('⌘Shift+', '⇧⌘')}>Redo</Btn>
         <Btn kind={p.dirty ? 'primary' : 'ghost'} disabled={locked || !p.dirty} onClick={() => act('save')} title={`Save (${MOD}S)`}>Save</Btn>
       </div>
+      <TaskStrip task={task} />
       {(upgrade || wordsBlocked || err) && <div className="space-y-2 border-b border-line px-4 py-3">
         {upgrade && <Notice tone="warning">
           This change needs the newer edit-history format (v3). Older M5 Studio versions cannot open this poster afterwards.

@@ -9,6 +9,8 @@ import { Create } from './Create'
 import { Home } from './Home'
 import { ProjectsPage } from './Projects'
 import { ExportsPage } from './ExportsPage'
+import { TaskPage, TaskSteps } from './TaskTracker'
+import { useTask } from './use-task'
 import { Concepts } from './Concepts'
 
 type Start = (b: Parameters<typeof api.job>[1]) => Promise<void>
@@ -337,6 +339,7 @@ function ProjectView({ name, cat }: { name: string; cat: Catalog }) {
   const reload = useCallback((x?: Project) => { if (x) setP(x); else api.project(name).then(setP).catch(e => setErr((e as Error).message)) }, [name])
   useEffect(() => { setP(null); setErr(null); reload() }, [name, reload])
   const { job, start, cancel, busy } = useJob(name, reload)
+  const tracked = useTask({ reel: name }, job ? job.n_events + (job.status === 'running' ? 0 : 1000) : 0)   // the server mirrors engine jobs into the reel's task
   const [pfs, setPfs] = useState<string[] | null>(null)
   if (err) return <Err msg={err} />
   if (!p) return <p className="text-sm text-ink-3">Loading…</p>
@@ -356,6 +359,7 @@ function ProjectView({ name, cat }: { name: string; cat: Catalog }) {
   return (
     <div className="space-y-4">
       <JobPanel job={job} onCancel={cancel} />
+      {tracked.task && <Card title="Progress of this reel"><TaskSteps task={tracked.task} onChange={tracked.setTask} /></Card>}
       <div>
         <div className="flex items-center gap-3"><h1 className="text-xl font-semibold">{p.name}</h1>
           <Btn kind="ghost" className="ml-auto" onClick={async () => reload(await api.patch(p.name, { archived: !p.archived }))}>{p.archived ? 'Restore from archive' : 'Archive'}</Btn></div>
@@ -428,20 +432,21 @@ function ProjectList({ rows, onOpen }: { rows: ProjectRow[]; onOpen: (n: string)
 // #/design, #/p/<reel>, #/poster/<id>.
 // An old Reel Studio link (#<project>) still opens that project.
 type Page = 'home' | 'create' | 'projects' | 'posters' | 'brands' | 'exports' | 'settings' | 'design'
-type Route = { page: Page } | { page: 'project'; name: string } | { page: 'poster'; id: string } | { page: 'concepts'; id: string }
+type Route = { page: Page } | { page: 'project'; name: string } | { page: 'poster'; id: string } | { page: 'concepts'; id: string } | { page: 'task'; id: string }
 const readRoute = (): Route => {
   const h = decodeURIComponent(location.hash.replace(/^#\/?/, ''))
   if (!h) return { page: 'home' }
   if (h === 'create' || h === 'projects' || h === 'posters' || h === 'brands' || h === 'exports' || h === 'settings' || h === 'design') return { page: h }
   if (h.startsWith('poster/')) return { page: 'poster', id: h.slice(7) }
   if (h.startsWith('concepts/')) return { page: 'concepts', id: h.slice(9) }
+  if (h.startsWith('task/')) return { page: 'task', id: h.slice(5) }
   return { page: 'project', name: h.startsWith('p/') ? h.slice(2) : h }
 }
-const hrefOf = (r: Route) => r.page === 'project' ? `#/p/${encodeURIComponent(r.name)}` : r.page === 'poster' ? `#/poster/${encodeURIComponent(r.id)}` : r.page === 'concepts' ? `#/concepts/${encodeURIComponent(r.id)}` : r.page === 'home' ? '#/' : `#/${r.page}`
+const hrefOf = (r: Route) => r.page === 'project' ? `#/p/${encodeURIComponent(r.name)}` : r.page === 'poster' ? `#/poster/${encodeURIComponent(r.id)}` : r.page === 'concepts' ? `#/concepts/${encodeURIComponent(r.id)}` : r.page === 'task' ? `#/task/${encodeURIComponent(r.id)}` : r.page === 'home' ? '#/' : `#/${r.page}`
 
 const NAV: { page: Page; label: string }[] = [
   { page: 'home', label: 'Home' }, { page: 'create', label: 'Advanced Create' }, { page: 'projects', label: 'Projects' }, { page: 'brands', label: 'Brand Studio' }, { page: 'exports', label: 'Exports' }, { page: 'settings', label: 'Settings' }]
-const TITLE: Record<Route['page'], string> = { home: 'Home', create: 'Advanced Create', projects: 'Projects', posters: 'Posters', brands: 'Brand Studio', exports: 'Exports', settings: 'Settings', design: 'Component reference', project: 'Reel', poster: 'Poster editor', concepts: 'Concepts' }
+const TITLE: Record<Route['page'], string> = { home: 'Home', create: 'Advanced Create', projects: 'Projects', posters: 'Posters', brands: 'Brand Studio', exports: 'Exports', settings: 'Settings', design: 'Component reference', project: 'Reel', poster: 'Poster editor', concepts: 'Concepts', task: 'Progress' }
 
 export default function App() {
   const [cat, setCat] = useState<Catalog | null>(null); const [rows, setRows] = useState<ProjectRow[]>([])
@@ -454,7 +459,7 @@ export default function App() {
     const on = () => setRoute(readRoute())
     window.addEventListener('hashchange', on); return () => window.removeEventListener('hashchange', on)
   }, [])
-  const section = route.page === 'project' || route.page === 'poster' || route.page === 'posters' || route.page === 'concepts' ? 'projects' : route.page === 'design' ? 'settings' : route.page
+  const section = route.page === 'project' || route.page === 'poster' || route.page === 'posters' || route.page === 'concepts' || route.page === 'task' ? 'projects' : route.page === 'design' ? 'settings' : route.page
   const recent = rows.filter(r => !r.archived).slice(0, 5)
   return (
     <div className="flex min-h-screen flex-col bg-surface text-ink md:flex-row">
@@ -478,6 +483,7 @@ export default function App() {
           <Err msg={err} />
           {!cat ? <p className="text-sm text-ink-3">Connecting to the local server…</p>
             : route.page === 'poster' ? <PosterEditor id={route.id} />
+            : route.page === 'task' ? <TaskPage id={route.id} />
             : route.page === 'posters' ? <PostersPage onOpen={id => go({ page: 'poster', id })} />
             : route.page === 'create' ? <Create onConcepts={id => go({ page: 'concepts', id })} reelForm={<NewProject cat={cat} onMade={n => go({ page: 'project', name: n })} />} />
             : route.page === 'concepts' ? <Concepts id={route.id} onOpen={id => go({ page: 'poster', id })} />
