@@ -14,7 +14,7 @@ marked failed with a plain reason and may be retried where that is safe. Nothing
 import json, os, re, threading, time, uuid
 from pathlib import Path
 
-FORMAT = "ideaframe-task@1"
+FORMAT = "ideaframe-task@2"      # @2 adds the reel's "title" step; @1 records are upgraded when read (see _upgrade)
 WORKSPACE = Path(__file__).resolve().parents[1]
 ROOT = WORKSPACE / "jobs" / os.environ.get("IDEAFRAME_M6_TASKS", "tasks")       # tests name another folder under jobs/
 
@@ -29,7 +29,8 @@ POSTER = [_s("interpret", "Understand the request"), _s("brief", "Save the brief
           _s("poster", "Create the editable poster", retry="client"), _s("review", "Review and edit the poster", user=True),
           _s("qa", "Poster QA", retry="client"), _s("export", "Export the poster", user=True, retry="client")]
 REEL = [_s("plan", "Plan the reel", retry="job"), _s("approve", "Approve the plan or script", user=True),
-        _s("narrate", "Narration", retry="job"), _s("build", "Build the edit", retry="job"), _s("render", "Render and check", retry="job")]
+        _s("narrate", "Narration", retry="job"), _s("title", "Set the title page words", user=True),
+        _s("build", "Build the edit", retry="job"), _s("render", "Render and check", retry="job")]
 KINDS = {"poster": POSTER, "reel": REEL, "both": POSTER + [_s("handoff", "Make a reel from the poster", user=True)] + REEL}
 JOB_STEP = {"plan": "plan", "hook": "plan", "approve": "approve", "narrate": "narrate", "build": "build", "render": "render"}
 REEL_IDS = tuple(d["id"] for d in REEL)
@@ -47,6 +48,20 @@ def _text(v, limit, what):
     if v is None: return None
     if not isinstance(v, str) or len(v) > limit or "\x00" in v: raise TaskError(400, "invalid", f"{what} must be text of at most {limit} characters")
     return v
+
+
+def _upgrade(t):
+    """@1 -> @2: add the title step where it belongs. It is marked done only if the build after it already started."""
+    if not (isinstance(t, dict) and t.get("format") == "ideaframe-task@1" and t.get("kind") in ("reel", "both") and isinstance(t.get("steps"), list)): 
+        if isinstance(t, dict) and t.get("format") == "ideaframe-task@1": t["format"] = FORMAT
+        return t
+    ids = [s.get("id") for s in t["steps"]]
+    if "title" not in ids and "build" in ids:
+        i = ids.index("build"); started = t["steps"][i].get("status") not in ("pending", None)
+        t["steps"].insert(i, dict(id="title", label="Set the title page words", user=True, retry=None, status="done" if started else "pending",
+                                  detail="recorded before this step was tracked" if started else None, error=None, pct=None, attempts=0, started=None, finished=None))
+    t["format"] = FORMAT
+    return t
 
 
 def validate(t):
@@ -71,10 +86,10 @@ def derive(t):
 
 
 class TaskStore:
-    def __init__(self, root=None, start_job=None, cancel_job=None, reel_facts=None):
+    def __init__(self, root=None, start_job=None, cancel_job=None, reel_facts=None, reel_title=None):
         self.root = Path(root or ROOT); self.root.mkdir(parents=True, exist_ok=True)
         self.lock = threading.RLock(); self.tasks = {}; self.invalid = []
-        self.start_job, self.cancel_job, self.reel_facts = start_job, cancel_job, reel_facts
+        self.start_job, self.cancel_job, self.reel_facts, self.reel_title = start_job, cancel_job, reel_facts, reel_title
         self.started = time.time(); self._seen = {}; self._bound = {}
         self._load(); self.recover()
 
@@ -84,7 +99,7 @@ class TaskStore:
     def _load(self):
         for p in sorted(self.root.glob("*.json")):
             try:
-                t = validate(json.loads(p.read_text(encoding="utf-8")))
+                t = validate(_upgrade(json.loads(p.read_text(encoding="utf-8"))))
                 if t["id"] != p.stem: raise ValueError("id does not match its file")
                 self.tasks[t["id"]] = t
             except Exception as e:      # a damaged file is left where it is and reported; it is never repaired or deleted here
@@ -225,6 +240,23 @@ class TaskStore:
                 return json.loads(json.dumps(self._save(t)))
             raise TaskError(409, "not-retryable", "this step needs you: open the project and do it again there")
 
+    def cleanup(self, older_than_days=30):
+        """Remove the records of finished work (completed or cancelled) older than the given age. Anything unfinished,
+        failed or damaged is kept. Only task records are removed; no poster, reel or export is touched."""
+        if not isinstance(older_than_days, (int, float)) or older_than_days < 1: raise TaskError(400, "invalid", "the age must be at least 1 day")
+        cut = time.time() - older_than_days * 86400; removed = []
+        with self.lock:
+            for tid, t in list(self.tasks.items()):
+                if t["status"] not in TERMINAL: continue
+                try: when = time.mktime(time.strptime(t["updated"], "%Y-%m-%d %H:%M:%S"))
+                except Exception: continue
+                if when >= cut: continue
+                try: self._path(tid).unlink()
+                except FileNotFoundError: pass
+                except OSError: continue
+                del self.tasks[tid]; removed.append(tid)
+        return dict(removed=len(removed), kept=len(self.tasks))
+
     # ---------------------------------------------------------------- reel engine jobs (read-only mirror of server.JOBS)
     def _reel_task(self, reel):
         """The open task that owns this reel: a 'both' task bound to it, else its own 'reel' task."""
@@ -274,6 +306,15 @@ class TaskStore:
         want = "done" if approved else "waiting" if drafted else s["status"]
         if want != s["status"] and s["status"] not in ("failed", "cancelled", "skipped", "running"):
             self.step(t["id"], "approve", want, detail="approved in the reel" if approved else "the plan or script is ready for you to read", _internal=True)
+        # The title page words are a fact of the reel project too. None = this reel takes them from its approved plan.
+        if not self.reel_title: return
+        try: ready = self.reel_title(reel)
+        except Exception: return
+        ts = self._step(t, "title")
+        if ts["status"] in ("failed", "cancelled", "skipped"): return
+        want = "skipped" if ready is None else "done" if ready else ("waiting" if approved else "pending")
+        if want != ts["status"]:
+            self.step(t["id"], "title", want, detail="taken from the approved plan" if ready is None else "saved in the reel" if ready else "needed before the edit can be built", _internal=True)
 
     def watch(self, jobs, every=0.5):
         def loop():
@@ -285,10 +326,12 @@ class TaskStore:
 
 
 # -------------------------------------------------------------------- routes (added to the M6 server by install())
-def install(app, jobs, start_job, cancel_job, reel_facts):
+def install(app, jobs, start_job, cancel_job, reel_facts, reel_title=None):
     from fastapi import APIRouter, Request
     from fastapi.responses import JSONResponse
-    store = TaskStore(start_job=start_job, cancel_job=cancel_job, reel_facts=reel_facts); store.watch(jobs)
+    store = TaskStore(start_job=start_job, cancel_job=cancel_job, reel_facts=reel_facts, reel_title=reel_title); store.watch(jobs)
+    try: store.cleanup(90)            # at start: finished records older than 90 days go; nothing unfinished is ever removed
+    except TaskError: pass
     r = APIRouter()
 
     def guard(fn):
@@ -323,6 +366,12 @@ def install(app, jobs, start_job, cancel_job, reel_facts):
         extra = set(v) - {"step", "status", "detail", "error", "poster", "reel"}
         if extra: return JSONResponse({"error": "invalid", "detail": f"unknown field {sorted(extra)[0]}"}, status_code=400)
         return guard(lambda: store.step(tid, v.get("step"), v.get("status"), detail=v.get("detail"), error=v.get("error"), poster=v.get("poster"), reel=v.get("reel")))
+
+    @r.post("/api/tasks/cleanup")
+    async def cleanup(request: Request):
+        try: v = await body(request)
+        except TaskError as e: return JSONResponse({"error": e.code, "detail": e.detail}, status_code=e.status)
+        return guard(lambda: store.cleanup(v.get("older_than_days", 30)))
 
     @r.post("/api/tasks/{tid}/cancel")
     def cancel(tid: str): return guard(lambda: store.cancel(tid))

@@ -103,3 +103,12 @@ Issues by class
 Not done
 - No screen-reader pass, no physical-keyboard Tab pass, no real Telugu keyboard. No accessibility certification is claimed.
 - Brand rights, the logo master and a production release remain the owner's decisions.
+
+# M7-C (final M7 stages, 13 Nov 2026)
+
+## C1 - tasks, title page, stale server, launcher
+- Task records are now `ideaframe-task@2`: reel and both tasks have a "Set the title page words" step, read from the reel project (a speaker reel skips it). `@1` records are upgraded when read.
+- `POST /api/tasks/cleanup` and a Settings button remove finished records older than 30 days; at start, older than 90 days. Unfinished, failed and damaged records are always kept.
+- `GET /api/version` says whether the running server is older than the code on disk, and whether the built screens are older than their source. The app shows "Restart needed" when so (also when the route is missing, i.e. a very old server).
+- Launcher: refuses with a plain message when Python or the built screens are missing or the port belongs to something else; reuses a current copy; replaces a stale copy of this workspace, but never while it has a job queued or running.
+- Checked: `tests/test_tasks.py` 12 tests; launcher exercised on a spare port against a fresh and a stale copy (old process stopped, new one current).

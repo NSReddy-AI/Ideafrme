@@ -22,6 +22,7 @@ export const tasks = {
   create: (b: { kind: Task['kind']; key?: string; poster?: string; reel?: string; meta?: Task['meta'] }) => call<Task>('POST', '/api/tasks', b),
   cancel: (id: string) => call<Task>('POST', `/api/tasks/${encodeURIComponent(id)}/cancel`),
   retry: (id: string) => call<Task>('POST', `/api/tasks/${encodeURIComponent(id)}/retry`),
+  cleanup: (older_than_days: number) => call<{ removed: number; kept: number }>('POST', '/api/tasks/cleanup', { older_than_days }),
 }
 /** Record a real step change. Returns the task, or null if recording failed (the work itself carries on). */
 export async function report(task: Task | string | null | undefined, step: string, status: StepStatus, extra: { detail?: string; error?: string; poster?: string; reel?: string } = {}): Promise<Task | null> {
@@ -45,7 +46,7 @@ export function summary(t: Task): string {
   const done = t.steps.filter(s => s.status === 'done' || s.status === 'skipped').length; const c = current(t)
   return t.status === 'completed' ? 'All steps finished' : t.status === 'cancelled' ? 'Cancelled' : `Step ${Math.min(done + 1, t.steps.length)} of ${t.steps.length}${c ? `: ${c.label}` : ''}`
 }
-const REEL_STEPS = ['plan', 'approve', 'narrate', 'build', 'render']
+const REEL_STEPS = ['plan', 'approve', 'narrate', 'title', 'build', 'render']
 /** Where the person goes to act on a step. Only real screens: concepts, the poster editor, the reel's own steps. */
 export function whereTo(t: Task, step: TaskStep | null): { href: string; label: string } | null {
   if (!step) return null

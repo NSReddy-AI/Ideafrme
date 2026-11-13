@@ -10,7 +10,7 @@ import { Home } from './Home'
 import { CapabilityList } from './CapabilityList'
 import { ProjectsPage } from './Projects'
 import { ExportsPage } from './ExportsPage'
-import { OpenTasks, TaskPage, TaskSteps } from './TaskTracker'
+import { OpenTasks, TaskHousekeeping, TaskPage, TaskSteps } from './TaskTracker'
 import { useTask } from './use-task'
 import { Concepts } from './Concepts'
 
@@ -456,6 +456,12 @@ export default function App() {
   useEffect(() => { api.catalog().then(setCat).catch(e => setErr((e as Error).message)) }, [])
   useEffect(() => { if (route.page === 'home') api.projects(false).then(setRows).catch(e => setErr((e as Error).message)) }, [route])
   useEffect(() => { document.title = `${TITLE[route.page]} · IDEAFRAME` }, [route.page])
+  // M7-C: a server started before an update keeps old code in memory. Ask it, and say so plainly.
+  const [outdated, setOutdated] = useState<string | null>(null)
+  useEffect(() => {
+    fetch('/api/version').then(r => r.json()).then(v => setOutdated(v.stale ? 'The app was updated while it was running.' : v.ui_stale ? 'The screens on disk are older than their source (developers: run the web build).' : null))
+      .catch(() => setOutdated('This running app is older than its files.'))
+  }, [route.page])
   useEffect(() => {   // links / back button: follow the address bar
     const on = () => setRoute(readRoute())
     window.addEventListener('hashchange', on); return () => window.removeEventListener('hashchange', on)
@@ -482,6 +488,7 @@ export default function App() {
       <main id="main" tabIndex={-1} className="min-w-0 flex-1 px-4 py-6 outline-none! md:px-8 md:py-8">
         <div key={hrefOf(route)} className={cx('page-enter mx-auto', route.page === 'poster' || route.page === 'task' ? 'max-w-[104rem]' : 'max-w-5xl')}>
           <Err msg={err} />
+          {outdated && <Notice tone="warning" className="mb-4" title="Restart needed.">{outdated} Close the IDEAFRAME window in Terminal and double-click the launcher again. Until then, progress tracking and the capability list may not work.</Notice>}
           {!cat ? <p className="text-sm text-ink-3">Connecting to the local server…</p>
             : route.page === 'poster' ? <PosterEditor id={route.id} />
             : route.page === 'task' ? <TaskPage id={route.id} />
@@ -502,6 +509,7 @@ export default function App() {
               <Card title="Design" right={<a href="#/design" className="text-sm text-link hover:underline">Component reference</a>}>
                 <p className="text-sm text-ink-2">Every shared button, field, status, dialog and notice, in the IDEAFRAME tokens.</p>
               </Card>
+              <Card title="Progress records"><TaskHousekeeping /></Card>
               <Card title="Capabilities and providers">
                 <p className="mb-2 text-sm text-ink-2">What works on this Mac right now, with each answer shown separately. A model that works for reels is not thereby qualified for posters.</p>
                 <div className="text-sm"><CapabilityList detailed /></div>

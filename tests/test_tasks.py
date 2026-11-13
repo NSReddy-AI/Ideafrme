@@ -10,12 +10,12 @@ from tasks import TaskStore, TaskError
 
 class StoreTest(unittest.TestCase):
     def setUp(self):
-        self.dir = Path(tempfile.mkdtemp(prefix="m6-tasks-")); self.started = []; self.cancelled = []; self.facts = []
+        self.dir = Path(tempfile.mkdtemp(prefix="m6-tasks-")); self.started = []; self.cancelled = []; self.facts = []; self.title = None
         self.store = self.new()
     def tearDown(self): shutil.rmtree(self.dir, ignore_errors=True)
     def new(self):
         def start(name, action): jid = uuid.uuid4().hex[:10]; self.started.append((name, action, jid)); return jid
-        return TaskStore(self.dir, start_job=start, cancel_job=self.cancelled.append, reel_facts=lambda name: list(self.facts))
+        return TaskStore(self.dir, start_job=start, cancel_job=self.cancelled.append, reel_facts=lambda name: list(self.facts), reel_title=lambda name: self.title)
     def status(self, t, sid): return next(s for s in t["steps"] if s["id"] == sid)["status"]
 
     def test_create_and_real_progress(self):
@@ -85,11 +85,15 @@ class StoreTest(unittest.TestCase):
         self.store.step(tid, "export", "running"); t = self.store.step(tid, "export", "done")
         self.assertEqual((t["status"], self.status(t, "handoff")), ("waiting", "waiting"))           # stops for the handoff
         self.facts[:] = ["project: a / b / c", "narration: none", "script prepared (check the ❓ lines)"]
+        self.title = False
         t = self.store.step(tid, "handoff", "done", reel=reel); t = self.store.get(tid)
-        self.assertEqual((t["project"]["reel"], t["status"], self.status(t, "approve")), (reel, "waiting", "waiting"))   # stops for script approval
+        self.assertEqual((t["project"]["reel"], t["status"], self.status(t, "approve"), self.status(t, "title")), (reel, "waiting", "waiting", "pending"))   # stops for script approval
         with self.assertRaises(TaskError): self.store.step(tid, "approve", "done")                  # the screen cannot approve
         with self.assertRaises(TaskError): self.store.step(tid, "render", "done")
         self.facts[:] = ["project: a / b / c", "narration: none", "script approved"]
+        t = self.store.get(tid); self.assertEqual((t["status"], self.status(t, "approve"), self.status(t, "title")), ("waiting", "done", "waiting"))   # stops for the title page words
+        with self.assertRaises(TaskError): self.store.step(tid, "title", "done")                    # the screen cannot claim them either
+        self.title = True; self.assertEqual(self.status(self.store.get(tid), "title"), "done")
         jobs["b1"] = dict(id="b1", project=reel, action="build", status="running", pct=30, events=[], created=time.time()); self.store.mirror(jobs)
         t = self.store.get(tid); self.assertEqual((t["status"], self.status(t, "approve"), self.status(t, "build"), self.status(t, "plan")), ("running", "done", "running", "skipped"))
         self.assertEqual(len(self.store.list(reel=reel)), 1, "the reel's jobs join the same task; no second task is made")
@@ -127,6 +131,27 @@ class StoreTest(unittest.TestCase):
         self.assertEqual((tc["status"], self.status(tc, "render"), tc["jobs"]), ("failed", "failed", {}))
         self.assertEqual(sorted(i["file"] for i in again.invalid), ["eeeeeeeeeeee.json", "ffffffffffff.json"]); self.assertTrue((self.dir / "ffffffffffff.json").exists(), "a damaged file is reported, not deleted")
         self.assertEqual(again.retry(a)["status"], "pending"); again.retry(c); self.assertEqual(self.started[-1][:2], ("r", "render"))
+
+    def test_cleanup_removes_only_old_finished_records(self):
+        import time as _t
+        done = self.store.create("poster")["id"]
+        for sid in ("interpret", "brief", "concepts", "choose", "poster", "review", "qa", "export"): self.store.step(done, sid, "done")
+        gone = self.store.create("poster")["id"]; self.store.cancel(gone)
+        failed = self.store.create("poster")["id"]; self.store.step(failed, "brief", "failed", error="x")
+        waiting = self.store.create("poster")["id"]; fresh = self.store.create("poster")["id"]; self.store.cancel(fresh)
+        old = _t.strftime("%Y-%m-%d %H:%M:%S", _t.localtime(_t.time() - 40 * 86400))
+        for tid in (done, gone, failed, waiting): self.store.tasks[tid]["updated"] = old
+        (self.dir / "ffffffffffff.json").write_text("{ damaged", encoding="utf-8")
+        self.assertEqual(self.store.cleanup(30), dict(removed=2, kept=3))
+        left = sorted(p.name for p in self.dir.glob("*.json")); self.assertEqual(left, sorted([f"{failed}.json", f"{waiting}.json", f"{fresh}.json", "ffffffffffff.json"]), "unfinished, failed, recent and damaged records stay")
+        with self.assertRaises(TaskError): self.store.cleanup(0)
+        self.assertEqual(self.store.cleanup(30)["removed"], 0)
+
+    def test_older_records_are_upgraded_not_rejected(self):
+        tid = self.store.create("both")["id"]; path = self.dir / f"{tid}.json"; old = json.loads(path.read_text(encoding="utf-8"))
+        old["format"] = "ideaframe-task@1"; old["steps"] = [s for s in old["steps"] if s["id"] != "title"]; path.write_text(json.dumps(old), encoding="utf-8")
+        again = self.new(); t = again.get(tid)
+        self.assertEqual((again.invalid, t["format"], [s["id"] for s in t["steps"]][-4:], self.status(t, "title")), ([], "ideaframe-task@2", ["narrate", "title", "build", "render"], "pending"))
 
     def test_concurrent_access(self):
         tid = self.store.create("poster")["id"]; errors = []
@@ -171,7 +196,7 @@ class RouteTest(unittest.TestCase):
 
     def test_routes_and_restart(self):
         st, t = self.call("POST", "/api/tasks", {"kind": "both", "key": "walk-1", "meta": {"prompt": "Poster and reel for Reading Day", "output": "both"}})
-        self.assertEqual((st, t["kind"], len(t["steps"])), (200, "both", 14)); tid = t["id"]
+        self.assertEqual((st, t["kind"], len(t["steps"])), (200, "both", 15)); tid = t["id"]
         self.assertEqual(self.call("POST", "/api/tasks", {"kind": "both", "key": "walk-1"})[1]["id"], tid)
         self.assertEqual(self.call("POST", f"/api/tasks/{tid}/step", {"step": "interpret", "status": "done"})[0], 200)
         self.assertEqual(self.call("POST", f"/api/tasks/{tid}/step", {"step": "brief", "status": "running"})[1]["status"], "running")

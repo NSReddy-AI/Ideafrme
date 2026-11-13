@@ -397,7 +397,32 @@ import tasks
 def _task_start(name, action):
     if action not in tasks.RETRY_ACTIONS: raise ValueError("not a retryable action")
     return start_job(name, Job(action=action))["id"]
-TASKS = tasks.install(app, JOBS, _task_start, lambda jid: cancel(jid), lambda name: rs.next_step(name)[0])
+def _task_title(name):
+    """True/False: the title page words are set. None: a speaker reel, whose words come from its approved plan."""
+    P = load(os.path.join(job_dir(name), "project.json"))
+    if P.get("video"): return None
+    hk = P.get("hook") or {}
+    return all(str(hk.get(k) or "").strip() for k in ("line1", "line2", "line3"))
+TASKS = tasks.install(app, JOBS, _task_start, lambda jid: cancel(jid), lambda name: rs.next_step(name)[0], _task_title)
+
+# M7-C: is this running server the code that is on disk? A server started before an update keeps serving old routes;
+# the screen and the launcher ask here instead of guessing.
+def _stamp(folder, exts):
+    newest = 0.0
+    for base, dirs, files in os.walk(folder):
+        dirs[:] = [d for d in dirs if d not in ("node_modules", "dist", "__pycache__", ".git")]
+        for f in files:
+            if f.endswith(exts): newest = max(newest, os.path.getmtime(os.path.join(base, f)))
+    return newest
+_CODE_AT_START = _stamp(HERE, (".py",)); _STARTED = time.time()
+@app.get("/api/version")
+def version():
+    code_now = _stamp(HERE, (".py",)); index = os.path.join(HERE, "web", "dist", "index.html")
+    ui_built = os.path.getmtime(index) if os.path.exists(index) else None
+    ui_src = _stamp(os.path.join(HERE, "web", "src"), (".ts", ".tsx", ".css"))
+    return dict(app="ideaframe-m6-dev", workspace=ROOT, pid=os.getpid(), started=time.strftime("%Y-%m-%d %H:%M:%S", time.localtime(_STARTED)),
+                stale=code_now > _CODE_AT_START + 1, ui_missing=ui_built is None, ui_stale=bool(ui_built and ui_src > ui_built + 1),
+                jobs_active=sum(1 for J in JOBS.values() if J["status"] in ("queued", "running")))
 
 # M7-B B4C-3: capability and provider health as facts (app/capabilities.py). Local checks only; nothing is sent online.
 import capabilities

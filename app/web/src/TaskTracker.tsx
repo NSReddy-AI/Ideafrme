@@ -110,3 +110,16 @@ export function OpenTasks() {
     </section>
   )
 }
+
+/** Settings: remove the records of finished work. Unfinished, failed and damaged records are always kept by the server. */
+export function TaskHousekeeping() {
+  const [info, setInfo] = useState<{ total: number; open: number; invalid: number } | null>(null); const [msg, setMsg] = useState<string | null>(null); const [busy, setBusy] = useState(false)
+  const load = () => tasks.recent().then(r => setInfo({ total: r.tasks.length, open: r.tasks.filter(t => t.status !== 'completed' && t.status !== 'cancelled').length, invalid: r.invalid.length })).catch(() => setInfo(null))
+  useEffect(() => { load() }, [])
+  const clean = async () => { setBusy(true); setMsg(null); try { const r = await tasks.cleanup(30); setMsg(`${r.removed} finished record${r.removed === 1 ? '' : 's'} removed, ${r.kept} kept.`); await load() } catch (e) { setMsg((e as Error).message) } finally { setBusy(false) } }
+  return <div className="text-sm">
+    <p className="text-ink-2">{info ? `${info.total} recent progress record${info.total === 1 ? '' : 's'} on this Mac, ${info.open} not finished${info.invalid ? `, ${info.invalid} damaged (kept, not used)` : ''}.` : 'Progress records could not be read.'}</p>
+    <div className="mt-2 flex flex-wrap items-center gap-3"><Btn kind="ghost" busy={busy} onClick={clean}>Remove finished records older than 30 days</Btn>{msg && <span role="status" className="text-xs text-ink-2">{msg}</span>}</div>
+    <p className="mt-2 text-xs text-ink-3">Only the progress records go. Posters, reels and exports are never touched, and unfinished or failed work is always kept.</p>
+  </div>
+}
