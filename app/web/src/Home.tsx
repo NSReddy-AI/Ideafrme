@@ -76,7 +76,7 @@ export function Home({ reelForm, onConcepts }: { reelForm: React.ReactNode; onCo
           <div aria-hidden className="pointer-events-none absolute -inset-0.5 rounded-sheet opacity-25 blur-md transition-opacity duration-[var(--motion-panel)] ease-[var(--ease-out)] group-focus-within:opacity-70 motion-reduce:transition-none" style={{ background: 'var(--brand-gradient)' }} />
           <div className="relative rounded-sheet border border-line bg-raised p-3 shadow-lift">
             <label htmlFor="omnibar" className="sr-only">Describe what you want to make</label>
-            <textarea id="omnibar" ref={box} rows={2} value={prompt} onChange={e => setPrompt(e.target.value)} onKeyDown={key} aria-describedby="omnibar-help"
+            <textarea id="omnibar" ref={box} rows={3} value={prompt} onChange={e => setPrompt(e.target.value)} onKeyDown={key} aria-describedby="omnibar-help"
               placeholder="e.g. Poster for Reading Day, to invite families. For parents in Guntur."
               className={cx('block w-full resize-none rounded-field bg-transparent px-3 py-2 text-lg text-ink placeholder:text-ink-3 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-focus', hasTelugu(prompt) && 'te')} />
             <div className="mt-2 flex flex-wrap items-center gap-3 px-1">

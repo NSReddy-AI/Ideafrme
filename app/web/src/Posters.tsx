@@ -55,7 +55,7 @@ type Pending = { action: string; extra: Record<string, unknown> }
 
 type Zoom = 'fit' | '25' | '50' | '75' | '100'
 type Mode = 'edit' | 'export'
-type Side = 'props' | 'quality' | 'reel'
+type Side = 'layers' | 'props' | 'quality' | 'reel'
 type Finding = { name: string; level: string; detail: string; element_id: string }
 type Run = { png: boolean; phase: Phase }
 const ZOOMS: [Zoom, string][] = [['fit', 'Fit'], ['25', '25%'], ['50', '50%'], ['75', '75%'], ['100', '100%']]
@@ -82,6 +82,7 @@ export function PosterEditor({ id }: { id: string }) {
   const [run, setRun] = useState<Run | null>(null); const [exportErr, setExportErr] = useState<string | null>(null)
   const frame = useRef<HTMLDivElement>(null); const seq = useRef(0)
   const composing = useRef(false); const layerBtns = useRef<(HTMLButtonElement | null)[]>([])
+  const root = useRef<HTMLDivElement>(null); const [narrow, setNarrow] = useState(false)
 
   useEffect(() => { setP(null); setSel(null); creative.view(id).then(setP).catch(e => setErr(msg(e))) }, [id])
   useEffect(() => {   // M5's pinned fonts, then M5's own probe that decides whether PNG export is trustworthy here
@@ -158,6 +159,11 @@ export function PosterEditor({ id }: { id: string }) {
     const measure = () => setScale(Math.round(node.getBoundingClientRect().width / 1080 * 100))
     measure(); const ro = new ResizeObserver(measure); ro.observe(node); return () => ro.disconnect()
   }, [loaded, mode, zoom])
+  useEffect(() => {   // B4B-4: below ~42rem of editor width the layer list moves into the panel tabs, so the canvas comes first
+    const node = root.current; if (!node || !loaded) return
+    const measure = () => setNarrow(node.getBoundingClientRect().width < 672)
+    measure(); const ro = new ResizeObserver(measure); ro.observe(node); return () => ro.disconnect()
+  }, [loaded])
   useEffect(() => {   // reels that carry the converter's record for this poster (read-only; same source as Projects)
     let live = true
     api.projects(false).then(async rows => { const l = await readLinks(rows); if (live) setReelFound({ id, rows: l.filter(x => x.posterId === id).map(x => ({ name: x.reel, status: reelStatusLabel(rows.find(r => r.name === x.reel) ?? {}) })) }) }).catch(() => { if (live) setReelFound({ id, rows: [] }) })
@@ -245,38 +251,9 @@ export function PosterEditor({ id }: { id: string }) {
   const status = previewErr ? previewErr : current ? 'Preview current' : 'Updating preview…'
   const brandName = (p.binding as Binding | null)?.record.brand?.record.payload.name
   const blocking = ready.items.filter(i => i.state === 'blocked').length; const toReview = failing.length
-  const sideTabs: { id: Side; label: string }[] = [{ id: 'props', label: 'Properties' },
+  const sideTabs: { id: Side; label: string }[] = [...(narrow ? [{ id: 'layers' as Side, label: 'Layers' }] : []), { id: 'props', label: 'Properties' },
     { id: 'quality', label: blocking ? `Quality · ${blocking} blocking` : toReview ? `Quality · ${toReview}` : 'Quality' }, { id: 'reel', label: 'Reel' }]
-  const zoomLabel = zoom === 'fit' ? (scale ? `Fit · ${scale}%` : 'Fit') : `${zoom}%`
-  return (
-    <div data-surface="editor" className="@container overflow-hidden rounded-sheet bg-canvas text-ink shadow-float">
-      {/* toolbar: where you are, what it is, its real save state, history, and the two views */}
-      <div role="toolbar" aria-label="Poster" className="flex flex-wrap items-center gap-x-3 gap-y-2 border-b border-line bg-surface px-4 py-2.5">
-        <a href="#/projects" className={cx('rounded-field px-1 text-sm text-ink-2 hover:text-ink', MOTION)}>← Projects</a>
-        <span aria-hidden className="hidden h-6 w-px bg-line sm:block" />
-        <div className="min-w-0 max-w-full">
-          <h1 className="truncate text-sm font-semibold">{p.name}</h1>
-          <p className="truncate text-xs text-ink-3">Poster · {view.width} × {view.height} px · revision {p.revision}{brandName ? ` · brand kit ${brandName}` : ''}</p>
-        </div>
-        <span role="status">{p.dirty ? <Pill ok={false}>Unsaved changes</Pill> : <Pill ok>Saved on this Mac</Pill>}</span>
-        <span className="ml-auto" />
-        <Tabs label="Editor view" value={mode} onChange={setMode} tabs={[{ id: 'edit', label: 'Edit' }, { id: 'export', label: 'Export' }]} />
-        <span aria-hidden className="hidden h-6 w-px bg-line sm:block" />
-        <Btn kind="quiet" disabled={locked || !p.can_undo} onClick={() => act('undo')} title={`Undo (${MOD}Z)`}>Undo</Btn>
-        <Btn kind="quiet" disabled={locked || !p.can_redo} onClick={() => act('redo')} title={`Redo (${MOD}Shift+Z)`.replace('⌘Shift+', '⇧⌘')}>Redo</Btn>
-        <Btn kind={p.dirty ? 'primary' : 'ghost'} disabled={locked || !p.dirty} onClick={() => act('save')} title={`Save (${MOD}S)`}>Save</Btn>
-      </div>
-      {(upgrade || wordsBlocked || err) && <div className="space-y-2 border-b border-line px-4 py-3">
-        {upgrade && <Notice tone="warning">
-          This change needs the newer edit-history format (v3). Older M5 Studio versions cannot open this poster afterwards.
-          <span className="ml-3 inline-flex gap-2"><Btn kind="ghost" disabled={locked} onClick={() => act(upgrade.action, { ...upgrade.extra, acknowledge_upgrade: true })}>Upgrade and continue</Btn><Btn kind="quiet" onClick={() => setUpgrade(null)}>Cancel</Btn></span></Notice>}
-        {wordsBlocked && <Notice tone="error" title="Export blocked.">Approved reel words on this poster no longer match their approval. Undo the edit or insert the approved line again. If the new wording is intended, approve it in that reel first, then insert it from there.</Notice>}
-        {err && <Notice tone="error">{err}</Notice>}
-      </div>}
-
-      {mode === 'edit' ? <div className="grid @2xl:grid-cols-[13rem_minmax(0,1fr)] @5xl:h-[calc(100vh-8.5rem)] @5xl:min-h-[36rem] @5xl:grid-cols-[15rem_minmax(0,1fr)_20rem]">
-        {/* layers: the real layers of this poster, top first */}
-        <aside aria-label="Layers" className="flex flex-col gap-3 border-b border-line bg-surface p-3 @2xl:border-r @5xl:overflow-auto @5xl:border-b-0">
+  const layersBody = <>
           <div className="flex items-center"><h2 className={PANEL_HEAD}>LAYERS</h2><span className="ml-auto text-xs text-ink-3">{layers.length} of {p.element_limit}</span></div>
           <ol className="space-y-0.5">
             {stack.map((l, i) => {
@@ -306,10 +283,40 @@ export function PosterEditor({ id }: { id: string }) {
               <Btn kind="ghost" disabled={locked || layers.length >= p.element_limit} onClick={() => act('add_shape', { shape: 'ellipse' })}>+ Ellipse</Btn>
             </div>
           </div>
-        </aside>
+  </>
+  const shownSide: Side = side === 'layers' && !narrow ? 'props' : side
+  const zoomLabel = zoom === 'fit' ? (scale ? `Fit · ${scale}%` : 'Fit') : `${zoom}%`
+  return (
+    <div ref={root} data-surface="editor" className="@container overflow-hidden rounded-sheet bg-canvas text-ink shadow-float">
+      {/* toolbar: where you are, what it is, its real save state, history, and the two views */}
+      <div role="toolbar" aria-label="Poster" className="flex flex-wrap items-center gap-x-3 gap-y-2 border-b border-line bg-surface px-4 py-2.5">
+        <a href="#/projects" className={cx('rounded-field px-1 text-sm text-ink-2 hover:text-ink', MOTION)}>← Projects</a>
+        <span aria-hidden className="hidden h-6 w-px bg-line sm:block" />
+        <div className="min-w-0 max-w-full">
+          <h1 className="truncate text-sm font-semibold">{p.name}</h1>
+          <p className="truncate text-xs text-ink-3">Poster · {view.width} × {view.height} px · revision {p.revision}{brandName ? ` · brand kit ${brandName}` : ''}</p>
+        </div>
+        <span role="status">{p.dirty ? <Pill ok={false}>Unsaved changes</Pill> : <Pill ok>Saved on this Mac</Pill>}</span>
+        <span className="ml-auto" />
+        <Tabs label="Editor view" value={mode} onChange={setMode} tabs={[{ id: 'edit', label: 'Edit' }, { id: 'export', label: 'Export' }]} />
+        <span aria-hidden className="hidden h-6 w-px bg-line sm:block" />
+        <Btn kind="quiet" disabled={locked || !p.can_undo} onClick={() => act('undo')} title={`Undo (${MOD}Z)`}>Undo</Btn>
+        <Btn kind="quiet" disabled={locked || !p.can_redo} onClick={() => act('redo')} title={`Redo (${MOD}Shift+Z)`.replace('⌘Shift+', '⇧⌘')}>Redo</Btn>
+        <Btn kind={p.dirty ? 'primary' : 'ghost'} disabled={locked || !p.dirty} onClick={() => act('save')} title={`Save (${MOD}S)`}>Save</Btn>
+      </div>
+      {(upgrade || wordsBlocked || err) && <div className="space-y-2 border-b border-line px-4 py-3">
+        {upgrade && <Notice tone="warning">
+          This change needs the newer edit-history format (v3). Older M5 Studio versions cannot open this poster afterwards.
+          <span className="ml-3 inline-flex gap-2"><Btn kind="ghost" disabled={locked} onClick={() => act(upgrade.action, { ...upgrade.extra, acknowledge_upgrade: true })}>Upgrade and continue</Btn><Btn kind="quiet" onClick={() => setUpgrade(null)}>Cancel</Btn></span></Notice>}
+        {wordsBlocked && <Notice tone="error" title="Export blocked.">Approved reel words on this poster no longer match their approval. Undo the edit or insert the approved line again. If the new wording is intended, approve it in that reel first, then insert it from there.</Notice>}
+        {err && <Notice tone="error">{err}</Notice>}
+      </div>}
+
+      {mode === 'edit' ? <div className="grid @2xl:grid-cols-[13rem_minmax(0,1fr)] @4xl:h-[calc(100vh-8.5rem)] @4xl:min-h-[36rem] @4xl:grid-cols-[13rem_minmax(0,1fr)_18rem] @6xl:grid-cols-[15rem_minmax(0,1fr)_20rem]">
+        {!narrow && <aside aria-label="Layers" className="flex flex-col gap-3 border-b border-line bg-surface p-3 @2xl:border-r @4xl:overflow-auto @4xl:border-b-0">{layersBody}</aside>}
 
         {/* canvas: the poster is the focus; zoom floats over the workspace */}
-        <section aria-label="Poster" className="relative flex min-h-[28rem] min-w-0 flex-col">
+        <section aria-label="Poster" className="relative flex min-h-[24rem] min-w-0 flex-col">
           <div className="flex flex-wrap items-center gap-x-3 gap-y-1 px-4 py-2 text-xs text-ink-3">
             <span>{view.width} × {view.height} px</span><span>Zoom {zoomLabel}</span>
             <span className={previewErr ? 'text-bad' : undefined}>{status}</span>
@@ -326,7 +333,7 @@ export function PosterEditor({ id }: { id: string }) {
                 const b = clippedBox(ghost(l), view); if (!b) return null
                 const on = sel === l.id
                 return <div key={l.id} onPointerDown={e => begin(e, l, 'move')} title={l.type === 'text' ? 'Text layer' : 'Shape layer'}
-                  className={cx('absolute cursor-move', on ? 'outline-2 outline-offset-2 outline-focus' : 'hover:outline hover:outline-1 hover:outline-focus/60', overflow.includes(l.id) && 'outline-2 outline-bad')}
+                  className={cx('absolute cursor-move', on ? 'z-10 outline-2 outline-offset-2 outline-focus' : 'hover:outline hover:outline-1 hover:outline-focus/60', overflow.includes(l.id) && 'outline-2 outline-bad')}
                   style={{ left: `${b.left}%`, top: `${b.top}%`, width: `${b.width}%`, height: `${b.height}%` }}>
                   {on && <span onPointerDown={e => begin(e, l, 'resize')} title="Resize" className="absolute -right-2 -bottom-2 h-3.5 w-3.5 cursor-nwse-resize rounded-chip bg-focus ring-2 ring-canvas" />}
                 </div>
@@ -354,17 +361,18 @@ export function PosterEditor({ id }: { id: string }) {
         </section>
 
         {/* right: properties of the selection, quality and readiness, reel context */}
-        <aside aria-label="Inspector" className="flex flex-col border-t border-line bg-surface @2xl:col-span-2 @5xl:col-span-1 @5xl:overflow-auto @5xl:border-t-0 @5xl:border-l">
-          <div className="sticky top-0 z-10 border-b border-line bg-surface p-2"><Tabs label="Inspector" value={side} onChange={setSide} tabs={sideTabs} /></div>
+        <aside aria-label="Inspector" className="flex flex-col border-t border-line bg-surface @2xl:col-span-2 @4xl:col-span-1 @4xl:overflow-auto @4xl:border-t-0 @4xl:border-l">
+          <div className="sticky top-0 z-10 overflow-x-auto border-b border-line bg-surface p-2"><Tabs label="Inspector" value={shownSide} onChange={setSide} tabs={sideTabs} /></div>
           <div className="space-y-4 p-3">
-            {side === 'props' && (!el ? <p className="text-sm text-ink-3">Select a layer on the poster or in the list to edit its text, size, colour and position.</p>
+            {shownSide === 'layers' && <div className="flex flex-col gap-3" role="region" aria-label="Layers">{layersBody}</div>}
+            {shownSide === 'props' && (!el ? <p className="text-sm text-ink-3">Select a layer on the poster or in the list to edit its text, size, colour and position.</p>
               : <>
                 <div><h2 className={PANEL_HEAD}>{layerKind(el, textOf(el)).toUpperCase()}</h2>
                   <p className={cx('mt-1 truncate text-sm font-medium', textOf(el)?.language === 'te' && 'te')}>{layerName(el, textOf(el))}</p></div>
                 <Inspector key={`${el.id}-${p.revision}`} p={p} el={el} text={textOf(el)} link={links.find(k => k.element_id === el.id)} locked={locked} act={act} onComposing={v => { composing.current = v }} />
               </>)}
-            {side === 'quality' && <QualityPanel ready={ready} qa={qa && qa.revision === p.revision ? qa : null} failing={failing} brand={brandName} onShow={id => { setSel(id); setSide('props') }} onExport={() => setMode('export')} />}
-            {side === 'reel' && <>
+            {shownSide === 'quality' && <QualityPanel ready={ready} qa={qa && qa.revision === p.revision ? qa : null} failing={failing} brand={brandName} onShow={id => { setSel(id); setSide('props') }} onExport={() => setMode('export')} />}
+            {shownSide === 'reel' && <>
               <div>
                 <h2 className={cx('mb-2', PANEL_HEAD)}>REELS MADE FROM THIS POSTER</h2>
                 {reelLinks === null ? <p className="text-xs text-ink-3">Checking…</p> : !reelLinks.length ? <p className="text-xs text-ink-3">None recorded yet.</p>

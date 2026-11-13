@@ -93,18 +93,18 @@ function Inputs({ p, reload }: { p: Project; reload: (x?: Project) => void }) {
   const videos = p.inputs.filter(f => /\.(mov|mp4|m4v|mkv|webm)$/i.test(f)); const slides = p.inputs.filter(f => /^slide_\d+\.png$/.test(f))
   return (
     <div className="space-y-3 text-sm">
-      <div className="grid gap-3 sm:grid-cols-3">
+      <div className="grid gap-3 sm:grid-cols-3 [&>*]:min-w-0">
         <label className="rounded-field border border-dashed border-line-strong p-3 hover:bg-surface">
           <div className="font-medium">Speaker video</div><div className="text-xs text-ink-3">a person talking → speaker reel through the AI planner</div>
-          <input type="file" accept="video/*" className="mt-2 text-xs" onChange={e => up(e.target.files?.[0], 'video')} />
+          <input type="file" accept="video/*" className="mt-2 block w-full min-w-0 max-w-full text-xs" onChange={e => up(e.target.files?.[0], 'video')} />
         </label>
         <label className="rounded-field border border-dashed border-line-strong p-3 hover:bg-surface">
           <div className="font-medium">Slide pictures ({slides.length})</div><div className="text-xs text-ink-3">your own pictures, one per sentence, in order</div>
-          <input type="file" accept="image/*" multiple className="mt-2 text-xs" onChange={async e => { for (const f of Array.from(e.target.files ?? [])) await up(f, 'slide') }} />
+          <input type="file" accept="image/*" multiple className="mt-2 block w-full min-w-0 max-w-full text-xs" onChange={async e => { for (const f of Array.from(e.target.files ?? [])) await up(f, 'slide') }} />
         </label>
         <label className="rounded-field border border-dashed border-line-strong p-3 hover:bg-surface">
           <div className="font-medium">Your narration recording</div><div className="text-xs text-ink-3">your own voice (.wav/.m4a) - never cloned</div>
-          <input type="file" accept="audio/*" className="mt-2 text-xs" onChange={e => up(e.target.files?.[0], 'recording')} />
+          <input type="file" accept="audio/*" className="mt-2 block w-full min-w-0 max-w-full text-xs" onChange={e => up(e.target.files?.[0], 'recording')} />
         </label>
       </div>
       {upl && <p className="text-ink-3">Uploading {upl}…</p>}
@@ -291,8 +291,8 @@ function TitlePage({ p, reload, wordsFromPlan }: { p: Project; reload: (x?: Proj
       <div className="grid gap-2 sm:grid-cols-4">{inp('tag_top', 'Sign: top (optional)')}{inp('tag_bottom', 'Sign: bottom')}{inp('h1', 'Headline line 1')}{inp('h2', 'Headline line 2')}</div></>}
       <div className="flex flex-wrap items-center gap-4">
         {!wordsFromPlan && <Btn kind={saved ? 'ghost' : 'primary'} disabled={saved} onClick={async () => { setErr(null); try { reload(await api.title(p.name, { line1: f.line1, line2: f.line2, line3: f.line3, tag_top: f.tag_top, tag_bottom: f.tag_bottom, headline: [f.h1, f.h2] })) } catch (e) { setErr((e as Error).message) } }}>{saved ? 'Saved' : 'Save title page'}</Btn>}
-        <label className="text-xs">Person cut-out (PNG, transparent): <input type="file" accept="image/png" className="text-xs" onChange={e => up(e.target.files?.[0], 'title_person')} /><span className="text-ink-3"> {p.project.title_person ? 'set' : 'none'}</span></label>
-        <label className="text-xs">Background photo: <input type="file" accept="image/*" className="text-xs" onChange={e => up(e.target.files?.[0], 'title_bg')} /><span className="text-ink-3"> {p.project.title_bg ? 'set' : 'none'}</span></label>
+        <label className="text-xs">Person cut-out (PNG, transparent): <input type="file" accept="image/png" className="max-w-full text-xs" onChange={e => up(e.target.files?.[0], 'title_person')} /><span className="text-ink-3"> {p.project.title_person ? 'set' : 'none'}</span></label>
+        <label className="text-xs">Background photo: <input type="file" accept="image/*" className="max-w-full text-xs" onChange={e => up(e.target.files?.[0], 'title_bg')} /><span className="text-ink-3"> {p.project.title_bg ? 'set' : 'none'}</span></label>
       </div>
       <Err msg={err} />
     </div>
@@ -414,7 +414,7 @@ function ProjectList({ rows, onOpen }: { rows: ProjectRow[]; onOpen: (n: string)
       {rows.map(r => (
         <li key={r.name}>
           <button onClick={() => onOpen(r.name)} className={cx('flex w-full flex-wrap items-center gap-x-4 gap-y-1 px-4 py-3 text-left hover:bg-act-subtle', MOTION)}>
-            <span className="min-w-0 flex-1 truncate font-medium">{r.name}</span>
+            <span className="w-full min-w-0 truncate font-medium sm:w-auto sm:flex-1">{r.name}</span>
             <span className="text-xs text-ink-3">{r.brand} · {r.mode === 'speaker' ? 'speaker reel' : 'slides reel'} · {r.exports} export(s){r.archived ? ' · archived' : ''}</span>
           </button>
         </li>
