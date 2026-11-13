@@ -23,6 +23,21 @@ export function parseLink(reel: string, raw: unknown): Link | null {
   return { reel, posterId: p.project_id, posterName: typeof p.name === 'string' ? p.name : '', revision: typeof p.revision === 'number' ? p.revision : null, created: typeof v.created === 'string' ? v.created : null }
 }
 
+/** Plain words for a reel's state (display only; the stored status is never changed).
+ *  The engine writes the status word "new" at creation and does not update it, so real progress comes from the
+ *  reel's own counts: exports made, steps done. "baseline" is the protected reference reel.
+ *  A status word this build does not know is shown as it is, never as finished or ready. */
+export function reelStatusLabel(r: { status?: string; archived?: boolean; steps_done?: number; exports?: number }): string {
+  if (r.archived) return 'Archived'
+  if (r.status === 'baseline') return 'Baseline project'
+  if (r.status === 'new' || !r.status) {
+    if ((r.exports ?? 0) > 0) return 'Exported'
+    if ((r.steps_done ?? 0) > 0) return 'In progress'
+    return r.status ? 'New project' : 'Reel'
+  }
+  return `Status: ${r.status}`
+}
+
 const plural = (n: number, w: string) => `${n} ${w}${n === 1 ? '' : 's'}`
 export const reelHref = (name: string) => `#/p/${encodeURIComponent(name)}`
 export const posterHref = (id: string) => `#/poster/${encodeURIComponent(id)}`
@@ -33,7 +48,7 @@ export function combine(reels: ReelSource[], posters: PosterSource[], links: Lin
   const reelItems: Item[] = reels.map(r => {
     const l = live.find(x => x.reel === r.name)
     return { key: `reel:${r.name}`, kind: 'reel', title: r.name, href: reelHref(r.name), modified: r.modified ?? null,
-      status: r.archived ? 'Archived' : r.status ? `Status: ${r.status}` : 'Reel',   // the reel's own status word; its next step is shown inside the reel
+      status: reelStatusLabel(r),
       facts: [r.mode === 'speaker' ? 'speaker reel' : 'slides reel', ...(r.brand ? [`reel brand ${r.brand}`] : []), ...(typeof r.steps_done === 'number' ? [`${plural(r.steps_done, 'step')} done`] : []), ...(typeof r.exports === 'number' ? [plural(r.exports, 'export')] : [])],
       linked: l ? [{ label: posterIds.has(l.posterId) ? `Made from poster "${l.posterName || l.posterId}"${l.revision !== null ? ` (revision ${l.revision})` : ''}` : `Made from a poster that is not in this poster library${l.posterName ? ` ("${l.posterName}")` : ''}`,
         href: posterIds.has(l.posterId) ? posterHref(l.posterId) : null }] : [] }

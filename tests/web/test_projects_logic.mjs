@@ -1,6 +1,6 @@
 // Unit test for app/web/src/projects-logic.ts (M7-B B4B-2). Run: node tests/web/test_projects_logic.mjs
 import assert from 'node:assert/strict'
-import { EMPTY, combine, counts, matches, parseLink } from '../../app/web/src/projects-logic.ts'
+import { EMPTY, combine, counts, matches, parseLink, reelStatusLabel } from '../../app/web/src/projects-logic.ts'
 let checks = 0
 const eq = (a, b, m) => { checks++; assert.deepEqual(a, b, `${m ?? 'check ' + checks}: got ${JSON.stringify(a)}`) }
 const ok = (v, m) => { checks++; assert.ok(v, m) }
@@ -31,14 +31,21 @@ eq(items.filter(i => matches(i, 'both')).map(i => i.key), ['reel:2026-11-12_read
 eq(items.filter(i => matches(i, 'poster')).map(i => i.title), ['Editorial hierarchy', 'Reading day'], 'posters by name'); eq(items.filter(i => matches(i, 'reel')).length, 3); eq(items.filter(i => matches(i, 'all')).length, 5)
 
 // ---- only supported facts: reel dates and steps from the reel list, no date for posters
-eq(reel.modified, '2026-11-12 14:41'); eq(reel.status, 'Status: new'); eq(reel.facts, ['slides reel', 'reel brand tech_ai_tools', '4 steps done', '3 exports']); eq(reel.href, '#/p/2026-11-12_reading_day')
-eq(items.find(i => i.key === 'reel:2026-11-03_reel_002').status, 'Status: rendered'); eq(items.find(i => i.key === 'reel:zz_old').status, 'Archived')
+eq(reel.modified, '2026-11-12 14:41'); eq(reel.status, 'Exported'); eq(reel.facts, ['slides reel', 'reel brand tech_ai_tools', '4 steps done', '3 exports']); eq(reel.href, '#/p/2026-11-12_reading_day')
+eq(items.find(i => i.key === 'reel:2026-11-03_reel_002').status, 'Status: rendered', 'an unknown status word is shown as it is'); eq(items.find(i => i.key === 'reel:zz_old').status, 'Archived')
 eq(poster.modified, null, 'no poster date is invented'); eq(poster.status, 'Unsaved changes'); eq(items.find(i => i.key === 'poster:p2').status, 'Saved'); eq(poster.href, '#/poster/p1')
 
 // ---- a recorded poster that is not in this library: said so, no dead link; a record for a missing reel is ignored
 items = combine(reels, [posters[0]], links)
 eq(items.find(i => i.key === 'reel:2026-11-12_reading_day').linked, [{ label: 'Made from a poster that is not in this poster library ("Editorial hierarchy")', href: null }]); eq(counts(items).both, 1)
 eq(counts(combine([reels[1]], posters, links)).both, 0)
+
+// ---- reel status wording: plain labels, real counts, unknown words never upgraded
+eq(reelStatusLabel({ status: 'new' }), 'New project'); eq(reelStatusLabel({ status: 'new', steps_done: 0, exports: 0 }), 'New project')
+eq(reelStatusLabel({ status: 'new', steps_done: 2, exports: 0 }), 'In progress'); eq(reelStatusLabel({ status: 'new', steps_done: 5, exports: 3 }), 'Exported')
+eq(reelStatusLabel({ status: 'baseline', steps_done: 1 }), 'Baseline project'); eq(reelStatusLabel({ status: 'new', archived: true }), 'Archived')
+eq(reelStatusLabel({ status: 'done' }), 'Status: done'); eq(reelStatusLabel({ status: 'weird_value', exports: 9 }), 'Status: weird_value'); eq(reelStatusLabel({}), 'Reel')
+ok(!/complete|ready/i.test(reelStatusLabel({ status: 'anything' })))
 
 // ---- empty states
 eq(counts(combine([], [], [])), { all: 0, poster: 0, reel: 0, both: 0 }); ok(EMPTY.all && EMPTY.poster && EMPTY.reel && EMPTY.both)

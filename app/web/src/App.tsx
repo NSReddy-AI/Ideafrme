@@ -474,13 +474,10 @@ export default function App() {
         <p className="hidden border-t border-line px-5 py-4 md:block text-xs text-ink-3">Works on this Mac. Nothing is published.</p>
       </aside>
       <main id="main" tabIndex={-1} className="min-w-0 flex-1 px-4 py-6 outline-none! md:px-8 md:py-8">
-        <div className={cx('mx-auto', route.page === 'poster' ? 'max-w-7xl' : 'max-w-5xl')}>
+        <div className={cx('mx-auto', route.page === 'poster' ? 'max-w-[104rem]' : 'max-w-5xl')}>
           <Err msg={err} />
           {!cat ? <p className="text-sm text-ink-3">Connecting to the local server…</p>
-            : route.page === 'poster' ? <>
-              <a href="#/projects" className="mb-4 inline-block text-sm text-link hover:underline">← Projects</a>
-              <PosterEditor id={route.id} />
-            </>
+            : route.page === 'poster' ? <PosterEditor id={route.id} />
             : route.page === 'posters' ? <PostersPage onOpen={id => go({ page: 'poster', id })} />
             : route.page === 'create' ? <Create onConcepts={id => go({ page: 'concepts', id })} reelForm={<NewProject cat={cat} onMade={n => go({ page: 'project', name: n })} />} />
             : route.page === 'concepts' ? <Concepts id={route.id} onOpen={id => go({ page: 'poster', id })} />

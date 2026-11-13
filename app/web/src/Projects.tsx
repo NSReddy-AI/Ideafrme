@@ -2,21 +2,14 @@
 // the reel list (/api/projects), the poster list (/api/creative/projects) and each slides reel's own conversion
 // record (served by /files). It opens projects in their existing editor or workflow and changes nothing.
 import { useEffect, useState } from 'react'
-import { api, fileUrl } from './api'
+import { api } from './api'
+import { readLinks } from './project-links'
 import { creative } from './creative'
-import { EMPTY, combine, counts, matches, parseLink, type Filter, type Item, type Link, type PosterSource, type ReelSource } from './projects-logic'
+import { EMPTY, combine, counts, matches, type Filter, type Item, type Link, type PosterSource, type ReelSource } from './projects-logic'
 import { Btn, MOTION, Notice, PageHead, Pill, Spinner, Tabs, cx } from './ui'
 
 const msg = (e: unknown) => (e as Error).message
 type Loaded<T> = { rows: T[]; error: string | null }
-
-/** A slides reel made by the poster-to-reel converter carries build/conversion.json. No file, or anything else, means no link. */
-async function readLinks(reels: ReelSource[]): Promise<Link[]> {
-  const found = await Promise.all(reels.filter(r => r.mode === 'slides').map(async r => {
-    try { const res = await fetch(fileUrl(`projects/${r.name}/build/conversion.json`)); return res.ok ? parseLink(r.name, await res.json()) : null } catch { return null }
-  }))
-  return found.filter((l): l is Link => l !== null)
-}
 
 export function ProjectsPage() {
   const [filter, setFilter] = useState<Filter>('all'); const [showAll, setShowAll] = useState(false)

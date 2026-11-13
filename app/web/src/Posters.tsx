@@ -10,6 +10,8 @@ import { nextLayerIndex, nudge, shortcut, zoomWidth } from '@m5/visual_poster_st
 import { creative, CreativeError, type ApprovedDoc, type Binding, type ContentLink, type ExportReceipt, type Face, type Layer, type PosterProject, type PosterQA, type PosterRow, type ReelRow, type Scene } from './creative'
 import { Btn, Card, Err, Field, MOTION, Notice, PageHead, Pill, Select, Tabs, TextArea, cx, useConfirm } from './ui'
 import { PHASES, readiness, savedFiles, type ItemState, type Phase } from './export-logic'
+import { readLinks } from './project-links'
+import { reelHref, reelStatusLabel } from './projects-logic'
 import { api, type Catalog } from './api'
 import { measureText, measuredChecks, type MeasuredCheck } from './measure'
 
@@ -53,10 +55,13 @@ type Pending = { action: string; extra: Record<string, unknown> }
 
 type Zoom = 'fit' | '25' | '50' | '75' | '100'
 type Mode = 'edit' | 'export'
+type Side = 'props' | 'quality' | 'reel'
+type Finding = { name: string; level: string; detail: string; element_id: string }
 type Run = { png: boolean; phase: Phase }
 const ZOOMS: [Zoom, string][] = [['fit', 'Fit'], ['25', '25%'], ['50', '50%'], ['75', '75%'], ['100', '100%']]
 const MOD = typeof navigator !== 'undefined' && /Mac|iPhone|iPad/.test(navigator.platform) ? '⌘' : 'Ctrl+'
 const CHECKER = { backgroundImage: 'conic-gradient(var(--color-bg-raised) 25%, var(--color-bg-surface) 0 50%, var(--color-bg-raised) 0 75%, var(--color-bg-surface) 0)', backgroundSize: '24px 24px' }
+const layerKind = (l: Layer, text?: { language: string }) => l.type === 'text' ? (text?.language === 'te' ? 'Telugu text' : 'English text') : l.style.shape === 'ellipse' ? 'Ellipse' : 'Rectangle'
 const layerName = (l: Layer, text?: { text: string }) => l.type === 'text' ? (text?.text.split('\n')[0] || 'empty text') : l.style.shape === 'ellipse' ? 'Ellipse' : 'Rectangle'
 const PANEL_HEAD = 'text-xs font-semibold tracking-wide text-ink-3'
 
@@ -72,7 +77,8 @@ export function PosterEditor({ id }: { id: string }) {
   const [qa, setQa] = useState<PosterQA | null>(null); const [links, setLinks] = useState<ContentLink[]>([])
   const [gesture, setGesture] = useState<Gesture | null>(null)
   const [exporting, setExporting] = useState(false); const [receipt, setReceipt] = useState<ExportReceipt | null>(null)
-  const [mode, setMode] = useState<Mode>('edit'); const [zoom, setZoom] = useState<Zoom>('fit')
+  const [mode, setMode] = useState<Mode>('edit'); const [zoom, setZoom] = useState<Zoom>('fit'); const [side, setSide] = useState<Side>('props')
+  const [scale, setScale] = useState<number | null>(null); const [reelFound, setReelFound] = useState<{ id: string; rows: { name: string; status: string }[] } | null>(null)
   const [run, setRun] = useState<Run | null>(null); const [exportErr, setExportErr] = useState<string | null>(null)
   const frame = useRef<HTMLDivElement>(null); const seq = useRef(0)
   const composing = useRef(false); const layerBtns = useRef<(HTMLButtonElement | null)[]>([])
@@ -145,7 +151,20 @@ export function PosterEditor({ id }: { id: string }) {
     document.addEventListener('keydown', on); return () => document.removeEventListener('keydown', on)
   }, [p, sel, busy, exporting, gesture, mode, act])
 
-  if (!p) return err ? <Err msg={err} /> : <p className="text-sm text-ink-3">Opening poster…</p>
+  const loaded = !!p
+  const reelLinks = reelFound && reelFound.id === id ? reelFound.rows : null
+  useEffect(() => {   // the real zoom of "Fit": the frame's width against the 1080 px poster
+    const node = frame.current; if (!node || !loaded) return
+    const measure = () => setScale(Math.round(node.getBoundingClientRect().width / 1080 * 100))
+    measure(); const ro = new ResizeObserver(measure); ro.observe(node); return () => ro.disconnect()
+  }, [loaded, mode, zoom])
+  useEffect(() => {   // reels that carry the converter's record for this poster (read-only; same source as Projects)
+    let live = true
+    api.projects(false).then(async rows => { const l = await readLinks(rows); if (live) setReelFound({ id, rows: l.filter(x => x.posterId === id).map(x => ({ name: x.reel, status: reelStatusLabel(rows.find(r => r.name === x.reel) ?? {}) })) }) }).catch(() => { if (live) setReelFound({ id, rows: [] }) })
+    return () => { live = false }
+  }, [id])
+
+  if (!p) return <div><a href="#/projects" className="mb-4 inline-block text-sm text-link hover:underline">← Projects</a>{err ? <Err msg={err} /> : <p className="text-sm text-ink-3">Opening poster…</p>}</div>
   const view = p.view; const layers = p.elements.filter(e => e.view_id === view.id)
   const el = layers.find(e => e.id === sel) ?? null
   const textOf = (e: Layer) => p.content.find(c => c.id === e.content_id)
@@ -218,65 +237,87 @@ export function PosterEditor({ id }: { id: string }) {
   // replaces the box-based one (the box is usually larger than the drawn text).
   const failing = [...(qa?.checks.filter(c => !c.passed && !(c.name === 'safe_area' && current)) ?? []),
     ...(current ? measured.map(m => ({ ...m, passed: false })) : [])]
-  const qaPass = !!qa && qa.passed && !overflow.length && !(current && measured.some(m => m.level === 'error'))
   const wordsBlocked = failing.some(c => c.name === 'approved_text')   // M7-A: the server refuses this export too
   const ready = readiness({ locked, current, previewErr, overflow: overflow.length, wordsBlocked, qaKnown: !!qa && qa.revision === p.revision,
     errors: failing.filter(c => c.level === 'error' && c.name !== 'approved_text').length, warnings: failing.filter(c => c.level !== 'error').length,
     fontsReady: !!faces, pngOk, pngNote: fontNote })
   const aspect = `${view.width} / ${view.height}`
-  const status = previewErr ? previewErr : current ? `Preview current · revision ${p.revision}` : 'Updating preview…'
+  const status = previewErr ? previewErr : current ? 'Preview current' : 'Updating preview…'
+  const brandName = (p.binding as Binding | null)?.record.brand?.record.payload.name
+  const blocking = ready.items.filter(i => i.state === 'blocked').length; const toReview = failing.length
+  const sideTabs: { id: Side; label: string }[] = [{ id: 'props', label: 'Properties' },
+    { id: 'quality', label: blocking ? `Quality · ${blocking} blocking` : toReview ? `Quality · ${toReview}` : 'Quality' }, { id: 'reel', label: 'Reel' }]
+  const zoomLabel = zoom === 'fit' ? (scale ? `Fit · ${scale}%` : 'Fit') : `${zoom}%`
   return (
-    <div data-surface="editor" className="rounded-sheet bg-canvas p-4 text-ink shadow-float">
-      {/* toolbar: what it is, where you are, history */}
-      <div role="toolbar" aria-label="Poster" className="mb-4 flex flex-wrap items-center gap-2">
-        <h1 className="mr-1 max-w-full truncate text-base font-semibold">{p.name}</h1>
-        {p.dirty ? <Pill ok={false}>Unsaved changes</Pill> : <Pill ok>Saved</Pill>}
-        <span className="mx-1"><Tabs label="Editor step" value={mode} onChange={setMode} tabs={[{ id: 'edit', label: 'Edit' }, { id: 'export', label: 'Export' }]} /></span>
+    <div data-surface="editor" className="@container overflow-hidden rounded-sheet bg-canvas text-ink shadow-float">
+      {/* toolbar: where you are, what it is, its real save state, history, and the two views */}
+      <div role="toolbar" aria-label="Poster" className="flex flex-wrap items-center gap-x-3 gap-y-2 border-b border-line bg-surface px-4 py-2.5">
+        <a href="#/projects" className={cx('rounded-field px-1 text-sm text-ink-2 hover:text-ink', MOTION)}>← Projects</a>
+        <span aria-hidden className="hidden h-6 w-px bg-line sm:block" />
+        <div className="min-w-0 max-w-full">
+          <h1 className="truncate text-sm font-semibold">{p.name}</h1>
+          <p className="truncate text-xs text-ink-3">Poster · {view.width} × {view.height} px · revision {p.revision}{brandName ? ` · brand kit ${brandName}` : ''}</p>
+        </div>
+        <span role="status">{p.dirty ? <Pill ok={false}>Unsaved changes</Pill> : <Pill ok>Saved on this Mac</Pill>}</span>
         <span className="ml-auto" />
+        <Tabs label="Editor view" value={mode} onChange={setMode} tabs={[{ id: 'edit', label: 'Edit' }, { id: 'export', label: 'Export' }]} />
+        <span aria-hidden className="hidden h-6 w-px bg-line sm:block" />
         <Btn kind="quiet" disabled={locked || !p.can_undo} onClick={() => act('undo')} title={`Undo (${MOD}Z)`}>Undo</Btn>
         <Btn kind="quiet" disabled={locked || !p.can_redo} onClick={() => act('redo')} title={`Redo (${MOD}Shift+Z)`.replace('⌘Shift+', '⇧⌘')}>Redo</Btn>
-        <Btn kind="ghost" disabled={locked || !p.dirty} onClick={() => act('save')} title={`Save (${MOD}S)`}>Save</Btn>
-        {mode === 'edit' && <Btn onClick={() => setMode('export')}>Export…</Btn>}
+        <Btn kind={p.dirty ? 'primary' : 'ghost'} disabled={locked || !p.dirty} onClick={() => act('save')} title={`Save (${MOD}S)`}>Save</Btn>
       </div>
-      {upgrade && <Notice tone="warning" className="mb-3">
-        This change needs the newer edit-history format (v3). Older M5 Studio versions cannot open this poster afterwards.
-        <span className="ml-3 inline-flex gap-2"><Btn kind="ghost" disabled={locked} onClick={() => act(upgrade.action, { ...upgrade.extra, acknowledge_upgrade: true })}>Upgrade and continue</Btn><Btn kind="quiet" onClick={() => setUpgrade(null)}>Cancel</Btn></span></Notice>}
-      {wordsBlocked && <Notice tone="error" className="mb-3" title="Export blocked.">Approved reel words on this poster no longer match their approval. Undo the edit or insert the approved line again. If the new wording is intended, approve it in that reel first, then insert it from there.</Notice>}
-      <Err msg={err} />
+      {(upgrade || wordsBlocked || err) && <div className="space-y-2 border-b border-line px-4 py-3">
+        {upgrade && <Notice tone="warning">
+          This change needs the newer edit-history format (v3). Older M5 Studio versions cannot open this poster afterwards.
+          <span className="ml-3 inline-flex gap-2"><Btn kind="ghost" disabled={locked} onClick={() => act(upgrade.action, { ...upgrade.extra, acknowledge_upgrade: true })}>Upgrade and continue</Btn><Btn kind="quiet" onClick={() => setUpgrade(null)}>Cancel</Btn></span></Notice>}
+        {wordsBlocked && <Notice tone="error" title="Export blocked.">Approved reel words on this poster no longer match their approval. Undo the edit or insert the approved line again. If the new wording is intended, approve it in that reel first, then insert it from there.</Notice>}
+        {err && <Notice tone="error">{err}</Notice>}
+      </div>}
 
-      {mode === 'edit' ? <div className="grid gap-4 lg:grid-cols-[15rem_minmax(0,1fr)_18rem]">
-        {/* layers */}
-        <aside aria-label="Layers" className="space-y-3 rounded-box bg-surface p-3">
-          <h2 className={PANEL_HEAD}>LAYERS</h2>
-          <ol className="space-y-1">
-            {stack.map((l, i) => <li key={l.id}><button ref={b => { layerBtns.current[i] = b }} onClick={() => setSel(l.id)} onKeyDown={e => layerKey(e, i)} aria-pressed={sel === l.id}
-              aria-label={l.type === 'text' ? `Text layer: ${layerName(l, textOf(l))}` : `${layerName(l)} layer`}
-              className={cx('w-full truncate rounded-field border-l-2 px-2 py-1.5 text-left text-sm', MOTION, sel === l.id ? 'border-act bg-act-subtle font-medium text-link' : 'border-transparent hover:bg-raised')}>
-              {links.some(k => k.element_id === l.id) && <span title="Approved words from a reel" className={cx('mr-1 text-xs font-semibold', links.find(k => k.element_id === l.id)?.ok ? 'text-ok' : 'text-bad')}>✓A</span>}
-              {l.type === 'text' ? <span className={textOf(l)?.language === 'te' ? 'te' : undefined}>{textOf(l)?.text.split('\n')[0] || '(empty text)'}</span> : <span className={sel === l.id ? undefined : 'text-ink-2'}>{layerName(l)}</span>}
-            </button></li>)}
+      {mode === 'edit' ? <div className="grid @2xl:grid-cols-[13rem_minmax(0,1fr)] @5xl:h-[calc(100vh-8.5rem)] @5xl:min-h-[36rem] @5xl:grid-cols-[15rem_minmax(0,1fr)_20rem]">
+        {/* layers: the real layers of this poster, top first */}
+        <aside aria-label="Layers" className="flex flex-col gap-3 border-b border-line bg-surface p-3 @2xl:border-r @5xl:overflow-auto @5xl:border-b-0">
+          <div className="flex items-center"><h2 className={PANEL_HEAD}>LAYERS</h2><span className="ml-auto text-xs text-ink-3">{layers.length} of {p.element_limit}</span></div>
+          <ol className="space-y-0.5">
+            {stack.map((l, i) => {
+              const t = textOf(l); const link = links.find(k => k.element_id === l.id); const on = sel === l.id
+              return <li key={l.id}><button ref={b => { layerBtns.current[i] = b }} onClick={() => setSel(l.id)} onKeyDown={e => layerKey(e, i)} aria-pressed={on}
+                aria-label={l.type === 'text' ? `Text layer: ${layerName(l, t)}` : `${layerName(l)} layer`}
+                className={cx('flex w-full items-center gap-2 rounded-field border-l-2 px-2 py-1.5 text-left text-sm', MOTION, on ? 'border-act bg-act-subtle text-link' : 'border-transparent hover:bg-raised')}>
+                <span aria-hidden className={cx('grid h-5 w-5 shrink-0 place-items-center rounded-chip text-xs font-semibold', on ? 'bg-act text-on-act' : 'bg-raised text-ink-2')}>{l.type === 'text' ? 'T' : l.style.shape === 'ellipse' ? '○' : '□'}</span>
+                <span className="min-w-0 flex-1">
+                  <span className={cx('block truncate', on && 'font-medium', l.type === 'text' && t?.language === 'te' && 'te')}>{l.type === 'text' ? (t?.text.split('\n')[0] || '(empty text)') : layerName(l)}</span>
+                  <span className={cx('block truncate text-xs', on ? 'text-link' : 'text-ink-3')}>{l.type === 'text' ? layerKind(l, t) : `${l.width} × ${l.height} px`}{link ? (link.ok ? ' · approved words' : ' · approved words changed') : ''}</span>
+                </span>
+                {link && <span title="Approved words from a reel" className={cx('text-xs font-semibold', link.ok ? 'text-ok' : 'text-bad')}>{link.ok ? '✓' : '!'}</span>}
+              </button></li>
+            })}
           </ol>
-          <div className="flex gap-1"><Btn kind="quiet" disabled={locked || !el} onClick={() => reorder(1)} title="Bring forward">Forward</Btn><Btn kind="quiet" disabled={locked || !el} onClick={() => reorder(-1)} title="Send backward">Backward</Btn></div>
-          <div className="grid grid-cols-2 gap-1 border-t border-line pt-3 [&>button]:px-2 [&>button]:text-xs">
-            <Btn kind="ghost" disabled={locked || p.remaining_text_slots.te < 1 || layers.length >= p.element_limit} onClick={() => act('add_text', { language: 'te' })}>+ Telugu</Btn>
-            <Btn kind="ghost" disabled={locked || p.remaining_text_slots.en < 1 || layers.length >= p.element_limit} onClick={() => act('add_text', { language: 'en' })}>+ English</Btn>
-            <Btn kind="ghost" disabled={locked || layers.length >= p.element_limit} onClick={() => act('add_shape', { shape: 'rectangle' })}>+ Rectangle</Btn>
-            <Btn kind="ghost" disabled={locked || layers.length >= p.element_limit} onClick={() => act('add_shape', { shape: 'ellipse' })}>+ Ellipse</Btn>
+          <div>
+            <div className="mb-1 text-xs text-ink-3">Order of the selected layer</div>
+            <div className="grid grid-cols-2 gap-1"><Btn kind="quiet" disabled={locked || !el} onClick={() => reorder(1)} title="Bring forward">Forward</Btn><Btn kind="quiet" disabled={locked || !el} onClick={() => reorder(-1)} title="Send backward">Backward</Btn></div>
+          </div>
+          <div className="border-t border-line pt-3">
+            <div className="mb-1 text-xs text-ink-3">Add a layer</div>
+            <div className="grid grid-cols-2 gap-1 [&>button]:px-2 [&>button]:text-xs">
+              <Btn kind="ghost" disabled={locked || p.remaining_text_slots.te < 1 || layers.length >= p.element_limit} onClick={() => act('add_text', { language: 'te' })}>+ Telugu</Btn>
+              <Btn kind="ghost" disabled={locked || p.remaining_text_slots.en < 1 || layers.length >= p.element_limit} onClick={() => act('add_text', { language: 'en' })}>+ English</Btn>
+              <Btn kind="ghost" disabled={locked || layers.length >= p.element_limit} onClick={() => act('add_shape', { shape: 'rectangle' })}>+ Rectangle</Btn>
+              <Btn kind="ghost" disabled={locked || layers.length >= p.element_limit} onClick={() => act('add_shape', { shape: 'ellipse' })}>+ Ellipse</Btn>
+            </div>
           </div>
         </aside>
 
-        {/* poster */}
-        <section aria-label="Poster" className="min-w-0">
-          <div className="mb-2 flex flex-wrap items-center gap-2 text-xs text-ink-2">
-            <span>{view.width} × {view.height} px · Draft</span>
-            <span className="ml-auto" />
-            <label className="flex items-center gap-2">Zoom<Select value={zoom} onChange={e => setZoom(e.target.value as Zoom)}>{ZOOMS.map(([v, t]) => <option key={v} value={v}>{t}</option>)}</Select></label>
-            <Btn kind="quiet" aria-pressed={zoom === 'fit'} onClick={() => setZoom('fit')}>Fit</Btn>
-            <Btn kind="quiet" aria-pressed={zoom === '100'} onClick={() => setZoom('100')}>100%</Btn>
+        {/* canvas: the poster is the focus; zoom floats over the workspace */}
+        <section aria-label="Poster" className="relative flex min-h-[28rem] min-w-0 flex-col">
+          <div className="flex flex-wrap items-center gap-x-3 gap-y-1 px-4 py-2 text-xs text-ink-3">
+            <span>{view.width} × {view.height} px</span><span>Zoom {zoomLabel}</span>
+            <span className={previewErr ? 'text-bad' : undefined}>{status}</span>
+            <span className="ml-auto">Dashed line: {SAFE_MARGIN} px safe area</span>
           </div>
-          <div className="max-h-[80vh] overflow-auto rounded-field bg-surface p-2" tabIndex={zoom === 'fit' ? undefined : 0} aria-label={zoom === 'fit' ? undefined : 'Poster, scrollable'}>
+          <div className="min-h-0 flex-1 overflow-auto px-6 pt-2 pb-20" tabIndex={zoom === 'fit' ? undefined : 0} aria-label={zoom === 'fit' ? undefined : 'Poster, scrollable'}>
             <div ref={frame} onPointerMove={moveG} onPointerUp={endG} onPointerCancel={() => setGesture(null)} onPointerDown={() => setSel(null)}
-              className="relative mx-auto select-none overflow-hidden rounded-field ring-1 ring-line"
+              className="relative mx-auto select-none overflow-hidden rounded-chip shadow-float ring-1 ring-line"
               style={{ width: zoomWidth(zoom), aspectRatio: aspect, ...CHECKER }}>
               {preview && <img src={preview} alt="Poster preview" draggable={false} className={cx('absolute inset-0 h-full w-full', !current && 'opacity-60')} />}
               <div aria-hidden className="pointer-events-none absolute border border-dashed border-line-strong/60"
@@ -292,57 +333,118 @@ export function PosterEditor({ id }: { id: string }) {
               })}
             </div>
           </div>
-          <div className="mt-2 flex flex-wrap items-center gap-x-3 gap-y-1 text-xs text-ink-3">
-            <span className={previewErr ? 'text-bad' : undefined}>{status}</span>
-            <span>Dashed line = {SAFE_MARGIN} px safe area</span>
-            <span>{el ? `Selected: ${layerName(el, textOf(el))} · ${el.x}, ${el.y} · ${el.width} × ${el.height}` : 'Nothing selected'}</span>
+          <div role="group" aria-label="Zoom" className="absolute bottom-14 left-1/2 flex -translate-x-1/2 items-center gap-1 rounded-box border border-line bg-raised/95 p-1 shadow-lift backdrop-blur">
+            <Btn kind="quiet" aria-pressed={zoom === 'fit'} onClick={() => setZoom('fit')}>Fit</Btn>
+            <Select aria-label="Zoom level" value={zoom} onChange={e => setZoom(e.target.value as Zoom)}>{ZOOMS.map(([v, t]) => <option key={v} value={v}>{v === 'fit' ? zoomLabel.replace(/^Fit$/, t) : t}</option>)}</Select>
+            <Btn kind="quiet" aria-pressed={zoom === '100'} onClick={() => setZoom('100')}>100%</Btn>
           </div>
-          <p className="mt-1 text-xs text-ink-3">{fontNote}</p>
-          <details className="mt-1 text-xs text-ink-2"><summary className={cx('cursor-pointer', MOTION)}>Keyboard shortcuts</summary>
-            <ul className="mt-1 grid gap-x-6 gap-y-0.5 sm:grid-cols-2">
-              <li><kbd>{MOD}S</kbd> Save</li><li><kbd>{MOD}Z</kbd> Undo · <kbd>{MOD === '⌘' ? '⇧⌘Z' : 'Ctrl+Shift+Z'}</kbd> Redo</li>
-              <li><kbd>{MOD}Enter</kbd> Apply text (in the text box)</li><li><kbd>{MOD === '⌘' ? '⌥' : 'Alt+'}Arrow</kbd> Move 1 px · with <kbd>Shift</kbd> 10 px</li>
-              <li><kbd>↑ ↓ Home End</kbd> Walk the layer list</li><li><kbd>Esc</kbd> Clear the selection</li>
-            </ul>
-            <p className="mt-1 text-ink-3">Undo and redo shortcuts work outside text boxes, so typing keeps its own undo.</p></details>
+          <div className="border-t border-line bg-surface px-4 py-2 text-xs text-ink-3">
+            <div className="flex flex-wrap items-center gap-x-3 gap-y-1">
+              <span className="min-w-0 truncate">{el ? <>Selected: <span className={textOf(el)?.language === 'te' ? 'te' : undefined}>{layerName(el, textOf(el))}</span> · X {el.x}, Y {el.y} · {el.width} × {el.height}</> : 'Nothing selected'}</span>
+              <details className="relative ml-auto"><summary className={cx('cursor-pointer text-ink-2', MOTION)}>Keyboard shortcuts</summary>
+                <div className="absolute right-0 bottom-full z-10 mb-2 w-72 rounded-box border border-line bg-raised p-3 text-ink-2 shadow-float">
+                  <ul className="space-y-1">
+                    <li><kbd>{MOD}S</kbd> Save</li><li><kbd>{MOD}Z</kbd> Undo · <kbd>{MOD === '⌘' ? '⇧⌘Z' : 'Ctrl+Shift+Z'}</kbd> Redo</li>
+                    <li><kbd>{MOD}Enter</kbd> Apply text (in the text box)</li><li><kbd>{MOD === '⌘' ? '⌥' : 'Alt+'}Arrow</kbd> Move 1 px · with <kbd>Shift</kbd> 10 px</li>
+                    <li><kbd>↑ ↓ Home End</kbd> Walk the layer list</li><li><kbd>Esc</kbd> Clear the selection</li>
+                  </ul>
+                  <p className="mt-2 text-ink-3">Undo and redo shortcuts work outside text boxes, so typing keeps its own undo.</p></div></details>
+            </div>
+          </div>
         </section>
 
-        {/* inspector + QA */}
-        <aside aria-label="Inspector" className="space-y-4">
-          <div className={cx('rounded-box bg-surface p-3', el && 'ring-1 ring-focus/50')}>
-            <h2 className={cx('mb-2', PANEL_HEAD)}>INSPECTOR</h2>
-            {!el ? <p className="text-sm text-ink-3">Select a layer on the poster or in the list.</p>
+        {/* right: properties of the selection, quality and readiness, reel context */}
+        <aside aria-label="Inspector" className="flex flex-col border-t border-line bg-surface @2xl:col-span-2 @5xl:col-span-1 @5xl:overflow-auto @5xl:border-t-0 @5xl:border-l">
+          <div className="sticky top-0 z-10 border-b border-line bg-surface p-2"><Tabs label="Inspector" value={side} onChange={setSide} tabs={sideTabs} /></div>
+          <div className="space-y-4 p-3">
+            {side === 'props' && (!el ? <p className="text-sm text-ink-3">Select a layer on the poster or in the list to edit its text, size, colour and position.</p>
               : <>
-                <p className="mb-3 truncate text-sm font-medium"><span className="text-ink-3">{el.type === 'text' ? (textOf(el)?.language === 'te' ? 'Telugu text' : 'English text') : 'Shape'} · </span>
-                  <span className={textOf(el)?.language === 'te' ? 'te' : undefined}>{layerName(el, textOf(el))}</span></p>
+                <div><h2 className={PANEL_HEAD}>{layerKind(el, textOf(el)).toUpperCase()}</h2>
+                  <p className={cx('mt-1 truncate text-sm font-medium', textOf(el)?.language === 'te' && 'te')}>{layerName(el, textOf(el))}</p></div>
                 <Inspector key={`${el.id}-${p.revision}`} p={p} el={el} text={textOf(el)} link={links.find(k => k.element_id === el.id)} locked={locked} act={act} onComposing={v => { composing.current = v }} />
-              </>}
+              </>)}
+            {side === 'quality' && <QualityPanel ready={ready} qa={qa && qa.revision === p.revision ? qa : null} failing={failing} brand={brandName} onShow={id => { setSel(id); setSide('props') }} onExport={() => setMode('export')} />}
+            {side === 'reel' && <>
+              <div>
+                <h2 className={cx('mb-2', PANEL_HEAD)}>REELS MADE FROM THIS POSTER</h2>
+                {reelLinks === null ? <p className="text-xs text-ink-3">Checking…</p> : !reelLinks.length ? <p className="text-xs text-ink-3">None recorded yet.</p>
+                  : <ul className="space-y-1">{reelLinks.map(r => <li key={r.name} className="rounded-field bg-raised p-2 text-sm"><a href={reelHref(r.name)} className="font-medium text-link hover:underline">{r.name}</a>
+                    <span className="block text-xs text-ink-3">{r.status} · opens its reel steps</span></li>)}</ul>}
+                <p className="mt-2 text-xs text-ink-3">Reels are edited in their own steps. There is no reel timeline in this editor.</p>
+              </div>
+              <ApprovedPanel p={p} locked={locked} onInserted={(np, id) => { setP(np); setSel(id); setSide('props') }} />
+              <MakeReelPanel p={p} locked={locked} />
+            </>}
           </div>
-          <div className="rounded-box bg-surface p-3">
-            <div className="mb-2 flex items-center gap-2"><h2 className={PANEL_HEAD}>POSTER QA</h2>
-              {qa && qa.revision === p.revision && <Pill ok={qaPass}>{qaPass ? 'PASS' : 'FAIL'}</Pill>}</div>
-            {overflow.length > 0 && <p className="mb-2 text-xs text-bad">Text overflows its box or lines overlap ({overflow.length} layer{overflow.length > 1 ? 's' : ''}). Export is blocked until fixed.</p>}
-            {!qa ? <p className="text-xs text-ink-3">Checking…</p> : !failing.length ? <p className="text-xs text-ok">All checks pass.</p>
-              : <ul className="space-y-1">{failing.map((c, i) => <li key={i}><button onClick={() => setSel(c.element_id)} className="w-full rounded-field px-1 py-0.5 text-left text-xs hover:bg-raised">
-                <span className={c.level === 'error' ? 'font-semibold text-bad' : 'font-semibold text-warn'}>{c.level === 'error' ? 'Error' : 'Warning'} · {c.name.replace(/_/g, ' ')}</span>
-                <span className="block text-ink-2">{c.detail}</span></button></li>)}</ul>}
-          </div>
-          <ApprovedPanel p={p} locked={locked} onInserted={(np, id) => { setP(np); setSel(id) }} />
-          <MakeReelPanel p={p} locked={locked} />
         </aside>
       </div>
-        : <div className="grid gap-4 lg:grid-cols-[minmax(0,1fr)_minmax(0,28rem)]">
+        : <div className="grid gap-4 p-4 @4xl:grid-cols-[minmax(0,1fr)_minmax(0,28rem)]">
           <section aria-label="Poster preview" className="min-w-0">
-            <div className="relative mx-auto overflow-hidden rounded-field ring-1 ring-line" style={{ width: zoomWidth('fit'), aspectRatio: aspect, ...CHECKER }}>
+            <div className="relative mx-auto overflow-hidden rounded-chip shadow-float ring-1 ring-line" style={{ width: zoomWidth('fit'), aspectRatio: aspect, ...CHECKER }}>
               {preview && <img src={preview} alt="Poster preview" draggable={false} className={cx('absolute inset-0 h-full w-full', !current && 'opacity-60')} />}
             </div>
-            <p className={cx('mt-2 text-center text-xs', previewErr ? 'text-bad' : 'text-ink-3')}>{status}</p>
+            <p className={cx('mt-2 text-center text-xs', previewErr ? 'text-bad' : 'text-ink-3')}>{status} · revision {p.revision}</p>
           </section>
           <ExportStep p={p} ready={ready} exporting={exporting} run={run} receipt={receipt} error={exportErr} qaErrors={failing.filter(c => c.level === 'error')} qaWarnings={failing.filter(c => c.level !== 'error')}
-            onExport={exportDraft} onEdit={id => { if (id) setSel(id); setMode('edit') }} />
+            onExport={exportDraft} onEdit={id => { if (id) { setSel(id); setSide('props') } setMode('edit') }} />
         </div>}
     </div>
   )
+}
+
+// ------------------------------------------------------------------ M7-B B4B-3: quality and readiness (the real checks only)
+// Everything shown here was actually run: M5's overflow check and poster QA on the server, measured text in this browser,
+// and the export gates. What this build does not check is listed as not checked, never as passed.
+const NOT_CHECKED = ['Spelling, facts, dates and names in your text', 'Whether colours and fonts match a brand kit', 'Translation: text is used exactly as typed', 'Accessibility certification: the contrast rule here is IDEAFRAME\'s own check, not a WCAG audit']
+const CHECK_LABEL: Record<string, string> = { canvas: 'Inside the poster', safe_area: 'Safe area', empty: 'Text present', contrast: 'Contrast against its background', glyphs: 'Characters in the pinned fonts', overlap: 'Text overlap', approved_text: 'Approved words', measured_canvas: 'Drawn text inside the poster', measured_safe_area: 'Drawn text in the safe area' }
+const checkLabel = (n: string) => CHECK_LABEL[n] ?? n.replace(/_/g, ' ')
+
+function ReadinessList({ items }: { items: ReturnType<typeof readiness>['items'] }) {
+  return <ul className="space-y-2">{items.map(i => <li key={i.id} className="grid grid-cols-[1.25rem_1fr] gap-x-1 text-sm">
+    <span aria-hidden className={cx('font-semibold', STATE[i.state].tone)}>{STATE[i.state].symbol}</span>
+    <div><span className="font-medium">{i.label}</span> <span className={cx('text-xs font-semibold', STATE[i.state].tone)}>{STATE[i.state].word}</span>
+      <span className="block text-xs text-ink-2">{i.detail}</span></div></li>)}</ul>
+}
+function BrandRights({ brand }: { brand?: string }) {
+  return <>
+    <p className="text-sm">{brand ? `Brand kit: ${brand} (approved version, linked to this poster).` : 'No brand kit is linked to this poster.'}</p>
+    <p className="mt-1 text-xs text-ink-2">This editor places no logos or other brand assets, so none are exported. Brands whose rights are not reviewed and approved cannot be used. Check any names, marks or quotes in your own text before sharing.</p>
+  </>
+}
+
+function QualityPanel({ ready, qa, failing, brand, onShow, onExport }: { ready: ReturnType<typeof readiness>; qa: PosterQA | null; failing: Finding[]; brand?: string; onShow: (elementId: string) => void; onExport: () => void }) {
+  const blocked = ready.items.some(i => i.state === 'blocked'); const pending = ready.items.some(i => i.state === 'pending')
+  const errors = failing.filter(c => c.level === 'error'), warnings = failing.filter(c => c.level !== 'error')
+  const passed = qa ? Object.entries(qa.checks.filter(c => c.passed).reduce<Record<string, number>>((m, c) => ({ ...m, [c.name]: (m[c.name] ?? 0) + 1 }), {})) : []
+  return <>
+    <div>
+      <div className="mb-2 flex items-center gap-2"><h2 className={PANEL_HEAD}>EXPORT READINESS</h2>
+        <span className="ml-auto" role="status"><Pill ok={blocked ? false : pending || errors.length || warnings.length ? null : true}>{blocked ? 'Blocked' : pending ? 'Checking' : errors.length || warnings.length ? 'Review first' : 'Ready'}</Pill></span></div>
+      <ReadinessList items={ready.items} />
+      <Btn kind="ghost" className="mt-3 w-full" onClick={onExport}>Open Export</Btn>
+    </div>
+    <div className="border-t border-line pt-3">
+      <h2 className={cx('mb-2', PANEL_HEAD)}>POSTER QA</h2>
+      {!qa ? <p className="text-xs text-ink-3">Checking this revision…</p> : <>
+        {errors.length > 0 && <Findings title={`Errors (${errors.length})`} tone="text-bad" rows={errors} onShow={onShow} />}
+        {warnings.length > 0 && <Findings title={`Warnings (${warnings.length})`} tone="text-warn" rows={warnings} onShow={onShow} />}
+        {!failing.length && <p className="text-xs text-ok">No errors or warnings on this revision.</p>}
+        {passed.length > 0 && <details className="mt-2 text-xs"><summary className={cx('cursor-pointer text-ink-2', MOTION)}>Passed checks ({passed.reduce((n, [, c]) => n + c, 0)})</summary>
+          <ul className="mt-1 space-y-0.5 text-ink-2">{passed.map(([name, n]) => <li key={name}><span aria-hidden className="mr-1 font-semibold text-ok">✓</span>{checkLabel(name)} <span className="text-ink-3">· {n} layer{n === 1 ? '' : 's'}</span></li>)}</ul></details>}
+      </>}
+    </div>
+    <div className="border-t border-line pt-3">
+      <h2 className={cx('mb-2', PANEL_HEAD)}>NOT CHECKED BY IDEAFRAME</h2>
+      <ul className="space-y-0.5 text-xs text-ink-2">{NOT_CHECKED.map(t => <li key={t}><span aria-hidden className="mr-1 text-ink-3">–</span>{t}</li>)}</ul>
+      <p className="mt-2 text-xs text-ink-3">These checks are rules, not AI. Nothing is repaired or approved for you.</p>
+    </div>
+    <div className="border-t border-line pt-3"><h2 className={cx('mb-2', PANEL_HEAD)}>BRAND AND RIGHTS</h2><BrandRights brand={brand} /></div>
+  </>
+}
+function Findings({ title, tone, rows, onShow }: { title: string; tone: string; rows: Finding[]; onShow: (elementId: string) => void }) {
+  return <div className="mb-2"><h3 className={cx('text-xs font-semibold', tone)}>{title}</h3>
+    <ul className="mt-1 space-y-1">{rows.map((c, i) => <li key={i}><button onClick={() => onShow(c.element_id)} title="Select this layer" className={cx('w-full rounded-field px-1.5 py-1 text-left text-xs hover:bg-raised', MOTION)}>
+      <span className="font-medium">{checkLabel(c.name)}</span><span className="block text-ink-2">{c.detail}</span></button></li>)}</ul></div>
 }
 
 // ------------------------------------------------------------------ M7-B B3: the Export step
@@ -352,7 +454,6 @@ const STATE: Record<ItemState, { symbol: string; word: string; tone: string }> =
   ok: { symbol: '✓', word: 'Ready', tone: 'text-ok' }, blocked: { symbol: '✕', word: 'Blocked', tone: 'text-bad' },
   advisory: { symbol: '!', word: 'Review', tone: 'text-warn' }, pending: { symbol: '…', word: 'Checking', tone: 'text-ink-3' },
 }
-type Finding = { name: string; level: string; detail: string; element_id: string }
 
 function ExportStep({ p, ready, exporting, run, receipt, error, qaErrors, qaWarnings, onExport, onEdit }: {
   p: PosterProject; ready: ReturnType<typeof readiness>; exporting: boolean; run: Run | null; receipt: ExportReceipt | null; error: string | null
@@ -379,10 +480,7 @@ function ExportStep({ p, ready, exporting, run, receipt, error, qaErrors, qaWarn
 
       <div className={box}>
         <h2 className={cx('mb-2', PANEL_HEAD)}>READINESS</h2>
-        <ul className="space-y-2">{ready.items.map(i => <li key={i.id} className="grid grid-cols-[1.25rem_1fr] gap-x-1 text-sm">
-          <span aria-hidden className={cx('font-semibold', STATE[i.state].tone)}>{STATE[i.state].symbol}</span>
-          <div><span className="font-medium">{i.label}</span> <span className={cx('text-xs font-semibold', STATE[i.state].tone)}>{STATE[i.state].word}</span>
-            <span className="block text-xs text-ink-2">{i.detail}</span></div></li>)}</ul>
+        <ReadinessList items={ready.items} />
         {(qaErrors.length > 0 || qaWarnings.length > 0) && <details className="mt-3 text-xs" open={qaErrors.length > 0}>
           <summary className={cx('cursor-pointer text-ink-2', MOTION)}>QA summary: {qaErrors.length} error{qaErrors.length === 1 ? '' : 's'}, {qaWarnings.length} warning{qaWarnings.length === 1 ? '' : 's'}</summary>
           <ul className="mt-1 space-y-1">{[...qaErrors, ...qaWarnings].map((c, i) => <li key={i}><button onClick={() => onEdit(c.element_id)} title="Show this layer in Edit" className="w-full rounded-field px-1 py-0.5 text-left hover:bg-raised">
@@ -392,8 +490,7 @@ function ExportStep({ p, ready, exporting, run, receipt, error, qaErrors, qaWarn
 
       <div className={box}>
         <h2 className={cx('mb-2', PANEL_HEAD)}>BRAND AND RIGHTS</h2>
-        <p className="text-sm">{brand ? `Brand kit: ${brand} (approved version, linked to this poster).` : 'No brand kit is linked to this poster.'}</p>
-        <p className="mt-1 text-xs text-ink-2">This editor places no logos or other brand assets, so none are exported. Brands whose rights are not reviewed and approved cannot be used. Check any names, marks or quotes in your own text before sharing.</p>
+        <BrandRights brand={brand} />
       </div>
 
       <div className={box}>
