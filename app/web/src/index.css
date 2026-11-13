@@ -86,4 +86,7 @@ input, select, textarea { accent-color: var(--color-action); }
 .dialog-motion[open] { animation: if-rise var(--motion-base) var(--ease-out); }
 .dialog-motion::backdrop { animation: if-fade var(--motion-base) var(--ease-out); }
 .toast-motion { animation: if-rise var(--motion-base) var(--ease-out); }
+/* B5: one quiet entrance when a screen or a step of a flow appears (prompt -> interpretation -> concepts -> editor -> export). */
+.page-enter { animation: if-enter var(--motion-panel) var(--ease-out); }
+@keyframes if-enter { from { opacity: 0; transform: translateY(6px); } to { opacity: 1; transform: none; } }
 @keyframes if-fade { from { opacity: 0; } to { opacity: 1; } }

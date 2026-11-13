@@ -397,7 +397,7 @@ export function PosterEditor({ id }: { id: string }) {
           </div>
         </aside>
       </div>
-        : <div className="grid gap-4 p-4 @4xl:grid-cols-[minmax(0,1fr)_minmax(0,28rem)]">
+        : <div className="page-enter grid gap-4 p-4 @4xl:grid-cols-[minmax(0,1fr)_minmax(0,28rem)]">
           <section aria-label="Poster preview" className="min-w-0">
             <div className="relative mx-auto overflow-hidden rounded-chip shadow-float ring-1 ring-line" style={{ width: zoomWidth('fit'), aspectRatio: aspect, ...CHECKER }}>
               {preview && <img src={preview} alt="Poster preview" draggable={false} className={cx('absolute inset-0 h-full w-full', !current && 'opacity-60')} />}

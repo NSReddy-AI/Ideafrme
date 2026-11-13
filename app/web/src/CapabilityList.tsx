@@ -6,7 +6,7 @@ import { Btn, Notice, cx } from './ui'
 export function CapabilityList({ detailed = false }: { detailed?: boolean }) {
   const [r, setR] = useState<CapabilityReport | null>(null); const [err, setErr] = useState<string | null>(null); const [n, setN] = useState(0)
   useEffect(() => { let live = true; fetchCapabilities().then(x => { if (live) { setR(x); setErr(null) } }).catch(e => { if (live) setErr((e as Error).message) }); return () => { live = false } }, [n])
-  if (err) return <Notice tone="error">The status of this Mac could not be read, so nothing is shown as available. {err}</Notice>
+  if (err) return <Notice tone="error">The status of this Mac could not be read, so nothing is shown as available. If the app was updated while it was running, close it and start it again with the launcher. ({err})</Notice>
   if (!r) return <p role="status" className="text-sm text-ink-3">Checking this Mac…</p>
   return (
     <div>

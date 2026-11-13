@@ -81,3 +81,25 @@ Checked
 Open
 - PNG export, which the handoff needs, did not work in the app's unfocused preview pane (the known M5 decode stall: "PNG export unavailable: Browser operation timed out"). It worked in focused Chrome, where this check was finished. The button was correctly disabled; nothing was faked.
 - The title page words are one more thing the reel needs before Build; they are not a tracked step.
+
+## B5 - consolidated acceptance and polish
+
+Changed
+- One quiet entrance animation when a screen or a step of a flow appears (zero with reduced motion). Home lists unfinished creations under "Pick up where you left off" when there are any. The Home brand selector stays compact when draft brands have long names. The capability list explains that the app must be restarted if it was updated while running.
+
+Checked
+- All suites, once: Python 49 tests in 8 files (tasks 10, capabilities 7, creative 10, poster QA 8, approved content 6, brand bridge 3, engine jobs 2, token audit 3); web 237 checks in 8 files; token audit 0 findings; contrast check 0 failures; type-check clean; lint at its 10 earlier warnings.
+- Real data (dev server on 8775, read only): the three brands are still drafts, none is eligible, and Home shows them as not available. Capability list matches this Mac. Projects shows the real poster-reel link.
+- Timings on this Mac: server answering 0.3 s after start; page load about 90 ms; Projects list 50 ms; poster editor open 131 ms; task and capability routes about 1-10 ms; the older system check route 0.7 s.
+- Resource use: engine jobs still run one at a time and the engine's heavy-model lock is unchanged, so planning with the local model and rendering do not run together. The task watcher looks at the in-memory job list twice a second and writes a file only when something changed.
+
+Issues by class
+- Critical: none open.
+- High: none open. (Fixed in this run: resize handle could be covered by another layer; a finished engine job could create a second empty task.)
+- Medium: PNG export stalls when the browser window is not focused (M5, with Codex); poster overflow gate trusts the browser's measurement (M5 design); engine jobs do not survive a restart (reported as interrupted, retry offered); task files are never cleaned up; title page words are not a tracked step.
+- Cosmetic: Home lists "Recent reels" only; poster rows have no dates; two posters per brief appear in Projects (the brief's and the chosen concept's).
+- Deferred capability: AI poster concepts, model-read prompts, translation, generated pictures, Reference Style Studio, layout repair, reel timeline editor, image and logo layers, Web Bridge, paid providers.
+
+Not done
+- No screen-reader pass, no physical-keyboard Tab pass, no real Telugu keyboard. No accessibility certification is claimed.
+- Brand rights, the logo master and a production release remain the owner's decisions.

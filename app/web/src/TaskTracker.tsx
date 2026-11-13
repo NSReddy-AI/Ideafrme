@@ -1,6 +1,6 @@
 // M7-B B4C-2: shows a task's real steps. No timers pretend to work: the list is whatever the server recorded, asked for
 // again while something is running. A step shows a percentage only when the engine reported one.
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import { STEP_LABEL, STEP_SYMBOL, TASK_LABEL, active, current, summary, tasks, whereTo, type StepStatus, type Task } from './tasks'
 import { useTask } from './use-task'
 import { Btn, MOTION, Notice, Pill, Spinner, cx } from './ui'
@@ -90,5 +90,23 @@ export function TaskPage({ id }: { id: string }) {
           <ul className="mt-2 space-y-0.5">{task.events.map((e, i) => <li key={i}><span className="text-ink-3">{e.at}</span> · {e.step ?? 'task'} · {e.status}{e.detail ? ` · ${e.detail}` : ''}</li>)}</ul></details>
       </div>
     </div>
+  )
+}
+
+/** Home: creations that are not finished, so work can be picked up after closing the app. Nothing is shown when there are none. */
+export function OpenTasks() {
+  const [rows, setRows] = useState<Task[] | null>(null)
+  useEffect(() => { let live = true; tasks.recent().then(r => { if (live) setRows((r.tasks ?? []).filter(t => t.status !== 'completed' && t.status !== 'cancelled').slice(0, 4)) }).catch(() => { if (live) setRows([]) }); return () => { live = false } }, [])
+  if (!rows?.length) return null
+  return (
+    <section aria-label="Unfinished work">
+      <h2 className="mb-2 text-base font-semibold">Pick up where you left off</h2>
+      <ul className="divide-y divide-line overflow-hidden rounded-box border border-line bg-raised">
+        {rows.map(t => { const now = current(t); const go = whereTo(t, now); return <li key={t.id} className="flex flex-wrap items-center gap-x-4 gap-y-1 px-4 py-3 text-sm">
+          <a href={go?.href ?? `#/task/${t.id}`} className="w-full min-w-0 truncate font-medium hover:underline sm:w-auto sm:flex-1">{t.meta.title || t.project.reel || 'Creation'}</a>
+          <Pill ok={pillOk(t)}>{TASK_LABEL[t.status]}</Pill><span className="text-xs text-ink-2">{summary(t)}</span>
+          <a href={`#/task/${t.id}`} className="text-xs text-link hover:underline">Progress</a></li> })}
+      </ul>
+    </section>
   )
 }

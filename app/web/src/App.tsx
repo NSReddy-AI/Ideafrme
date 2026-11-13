@@ -10,7 +10,7 @@ import { Home } from './Home'
 import { CapabilityList } from './CapabilityList'
 import { ProjectsPage } from './Projects'
 import { ExportsPage } from './ExportsPage'
-import { TaskPage, TaskSteps } from './TaskTracker'
+import { OpenTasks, TaskPage, TaskSteps } from './TaskTracker'
 import { useTask } from './use-task'
 import { Concepts } from './Concepts'
 
@@ -480,7 +480,7 @@ export default function App() {
         <p className="hidden border-t border-line px-5 py-4 md:block text-xs text-ink-3">Works on this Mac. Nothing is published.</p>
       </aside>
       <main id="main" tabIndex={-1} className="min-w-0 flex-1 px-4 py-6 outline-none! md:px-8 md:py-8">
-        <div className={cx('mx-auto', route.page === 'poster' ? 'max-w-[104rem]' : 'max-w-5xl')}>
+        <div key={hrefOf(route)} className={cx('page-enter mx-auto', route.page === 'poster' || route.page === 'task' ? 'max-w-[104rem]' : 'max-w-5xl')}>
           <Err msg={err} />
           {!cat ? <p className="text-sm text-ink-3">Connecting to the local server…</p>
             : route.page === 'poster' ? <PosterEditor id={route.id} />
@@ -509,6 +509,7 @@ export default function App() {
             </div>
             : <div className="space-y-6">
               <Home onConcepts={id => go({ page: 'concepts', id })} reelForm={<NewProject cat={cat} onMade={n => go({ page: 'project', name: n })} />} />
+              <OpenTasks />
               <section>
                 <div className="mb-2 flex items-baseline gap-3"><h2 className="text-base font-semibold">Recent reels</h2><a href="#/projects" className="text-sm text-link hover:underline">All projects</a></div>
                 <ProjectList rows={recent} onOpen={n => go({ page: 'project', name: n })} />

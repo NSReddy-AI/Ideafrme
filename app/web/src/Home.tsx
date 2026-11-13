@@ -39,7 +39,7 @@ export function Home({ reelForm, onConcepts }: { reelForm: React.ReactNode; onCo
     const { it } = read
     const notes = [...it.notes, ...(read.brandNote ? [read.brandNote] : [])]
     return (
-      <div className="space-y-6">
+      <div className="page-enter space-y-6">
         <div>
           <h1 ref={heading} tabIndex={-1} className="font-head text-2xl font-semibold tracking-tight outline-none!">Check what IDEAFRAME understood</h1>
           <p className="mt-1 text-sm text-ink-2">Fixed rules read your words. No AI model was used. Correct anything below before a project is created.</p>
@@ -82,7 +82,7 @@ export function Home({ reelForm, onConcepts }: { reelForm: React.ReactNode; onCo
             <div className="mt-2 flex flex-wrap items-center gap-3 px-1">
               <Tabs label="What to make" value={output} onChange={v => { setOutput(v); setChose(true) }} tabs={OUTPUTS} />
               <label className="flex min-w-0 items-center gap-2 text-sm text-ink-2">Brand kit
-                <Select value={brand} onChange={e => setBrand(e.target.value)} className="max-w-56">
+                <Select value={brand} onChange={e => setBrand(e.target.value)} className="w-44 min-w-0">
                   <option value="">No brand kit</option>
                   {usable.map(v => <option key={v.hash} value={v.hash}>{v.name} (approved v{v.revision})</option>)}
                   {unavailable.map(b => <option key={b.hash} value="" disabled>{b.name}: not available, rights not reviewed</option>)}
