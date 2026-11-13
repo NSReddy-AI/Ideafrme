@@ -7,6 +7,8 @@ import { BrandStudio } from './BrandStudio'
 import { DesignReference } from './DesignReference'
 import { Create } from './Create'
 import { Home } from './Home'
+import { ProjectsPage } from './Projects'
+import { ExportsPage } from './ExportsPage'
 import { Concepts } from './Concepts'
 
 type Start = (b: Parameters<typeof api.job>[1]) => Promise<void>
@@ -422,15 +424,15 @@ function ProjectList({ rows, onOpen }: { rows: ProjectRow[]; onOpen: (n: string)
 }
 
 // ------------------------------------------------------------------ shell
-// Routes live in the address bar: #/ (home), #/create, #/concepts/<id>, #/projects (reels), #/posters, #/brands, #/settings,
+// Routes live in the address bar: #/ (home), #/create, #/concepts/<id>, #/projects (posters and reels), #/exports, #/posters, #/brands, #/settings,
 // #/design, #/p/<reel>, #/poster/<id>.
 // An old Reel Studio link (#<project>) still opens that project.
-type Page = 'home' | 'create' | 'projects' | 'posters' | 'brands' | 'settings' | 'design'
+type Page = 'home' | 'create' | 'projects' | 'posters' | 'brands' | 'exports' | 'settings' | 'design'
 type Route = { page: Page } | { page: 'project'; name: string } | { page: 'poster'; id: string } | { page: 'concepts'; id: string }
 const readRoute = (): Route => {
   const h = decodeURIComponent(location.hash.replace(/^#\/?/, ''))
   if (!h) return { page: 'home' }
-  if (h === 'create' || h === 'projects' || h === 'posters' || h === 'brands' || h === 'settings' || h === 'design') return { page: h }
+  if (h === 'create' || h === 'projects' || h === 'posters' || h === 'brands' || h === 'exports' || h === 'settings' || h === 'design') return { page: h }
   if (h.startsWith('poster/')) return { page: 'poster', id: h.slice(7) }
   if (h.startsWith('concepts/')) return { page: 'concepts', id: h.slice(9) }
   return { page: 'project', name: h.startsWith('p/') ? h.slice(2) : h }
@@ -438,22 +440,25 @@ const readRoute = (): Route => {
 const hrefOf = (r: Route) => r.page === 'project' ? `#/p/${encodeURIComponent(r.name)}` : r.page === 'poster' ? `#/poster/${encodeURIComponent(r.id)}` : r.page === 'concepts' ? `#/concepts/${encodeURIComponent(r.id)}` : r.page === 'home' ? '#/' : `#/${r.page}`
 
 const NAV: { page: Page; label: string }[] = [
-  { page: 'home', label: 'Home' }, { page: 'create', label: 'Create' }, { page: 'projects', label: 'Reels' }, { page: 'posters', label: 'Posters' }, { page: 'brands', label: 'Brand Studio' }, { page: 'settings', label: 'Settings' }]
+  { page: 'home', label: 'Home' }, { page: 'create', label: 'Advanced Create' }, { page: 'projects', label: 'Projects' }, { page: 'brands', label: 'Brand Studio' }, { page: 'exports', label: 'Exports' }, { page: 'settings', label: 'Settings' }]
+const TITLE: Record<Route['page'], string> = { home: 'Home', create: 'Advanced Create', projects: 'Projects', posters: 'Posters', brands: 'Brand Studio', exports: 'Exports', settings: 'Settings', design: 'Component reference', project: 'Reel', poster: 'Poster editor', concepts: 'Concepts' }
 
 export default function App() {
-  const [cat, setCat] = useState<Catalog | null>(null); const [rows, setRows] = useState<ProjectRow[]>([]); const [showTests, setShowTests] = useState(false)
+  const [cat, setCat] = useState<Catalog | null>(null); const [rows, setRows] = useState<ProjectRow[]>([])
   const [route, setRoute] = useState<Route>(readRoute); const [err, setErr] = useState<string | null>(null)
   const go = (r: Route) => { location.hash = hrefOf(r) }
   useEffect(() => { api.catalog().then(setCat).catch(e => setErr((e as Error).message)) }, [])
-  useEffect(() => { api.projects(showTests).then(setRows).catch(e => setErr((e as Error).message)) }, [showTests, route])
+  useEffect(() => { if (route.page === 'home') api.projects(false).then(setRows).catch(e => setErr((e as Error).message)) }, [route])
+  useEffect(() => { document.title = `${TITLE[route.page]} · IDEAFRAME` }, [route.page])
   useEffect(() => {   // links / back button: follow the address bar
     const on = () => setRoute(readRoute())
     window.addEventListener('hashchange', on); return () => window.removeEventListener('hashchange', on)
   }, [])
-  const section = route.page === 'project' ? 'projects' : route.page === 'poster' ? 'posters' : route.page === 'design' ? 'settings' : route.page === 'concepts' ? 'create' : route.page
+  const section = route.page === 'project' || route.page === 'poster' || route.page === 'posters' || route.page === 'concepts' ? 'projects' : route.page === 'design' ? 'settings' : route.page
   const recent = rows.filter(r => !r.archived).slice(0, 5)
   return (
     <div className="flex min-h-screen flex-col bg-surface text-ink md:flex-row">
+      <a href="#main" onClick={e => { e.preventDefault(); document.getElementById('main')?.focus() }} className="sr-only focus:not-sr-only focus:absolute focus:top-2 focus:left-2 focus:z-10 focus:rounded-btn focus:bg-raised focus:px-3 focus:py-2 focus:text-sm focus:text-link focus:shadow-lift">Skip to content</a>
       <aside className="flex shrink-0 flex-col border-b border-line bg-raised md:sticky md:top-0 md:h-screen md:w-60 md:border-r md:border-b-0">
         {/* Text wordmark only: the approved logo goes here once its vector master exists (Bible G1). */}
         <a href="#/" className="block px-5 pt-5 pb-3 md:pt-6 md:pb-5">
@@ -468,12 +473,12 @@ export default function App() {
         </nav>
         <p className="hidden border-t border-line px-5 py-4 md:block text-xs text-ink-3">Works on this Mac. Nothing is published.</p>
       </aside>
-      <main className="min-w-0 flex-1 px-4 py-6 md:px-8 md:py-8">
+      <main id="main" tabIndex={-1} className="min-w-0 flex-1 px-4 py-6 outline-none! md:px-8 md:py-8">
         <div className={cx('mx-auto', route.page === 'poster' ? 'max-w-7xl' : 'max-w-5xl')}>
           <Err msg={err} />
           {!cat ? <p className="text-sm text-ink-3">Connecting to the local server…</p>
             : route.page === 'poster' ? <>
-              <a href="#/posters" className="mb-4 inline-block text-sm text-link hover:underline">← Posters</a>
+              <a href="#/projects" className="mb-4 inline-block text-sm text-link hover:underline">← Projects</a>
               <PosterEditor id={route.id} />
             </>
             : route.page === 'posters' ? <PostersPage onOpen={id => go({ page: 'poster', id })} />
@@ -482,14 +487,11 @@ export default function App() {
             : route.page === 'brands' ? <BrandStudio />
             : route.page === 'design' ? <DesignReference />
             : route.page === 'project' ? <>
-              <a href="#/projects" className="mb-4 inline-block text-sm text-link hover:underline">← Reels</a>
+              <a href="#/projects" className="mb-4 inline-block text-sm text-link hover:underline">← Projects</a>
               <ProjectView name={route.name} cat={cat} />
             </>
-            : route.page === 'projects' ? <>
-              <PageHead title="Reels" sub="Every reel project on this Mac." />
-              <label className="mb-3 flex items-center gap-2 text-xs text-ink-2"><input type="checkbox" checked={showTests} onChange={e => setShowTests(e.target.checked)} />Show test and archived projects</label>
-              <ProjectList rows={rows} onOpen={n => go({ page: 'project', name: n })} />
-            </>
+            : route.page === 'projects' ? <ProjectsPage />
+            : route.page === 'exports' ? <ExportsPage />
             : route.page === 'settings' ? <div className="space-y-4">
               <PageHead title="Settings" sub="Local tools, models and planner status." />
               <SystemCheck />
@@ -504,7 +506,7 @@ export default function App() {
             : <div className="space-y-6">
               <Home onConcepts={id => go({ page: 'concepts', id })} reelForm={<NewProject cat={cat} onMade={n => go({ page: 'project', name: n })} />} />
               <section>
-                <div className="mb-2 flex items-baseline gap-3"><h2 className="text-base font-semibold">Recent reels</h2><a href="#/projects" className="text-sm text-link hover:underline">All reels</a></div>
+                <div className="mb-2 flex items-baseline gap-3"><h2 className="text-base font-semibold">Recent reels</h2><a href="#/projects" className="text-sm text-link hover:underline">All projects</a></div>
                 <ProjectList rows={recent} onOpen={n => go({ page: 'project', name: n })} />
               </section>
             </div>}

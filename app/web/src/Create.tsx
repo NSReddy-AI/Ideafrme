@@ -14,7 +14,7 @@ export function Create({ reelForm, onConcepts }: { reelForm: React.ReactNode; on
   const [output, setOutput] = useState<Output>('poster')
   return (
     <div className="space-y-6">
-      <PageHead title="Create" sub="Start from an idea. Choose a poster, a reel, or both." />
+      <PageHead title="Advanced Create" sub="The full form. Choose a poster, a reel, or both, and fill in every detail yourself." />
       <Tabs label="What to make" value={output} onChange={setOutput} tabs={[{ id: 'poster', label: 'Poster' }, { id: 'reel', label: 'Reel' }, { id: 'both', label: 'Both' }]} />
       {output === 'reel' ? <>
         <Notice tone="info">Reels start from your own video, pictures or recording, and use the reel brands in Reels.</Notice>
