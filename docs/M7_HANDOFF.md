@@ -118,3 +118,10 @@ Not done
 - M6 change (no M5 file touched, no check weakened): M5's own probe is run again when the window regains focus or visibility, and by a "Check PNG again" button; when frames are not running the message says the window is in the background instead of a bare timeout, for the probe and for an export that times out. A real pixel mismatch still disables PNG until the page is reloaded.
 - Checked: background message seen live; recovery on focus checked with a stand-in for decode (the pane could not be brought to the front, and Chrome was not connected).
 - For Codex (M5): with `image.decode()` replaced by waiting for the image's `load` event, the same probe passed in a background window. Waiting for `load` before or instead of `decode()` in `browser_acceptance.js` would likely remove the stall at its source. Not changed here.
+
+## C3 - poster dates, roles, named exports
+- New `app/poster_overview.py` and read-only `GET /api/creative/overview`: last-changed time per poster (newest file time in M5's own folders), role (concept, brief-source, brief, plain) proved from M5's concept receipts by recomputing the concept poster's id, and the poster each export came from.
+- M5's export record still does not name its poster, so M6 writes its own small index (`export-index.json` in M6's links folder) when an export finishes. Exports made before this stay "Poster not recorded".
+- Projects: newest change first across posters and reels; a concept poster says which brief it came from and links to it; a brief draft whose concept poster exists is hidden unless "Show brief drafts" is ticked. Exports names the poster and export time.
+- Nothing in M5's session is written or changed; no schema changed. M5 still creates the second poster by design; this only stops it looking like a duplicate.
+- Checked: `tests/test_poster_overview.py` (3 tests, real server), `test_projects_logic.mjs` (53 checks), and in the browser.

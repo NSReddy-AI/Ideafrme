@@ -17,7 +17,9 @@ export type Scene = { project_id: string; revision: number; svg: string; svg_sha
 export type Face = { family: string; weight: number; hash: string; uri: string; notice: string }
 export type QACheck = { name: string; level: 'error' | 'warning'; passed: boolean; element_id: string; detail: string }
 export type PosterQA = { passed: boolean; errors: number; warnings: number; checks: QACheck[]; revision: number; fonts_checked: boolean; rules: Record<string, number> }
-export type PosterExportRow = { id: string; state: 'draft' | 'partial' | 'review-required'; revision: number | null; svg_sha256: string | null; png_sha256: string | null; directory: string }
+export type PosterExportRow = { id: string; state: 'draft' | 'partial' | 'review-required'; revision: number | null; svg_sha256: string | null; png_sha256: string | null; directory: string
+  poster?: { project_id: string; name: string; revision: number; at: string } | null }
+export type PosterOverviewRow = PosterRow & { modified: string | null; role: 'concept' | 'brief-source' | 'brief' | 'plain'; source: string | null; source_name: string | null }
 export type ExportReceipt = { directory: string; manifest: { svg_sha256: string; png_sha256: string | null; revision: number } }
 
 // Step 6: approved reel words (app/approved_content.py) and where they sit on a poster.
@@ -87,5 +89,7 @@ export const creative = {
     call<{ project: PosterProject; bundle_digest: string; concept_id: string; approved: boolean }>('POST', '/api/creative/director/select', { source, bundle_digest: bundle.digest, concept_id, acknowledge_rules: true }),
   // M7-B B4B-2: M5's own read-only overview (poster list and draft export folders)
   navigation: () => call<{ projects: PosterRow[]; exports: PosterExportRow[] }>('GET', '/api/creative/navigation'),
+  // M7-C: the same lists with last-changed times, concept/brief roles and the poster each export came from (read-only)
+  overview: () => call<{ posters: PosterOverviewRow[]; exports: PosterExportRow[] }>('GET', '/api/creative/overview'),
   links: (p: PosterProject) => call<{ links: ContentLink[] }>('GET', `/api/creative/approved/links/${encodeURIComponent(p.project_id)}`).then(r => r.links),
 }

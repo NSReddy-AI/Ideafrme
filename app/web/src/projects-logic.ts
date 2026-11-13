@@ -4,13 +4,15 @@
 // written by app/poster_to_reel.py). Similar names or dates never make a link.
 
 export type ReelSource = { name: string; brand?: string; status?: string; mode: 'speaker' | 'slides'; steps_done?: number; modified?: string; exports?: number; archived?: boolean }
-export type PosterSource = { project_id: string; name: string; dirty: boolean; saved: boolean }
+export type PosterSource = { project_id: string; name: string; dirty: boolean; saved: boolean
+  modified?: string | null; role?: 'concept' | 'brief-source' | 'brief' | 'plain'; source?: string | null; source_name?: string | null }
 export type Link = { reel: string; posterId: string; posterName: string; revision: number | null; created: string | null }
 export type Filter = 'all' | 'poster' | 'reel' | 'both'
 export type Item = {
   key: string; kind: 'poster' | 'reel'; title: string; href: string
   status: string            // from the source's own state
-  modified: string | null   // reels only: the poster list carries no date
+  modified: string | null   // last change, where the source records one (a never-saved poster has none)
+  briefSource?: boolean     // a brief whose concept poster exists: the working poster is the concept, this is its starting point
   facts: string[]           // short supported facts, e.g. "slides reel", "3 exports"
   linked: { label: string; href: string | null }[]   // recorded poster-reel relationships
 }
@@ -53,13 +55,19 @@ export function combine(reels: ReelSource[], posters: PosterSource[], links: Lin
       linked: l ? [{ label: posterIds.has(l.posterId) ? `Made from poster "${l.posterName || l.posterId}"${l.revision !== null ? ` (revision ${l.revision})` : ''}` : `Made from a poster that is not in this poster library${l.posterName ? ` ("${l.posterName}")` : ''}`,
         href: posterIds.has(l.posterId) ? posterHref(l.posterId) : null }] : [] }
   })
-  const posterItems: Item[] = posters.map(p => ({ key: `poster:${p.project_id}`, kind: 'poster', title: p.name, href: posterHref(p.project_id), modified: null,
-    status: p.dirty ? 'Unsaved changes' : p.saved ? 'Saved' : 'Not saved yet', facts: [],
-    linked: live.filter(l => l.posterId === p.project_id).map(l => ({ label: `Reel made from it: ${l.reel}`, href: reelHref(l.reel) })) }))
-  // dated rows first (newest first, as the reel list gives them), then posters by name: the poster list has no dates to sort by
-  return [...reelItems, ...[...posterItems].sort((a, b) => a.title.localeCompare(b.title))]
+  const posterItems: Item[] = posters.map(p => ({ key: `poster:${p.project_id}`, kind: 'poster', title: p.name, href: posterHref(p.project_id), modified: p.modified ?? null,
+    status: p.dirty ? 'Unsaved changes' : p.saved ? 'Saved' : 'Not saved yet', briefSource: p.role === 'brief-source',
+    facts: p.role === 'concept' ? [`concept poster${p.source_name ? ` from the brief "${p.source_name}"` : ''}`] : p.role === 'brief-source' ? ['brief draft: concept posters were made from it'] : p.role === 'brief' ? ['started from a brief'] : [],
+    linked: [...(p.role === 'concept' && p.source && posterIds.has(p.source) ? [{ label: 'Open its brief and concepts', href: `#/concepts/${encodeURIComponent(p.source)}` }] : []),
+      ...live.filter(l => l.posterId === p.project_id).map(l => ({ label: `Reel made from it: ${l.reel}`, href: reelHref(l.reel) }))] }))
+  // newest change first; rows without a recorded time (never-saved posters) come last, by name
+  const dated = [...reelItems, ...posterItems].filter(i => i.modified).sort((a, b) => (a.modified! < b.modified! ? 1 : a.modified! > b.modified! ? -1 : 0))
+  return [...dated, ...[...reelItems, ...posterItems].filter(i => !i.modified).sort((a, b) => a.title.localeCompare(b.title))]
 }
 
-export const matches = (i: Item, f: Filter) => f === 'all' || (f === 'both' ? i.linked.length > 0 : i.kind === f)
-export const counts = (items: Item[]): Record<Filter, number> => ({ all: items.length, poster: items.filter(i => i.kind === 'poster').length, reel: items.filter(i => i.kind === 'reel').length, both: items.filter(i => i.linked.length > 0).length })
+const paired = (i: Item) => i.linked.some(l => l.label.startsWith('Reel made from it') || l.label.startsWith('Made from'))
+export const matches = (i: Item, f: Filter) => f === 'all' || (f === 'both' ? paired(i) : i.kind === f)
+/** Brief drafts whose concept poster exists are hidden unless asked for: the concept poster is the one being worked on. */
+export const visible = (items: Item[], showBriefDrafts: boolean) => (showBriefDrafts ? items : items.filter(i => !i.briefSource))
+export const counts = (items: Item[]): Record<Filter, number> => ({ all: items.length, poster: items.filter(i => i.kind === 'poster').length, reel: items.filter(i => i.kind === 'reel').length, both: items.filter(paired).length })
 export const EMPTY: Record<Filter, string> = { all: 'No projects yet.', poster: 'No posters yet.', reel: 'No reels yet.', both: 'No poster has a reel made from it yet. Use "Make a reel from this poster" in the poster editor.' }

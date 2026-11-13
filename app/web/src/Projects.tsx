@@ -5,25 +5,26 @@ import { useEffect, useState } from 'react'
 import { api } from './api'
 import { readLinks } from './project-links'
 import { creative } from './creative'
-import { EMPTY, combine, counts, matches, type Filter, type Item, type Link, type PosterSource, type ReelSource } from './projects-logic'
+import { EMPTY, combine, counts, matches, visible, type Filter, type Item, type Link, type PosterSource, type ReelSource } from './projects-logic'
 import { Btn, MOTION, Notice, PageHead, Pill, Spinner, Tabs, cx } from './ui'
 
 const msg = (e: unknown) => (e as Error).message
 type Loaded<T> = { rows: T[]; error: string | null }
 
 export function ProjectsPage() {
-  const [filter, setFilter] = useState<Filter>('all'); const [showAll, setShowAll] = useState(false)
+  const [filter, setFilter] = useState<Filter>('all'); const [showAll, setShowAll] = useState(false); const [showBriefs, setShowBriefs] = useState(false)
   const [reels, setReels] = useState<Loaded<ReelSource> | null>(null); const [posters, setPosters] = useState<Loaded<PosterSource> | null>(null); const [links, setLinks] = useState<Link[]>([])
   useEffect(() => {
     let live = true
     api.projects(showAll).then(async rows => { if (!live) return; setReels({ rows, error: null }); const l = await readLinks(rows); if (live) setLinks(l) })
       .catch(e => { if (live) setReels({ rows: [], error: msg(e) }) })
-    creative.list().then(rows => { if (live) setPosters({ rows, error: null }) }).catch(e => { if (live) setPosters({ rows: [], error: msg(e) }) })
+    creative.overview().then(o => { if (live) setPosters({ rows: o.posters, error: null }) }).catch(e => { if (live) setPosters({ rows: [], error: msg(e) }) })
     return () => { live = false }
   }, [showAll])
 
   const loading = !reels || !posters
-  const items = loading ? [] : combine(reels.rows, posters.rows, links)
+  const everything = loading ? [] : combine(reels.rows, posters.rows, links)
+  const items = visible(everything, showBriefs); const hiddenBriefs = everything.length - visible(everything, false).length
   const n = counts(items); const shown = items.filter(i => matches(i, filter))
   const down = !loading && !!reels.error && !!posters.error
   return (
@@ -32,6 +33,7 @@ export function ProjectsPage() {
       <div className="mb-4 flex flex-wrap items-center gap-3">
         <Tabs label="Show" value={filter} onChange={setFilter} tabs={[{ id: 'all', label: `All (${n.all})` }, { id: 'poster', label: `Poster (${n.poster})` }, { id: 'reel', label: `Reel (${n.reel})` }, { id: 'both', label: `Both (${n.both})` }]} />
         <label className="flex items-center gap-2 text-xs text-ink-2"><input type="checkbox" checked={showAll} onChange={e => setShowAll(e.target.checked)} />Show test and archived reels</label>
+        {hiddenBriefs > 0 && <label className="flex items-center gap-2 text-xs text-ink-2"><input type="checkbox" checked={showBriefs} onChange={e => setShowBriefs(e.target.checked)} />Show brief drafts ({hiddenBriefs})</label>}
       </div>
       <p role="status" className="sr-only">{loading ? 'Loading projects' : `${shown.length} project${shown.length === 1 ? '' : 's'} shown`}</p>
 
@@ -46,7 +48,7 @@ export function ProjectsPage() {
           </div>
             : <ul className="divide-y divide-line overflow-hidden rounded-box border border-line bg-raised">{shown.map(i => <Row key={i.key} i={i} />)}</ul>}
           {filter === 'both' && <p className="mt-3 text-xs text-ink-3">"Both" lists a poster and a reel only when the reel carries the record written by "Make a reel from this poster". Similar names are never treated as a link.</p>}
-          <p className="mt-3 text-xs text-ink-3">Posters have no saved date in their data, so they are listed by name after the reels. <a href="#/posters" className="text-link hover:underline">Plain poster without a brief</a></p>
+          <p className="mt-3 text-xs text-ink-3">Newest change first. {hiddenBriefs > 0 && !showBriefs ? `${hiddenBriefs} brief draft${hiddenBriefs === 1 ? ' is' : 's are'} hidden because ${hiddenBriefs === 1 ? 'its' : 'their'} concept poster is listed. ` : ''}<a href="#/posters" className="text-link hover:underline">Plain poster without a brief</a></p>
         </>}
     </div>
   )

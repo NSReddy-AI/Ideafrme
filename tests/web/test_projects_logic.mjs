@@ -1,6 +1,6 @@
 // Unit test for app/web/src/projects-logic.ts (M7-B B4B-2). Run: node tests/web/test_projects_logic.mjs
 import assert from 'node:assert/strict'
-import { EMPTY, combine, counts, matches, parseLink, reelStatusLabel } from '../../app/web/src/projects-logic.ts'
+import { EMPTY, combine, counts, matches, parseLink, reelStatusLabel, visible } from '../../app/web/src/projects-logic.ts'
 let checks = 0
 const eq = (a, b, m) => { checks++; assert.deepEqual(a, b, `${m ?? 'check ' + checks}: got ${JSON.stringify(a)}`) }
 const ok = (v, m) => { checks++; assert.ok(v, m) }
@@ -27,8 +27,8 @@ items = combine(reels, posters, links)
 eq(counts(items), { all: 5, poster: 2, reel: 3, both: 2 })
 const reel = items.find(i => i.key === 'reel:2026-11-12_reading_day'), poster = items.find(i => i.key === 'poster:p1')
 eq(reel.linked, [{ label: 'Made from poster "Editorial hierarchy" (revision 27)', href: '#/poster/p1' }]); eq(poster.linked, [{ label: 'Reel made from it: 2026-11-12_reading_day', href: '#/p/2026-11-12_reading_day' }])
-eq(items.filter(i => matches(i, 'both')).map(i => i.key), ['reel:2026-11-12_reading_day', 'poster:p1'])
-eq(items.filter(i => matches(i, 'poster')).map(i => i.title), ['Editorial hierarchy', 'Reading day'], 'posters by name'); eq(items.filter(i => matches(i, 'reel')).length, 3); eq(items.filter(i => matches(i, 'all')).length, 5)
+eq(items.filter(i => matches(i, 'both')).map(i => i.key).sort(), ['poster:p1', 'reel:2026-11-12_reading_day'])
+eq(items.filter(i => matches(i, 'poster')).map(i => i.title), ['Editorial hierarchy', 'Reading day'], 'undated posters by name'); eq(items.filter(i => matches(i, 'reel')).length, 3); eq(items.filter(i => matches(i, 'all')).length, 5)
 
 // ---- only supported facts: reel dates and steps from the reel list, no date for posters
 eq(reel.modified, '2026-11-12 14:41'); eq(reel.status, 'Exported'); eq(reel.facts, ['slides reel', 'reel brand tech_ai_tools', '4 steps done', '3 exports']); eq(reel.href, '#/p/2026-11-12_reading_day')
@@ -39,6 +39,17 @@ eq(poster.modified, null, 'no poster date is invented'); eq(poster.status, 'Unsa
 items = combine(reels, [posters[0]], links)
 eq(items.find(i => i.key === 'reel:2026-11-12_reading_day').linked, [{ label: 'Made from a poster that is not in this poster library ("Editorial hierarchy")', href: null }]); eq(counts(items).both, 1)
 eq(counts(combine([reels[1]], posters, links)).both, 0)
+
+// ---- M7-C: dates, roles and brief drafts, from the overview's own facts
+const dated = [{ project_id: 'b1', name: 'Reading brief', dirty: false, saved: true, modified: '2026-11-13 09:00', role: 'brief-source' },
+  { project_id: 'c1', name: 'Editorial hierarchy', dirty: false, saved: true, modified: '2026-11-13 09:05', role: 'concept', source: 'b1', source_name: 'Reading brief' },
+  { project_id: 'x1', name: 'Loose brief', dirty: false, saved: true, modified: '2026-11-10 08:00', role: 'brief' }, { project_id: 'n1', name: 'Never saved', dirty: true, saved: false, modified: null, role: 'plain' }]
+items = combine(reels, dated, [])
+eq(items.map(i => i.key), ['poster:c1', 'poster:b1', 'reel:2026-11-12_reading_day', 'poster:x1', 'reel:2026-11-03_reel_002', 'reel:zz_old', 'poster:n1'], 'newest change first, undated last')
+const c1 = items.find(i => i.key === 'poster:c1'); eq(c1.facts, ['concept poster from the brief "Reading brief"']); eq(c1.linked, [{ label: 'Open its brief and concepts', href: '#/concepts/b1' }]); eq(c1.modified, '2026-11-13 09:05')
+eq(items.find(i => i.key === 'poster:b1').briefSource, true); eq(items.find(i => i.key === 'poster:x1').facts, ['started from a brief']); eq(items.find(i => i.key === 'poster:n1').modified, null)
+eq(visible(items, false).some(i => i.key === 'poster:b1'), false, 'a brief draft with a concept poster is hidden by default'); eq(visible(items, true).length, 7); eq(visible(items, false).length, 6)
+eq(visible(items, false).some(i => i.key === 'poster:x1'), true, 'a brief without a proved concept is never hidden'); eq(counts(visible(items, false)).both, 0, 'a brief link is not a poster-reel pair')
 
 // ---- reel status wording: plain labels, real counts, unknown words never upgraded
 eq(reelStatusLabel({ status: 'new' }), 'New project'); eq(reelStatusLabel({ status: 'new', steps_done: 0, exports: 0 }), 'New project')

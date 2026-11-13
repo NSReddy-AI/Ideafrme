@@ -3,7 +3,7 @@
 import { useEffect, useState } from 'react'
 import { api, type ProjectRow } from './api'
 import { creative, type PosterExportRow } from './creative'
-import { reelHref } from './projects-logic'
+import { posterHref, reelHref } from './projects-logic'
 import { Card, Notice, PageHead, Pill, Spinner } from './ui'
 
 const msg = (e: unknown) => (e as Error).message
@@ -14,7 +14,7 @@ export function ExportsPage() {
   const [posters, setPosters] = useState<PosterExportRow[] | null>(null); const [posterErr, setPosterErr] = useState<string | null>(null)
   useEffect(() => {
     api.projects(false).then(r => setReels(r.filter(x => x.exports > 0))).catch(e => setReelErr(msg(e)))
-    creative.navigation().then(n => setPosters(n.exports)).catch(e => setPosterErr(msg(e)))
+    creative.overview().then(n => setPosters(n.exports)).catch(e => setPosterErr(msg(e)))
   }, [])
   return (
     <div className="space-y-6">
@@ -32,9 +32,10 @@ export function ExportsPage() {
           : !posters.length ? <p className="text-sm text-ink-3">No poster has been exported yet. Use the Export step in a poster.</p>
           : <ul className="divide-y divide-line">{posters.map(x => <li key={x.id} className="py-2 text-sm">
             <div className="flex flex-wrap items-center gap-x-3 gap-y-1"><span className="font-medium">{x.id}</span><Pill ok={x.state === 'draft' ? null : false}>{STATE[x.state]}</Pill>
-              {x.revision !== null && <span className="text-xs text-ink-2">Revision {x.revision} · {x.png_sha256 ? 'SVG and PNG' : 'SVG'}</span>}</div>
+              {x.revision !== null && <span className="text-xs text-ink-2">Revision {x.revision} · {x.png_sha256 ? 'SVG and PNG' : 'SVG'}</span>}
+              {x.poster ? <a href={posterHref(x.poster.project_id)} className="text-xs text-link hover:underline">Poster: {x.poster.name} · exported {x.poster.at}</a> : <span className="text-xs text-ink-3">Poster not recorded (exported before 13 Nov 2026)</span>}</div>
             <code className="mt-0.5 block break-all text-xs text-ink-3">{x.directory}</code></li>)}</ul>}
-        <p className="mt-3 text-xs text-ink-3">These are draft files, not approved artwork. The export record does not name its poster, so folders are listed as saved.</p>
+        <p className="mt-3 text-xs text-ink-3">These are draft files, not approved artwork. Newer exports name the poster they came from.</p>
       </Card>
     </div>
   )

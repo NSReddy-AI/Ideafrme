@@ -179,8 +179,33 @@ def _begin(s, v):
 
 def _finish(s, v):
     pending = getattr(s.exports, "pending", None)            # checked again: the reel's approval may change during the handshake
-    if pending: _approved_words_or_refuse(s, pending["identity"])
-    return s.finish(v)
+    identity = pending["identity"] if pending else None
+    if pending: _approved_words_or_refuse(s, identity)
+    result = s.finish(v)
+    if identity:        # M7-C: M6's own note of which poster this export came from. A failure to note it never fails the export.
+        try: _export_index().add(result["directory"], identity, s.view(identity)["name"], result["manifest"]["revision"])
+        except Exception as exc: print(f"creative: export index not updated: {type(exc).__name__}", file=sys.stderr, flush=True)
+    return result
+
+
+def _export_index():
+    from poster_overview import ExportIndex
+    return ExportIndex(LINKS)
+
+
+def _overview(s):
+    """Read-only: the poster list with last-changed times and roles, and the export list with the poster each came from."""
+    import poster_overview as po
+    nav = s.navigation(); rows = nav["projects"]; ids = [r["project_id"] for r in rows]
+    role = po.roles(SESSION, getattr(s.pairs, "session_id", None), set(ids), set(getattr(s.pairs, "bindings", {})))
+    names = {r["project_id"]: r["name"] for r in rows}; index = _export_index().all()
+    posters = [dict(r, modified=po.modified(SESSION, r["project_id"]), role=role[r["project_id"]][0], source=role[r["project_id"]][1],
+                    source_name=names.get(role[r["project_id"]][1])) for r in rows]
+    exports = [dict(e, poster=index.get(e["id"])) for e in nav["exports"]]
+    return {"posters": posters, "exports": exports}
+
+@router.get("/api/creative/overview")
+async def overview(request: Request): return await _handle(request, _overview, body=False)
 
 @router.post("/api/creative/export/begin")
 async def export_begin(request: Request): return await _handle(request, _begin)
