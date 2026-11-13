@@ -65,3 +65,19 @@ Checked
 Open
 - Speech and voice environments are only checked for presence; they are not started to prove they work.
 - No paid provider was called, so "configured" for them means only that a key exists.
+
+## B4C-4 - poster-first "Both" as one tracked chain
+
+Changed
+- A creation started as Both gets one task with 14 steps: the eight poster steps, "Make a reel from the poster", then the five reel steps. "Make a reel" in the editor reports the handoff with the real reel name; from then on the reel's engine jobs and its approval state fill the same task.
+- The editor's Reel tab reads "Reel · next" and explains the handoff when it is the waiting step. The reel page and Concepts show the same progress list, with the original request. The brief form's Both note now describes the real order.
+- The original Omnibar prompt is kept in the task record (`meta.prompt`), which is local data beside the projects. No poster or reel schema changed.
+- Fixed in `app/tasks.py`: a finished engine job could start a second, empty task for the same reel on the next look. Finished jobs are now remembered; test added.
+
+Checked
+- `tests/test_tasks.py` (10 tests): the chain stops at the concept choice, poster review, handoff and script approval; a failed export does not open the handoff; the screen cannot mark approval, build or render; a failed render leaves the task failed; the prompt survives to the end.
+- End to end with the real engine (throwaway reel `2026-11-12_zz_b4c4_check`, deleted afterwards with its exports): prompt "Poster and reel for Reading Day..." -> Both detected -> brief -> three concepts -> choice -> poster -> SVG+PNG export -> handoff -> reel created with its script not approved -> Build and Render disabled until approval and title page -> build 5/31/63/95% from the engine -> render 0/18/85% -> task Completed. Reel QA passed.
+
+Open
+- PNG export, which the handoff needs, did not work in the app's unfocused preview pane (the known M5 decode stall: "PNG export unavailable: Browser operation timed out"). It worked in focused Chrome, where this check was finished. The button was correctly disabled; nothing was faked.
+- The title page words are one more thing the reel needs before Build; they are not a tracked step.

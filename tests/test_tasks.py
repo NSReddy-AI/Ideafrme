@@ -69,6 +69,34 @@ class StoreTest(unittest.TestCase):
         self.facts[:] = ["project: a / b / c", "script approved"]; self.assertEqual(self.status(self.store.get(t["id"]), "approve"), "done")
         jobs["j9"] = dict(id="j9", project=reel, action="render", status="done", pct=100, events=[], created=time.time(), seconds=17.9)
         self.store.mirror(jobs); self.assertEqual(self.store.get(t["id"])["status"], "completed"); self.assertEqual(len(self.store.list(reel=reel)), 1, "one task for the reel, not one per job")
+        for _ in range(3): self.store.mirror(jobs)                      # finished jobs stay in the engine's list; looking again must change nothing
+        self.assertEqual((len(self.store.list(reel=reel)), self.store.get(t["id"])["status"]), (1, "completed"), "a finished job never starts a new task")
+
+    def test_both_chain_stops_at_every_approval(self):
+        tid = self.store.create("both", key="b1", meta={"prompt": "Poster and reel for Reading Day", "output": "both"})["id"]; jobs = {}; reel = "2026-11-12_reading"
+        for sid in ("interpret", "brief", "concepts"): self.store.step(tid, sid, "done")
+        self.assertEqual(self.store.get(tid)["status"], "waiting")                                   # stops for the concept choice
+        self.store.step(tid, "choose", "done"); t = self.store.step(tid, "poster", "done", poster="p2")
+        self.assertEqual((t["status"], self.status(t, "review")), ("waiting", "waiting"))            # stops for the poster review
+        for sid in ("review", "qa"): self.store.step(tid, sid, "done")
+        t = self.store.step(tid, "export", "running"); t = self.store.step(tid, "export", "failed", error="PNG disabled: the decoded image did not match the preview exactly.")
+        self.assertEqual((t["status"], self.status(t, "handoff")), ("failed", "pending"), "a failed export does not open the reel handoff")
+        with self.assertRaises(TaskError): self.store.step(tid, "handoff", "done", reel=reel)
+        self.store.step(tid, "export", "running"); t = self.store.step(tid, "export", "done")
+        self.assertEqual((t["status"], self.status(t, "handoff")), ("waiting", "waiting"))           # stops for the handoff
+        self.facts[:] = ["project: a / b / c", "narration: none", "script prepared (check the ❓ lines)"]
+        t = self.store.step(tid, "handoff", "done", reel=reel); t = self.store.get(tid)
+        self.assertEqual((t["project"]["reel"], t["status"], self.status(t, "approve")), (reel, "waiting", "waiting"))   # stops for script approval
+        with self.assertRaises(TaskError): self.store.step(tid, "approve", "done")                  # the screen cannot approve
+        with self.assertRaises(TaskError): self.store.step(tid, "render", "done")
+        self.facts[:] = ["project: a / b / c", "narration: none", "script approved"]
+        jobs["b1"] = dict(id="b1", project=reel, action="build", status="running", pct=30, events=[], created=time.time()); self.store.mirror(jobs)
+        t = self.store.get(tid); self.assertEqual((t["status"], self.status(t, "approve"), self.status(t, "build"), self.status(t, "plan")), ("running", "done", "running", "skipped"))
+        self.assertEqual(len(self.store.list(reel=reel)), 1, "the reel's jobs join the same task; no second task is made")
+        jobs["b1"].update(status="done", seconds=7.8); jobs["r1"] = dict(id="r1", project=reel, action="render", status="failed", pct=80, events=[dict(event="error", message="QA failed: loudness")], created=time.time())
+        self.store.mirror(jobs); t = self.store.get(tid); self.assertEqual((t["status"], self.status(t, "render")), ("failed", "failed"), "a failed render is not a finished creation")
+        jobs["r2"] = dict(id="r2", project=reel, action="render", status="done", pct=100, events=[], created=time.time(), seconds=18); self.store.mirror(jobs)
+        t = self.store.get(tid); self.assertEqual((t["status"], t["meta"]["prompt"]), ("completed", "Poster and reel for Reading Day"), "the original request is kept to the end")
 
     def test_approval_job_is_not_retried(self):
         jobs = {"a1": dict(id="a1", project="r", action="approve", status="failed", pct=0, events=[dict(event="error", message="choose A, B, C or D")], created=time.time())}

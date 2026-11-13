@@ -77,7 +77,7 @@ export function BriefForm({ both, onConcepts, initial, sources, title, prompt }:
       </div>
       <label className="mt-4 flex items-start gap-2 text-sm"><input type="checkbox" className="mt-1" checked={ack} onChange={e => setAck(e.target.checked)} />
         <span>This poster keeps its brief and brand linked to it. Older M5 Studio versions cannot open posters like this.</span></label>
-      {both && <Notice tone="info" className="mt-3">After you choose a concept and save the poster, use "Make a reel from this poster" in the editor.</Notice>}
+      {both && <Notice tone="info" className="mt-3">Poster first. After you choose a concept, check the poster, export it as SVG and PNG and save it, the editor offers "Make a reel from this poster". The reel then waits for your approval of its script before it is built and rendered. Progress is tracked across both.</Notice>}
       <Btn className="mt-4" busy={busy} disabled={!ready} onClick={start}>Continue to concepts</Btn>
       {!ready && <p className="mt-2 text-xs text-ink-3">{need.length ? `Still needed: ${need.map(k => FIELD_LABEL[k]).join(', ')}${ack ? '.' : ', and the confirmation above.'}` : 'Tick the confirmation above to continue.'}</p>}
       {err && <Notice tone="error" className="mt-3">{err}</Notice>}

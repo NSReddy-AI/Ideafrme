@@ -75,7 +75,7 @@ class TaskStore:
         self.root = Path(root or ROOT); self.root.mkdir(parents=True, exist_ok=True)
         self.lock = threading.RLock(); self.tasks = {}; self.invalid = []
         self.start_job, self.cancel_job, self.reel_facts = start_job, cancel_job, reel_facts
-        self.started = time.time(); self._seen = {}
+        self.started = time.time(); self._seen = {}; self._bound = {}
         self._load(); self.recover()
 
     # ---------------------------------------------------------------- storage
@@ -238,14 +238,16 @@ class TaskStore:
             for jid, J in list(jobs.items()):
                 step_id = JOB_STEP.get(J.get("action"))
                 if not step_id or J.get("created", 0) < self.started - 1: continue
-                t = next((x for x in self.tasks.values() if jid in x["jobs"]), None)
+                js = J.get("status")
+                if self._seen.get(jid) == (js, J.get("pct")): continue        # nothing new about this job (finished jobs stay in the queue's list)
+                t = self.tasks.get(self._bound.get(jid)) or next((x for x in self.tasks.values() if jid in x["jobs"]), None)
                 if not t:
                     t = self._reel_task(J["project"])
                     if not t:
                         made = self.create("reel", reel=J["project"]); t = self.tasks[made["id"]]
                     t["jobs"][jid] = step_id
-                s = self._step(t, step_id); js = J.get("status")
-                if self._seen.get(jid) == (js, J.get("pct")): continue
+                self._bound[jid] = t["id"]
+                s = self._step(t, step_id)
                 self._seen[jid] = (js, J.get("pct")); s["action"] = J.get("action")
                 if js in ("queued", "running"):
                     if step_id in ("build", "render"):        # a build or render that runs proves the earlier optional steps were not needed

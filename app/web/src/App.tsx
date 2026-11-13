@@ -360,7 +360,7 @@ function ProjectView({ name, cat }: { name: string; cat: Catalog }) {
   return (
     <div className="space-y-4">
       <JobPanel job={job} onCancel={cancel} />
-      {tracked.task && <Card title="Progress of this reel"><TaskSteps task={tracked.task} onChange={tracked.setTask} /></Card>}
+      {tracked.task && <section aria-label="Progress of this reel" className="rounded-box border border-line bg-raised p-5 shadow-soft"><TaskSteps task={tracked.task} onChange={tracked.setTask} /></section>}
       <div>
         <div className="flex items-center gap-3"><h1 className="text-xl font-semibold">{p.name}</h1>
           <Btn kind="ghost" className="ml-auto" onClick={async () => reload(await api.patch(p.name, { archived: !p.archived }))}>{p.archived ? 'Restore from archive' : 'Archive'}</Btn></div>

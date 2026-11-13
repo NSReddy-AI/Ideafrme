@@ -33,6 +33,7 @@ export function TaskSteps({ task, onChange, heading = true }: { task: Task; onCh
         <h2 className="text-base font-semibold">Progress</h2><span role="status"><Pill ok={pillOk(task)}>{TASK_LABEL[task.status]}</Pill></span>
         <span className="text-xs text-ink-3">{summary(task)}</span>
         <a href={`#/task/${task.id}`} className="ml-auto text-sm text-link hover:underline">Full view</a></div>}
+      {heading && task.meta.prompt && <p className={cx('mb-3 border-l-2 border-line-strong pl-3 text-xs text-ink-2', /[\u0C00-\u0C7F]/.test(task.meta.prompt) && 'te')}><span className="text-ink-3">Your request: </span>{task.meta.prompt}</p>}
       <ol className="space-y-1.5">
         {task.steps.map(s => <li key={s.id} aria-current={now?.id === s.id ? 'step' : undefined} className={cx('grid grid-cols-[1.5rem_1fr] gap-x-1 rounded-field px-2 py-1.5 text-sm', MOTION, now?.id === s.id && 'bg-raised ring-1 ring-line')}>
           <span aria-hidden className={cx('pt-px text-center font-semibold', TONE[s.status])}>{s.status === 'running' ? <Spinner /> : STEP_SYMBOL[s.status]}</span>

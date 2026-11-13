@@ -12,7 +12,7 @@ import { Btn, Card, Err, Field, MOTION, Notice, PageHead, Pill, Select, Tabs, Te
 import { PHASES, readiness, savedFiles, type ItemState, type Phase } from './export-logic'
 import { readLinks } from './project-links'
 import { reelHref, reelStatusLabel } from './projects-logic'
-import { report } from './tasks'
+import { report, type Task } from './tasks'
 import { TaskStrip } from './TaskTracker'
 import { useTask } from './use-task'
 import { api, type Catalog } from './api'
@@ -259,8 +259,9 @@ export function PosterEditor({ id }: { id: string }) {
   const status = previewErr ? previewErr : current ? 'Preview current' : 'Updating preview…'
   const brandName = (p.binding as Binding | null)?.record.brand?.record.payload.name
   const blocking = ready.items.filter(i => i.state === 'blocked').length; const toReview = failing.length
+  const handoff = task?.kind === 'both' && ['waiting', 'failed'].includes(task.steps.find(s => s.id === 'handoff')?.status ?? '')
   const sideTabs: { id: Side; label: string }[] = [...(narrow ? [{ id: 'layers' as Side, label: 'Layers' }] : []), { id: 'props', label: 'Properties' },
-    { id: 'quality', label: blocking ? `Quality · ${blocking} blocking` : toReview ? `Quality · ${toReview}` : 'Quality' }, { id: 'reel', label: 'Reel' }]
+    { id: 'quality', label: blocking ? `Quality · ${blocking} blocking` : toReview ? `Quality · ${toReview}` : 'Quality' }, { id: 'reel', label: handoff ? 'Reel · next' : 'Reel' }]
   const layersBody = <>
           <div className="flex items-center"><h2 className={PANEL_HEAD}>LAYERS</h2><span className="ml-auto text-xs text-ink-3">{layers.length} of {p.element_limit}</span></div>
           <ol className="space-y-0.5">
@@ -390,7 +391,8 @@ export function PosterEditor({ id }: { id: string }) {
                 <p className="mt-2 text-xs text-ink-3">Reels are edited in their own steps. There is no reel timeline in this editor.</p>
               </div>
               <ApprovedPanel p={p} locked={locked} onInserted={(np, id) => { setP(np); setSel(id); setSide('props') }} />
-              <MakeReelPanel p={p} locked={locked} />
+              {handoff && <Notice tone="info" title="Next: the reel.">This creation was started as poster and reel. Export the poster as SVG and PNG, save it, then make the reel below. You approve its script in the reel before anything is built or rendered.</Notice>}
+              <MakeReelPanel p={p} locked={locked} task={task} onMade={() => setTick(t => t + 1)} />
             </>}
           </div>
         </aside>
@@ -627,14 +629,17 @@ function ApprovedPanel({ p, locked, onInserted }: { p: PosterProject; locked: bo
 }
 
 // ------------------------------------------------------------------ step 7: poster -> ordinary reel (owner approves the script in Reels)
-function MakeReelPanel({ p, locked }: { p: PosterProject; locked: boolean }) {
+function MakeReelPanel({ p, locked, task, onMade }: { p: PosterProject; locked: boolean; task: Task | null; onMade: () => void }) {
   const [cat, setCat] = useState<Catalog | null>(null); const [brand, setBrand] = useState(''); const [platform, setPlatform] = useState('instagram')
   const [style, setStyle] = useState(''); const [slug, setSlug] = useState(''); const [busy, setBusy] = useState(false)
   const [err, setErr] = useState<string | null>(null); const [made, setMade] = useState<{ project: string; slides: number } | null>(null)
   useEffect(() => { api.catalog().then(c => { setCat(c); const b = c.brands[0]; if (b) { setBrand(b.id); setStyle(b.default_style) } }).catch(e => setErr(msg(e))) }, [])
   const go = async () => {
     setBusy(true); setErr(null); setMade(null)
-    try { const r = await creative.toReel(p, { brand, platform, style, slug }); setMade(r) } catch (e) { setErr(msg(e)) } finally { setBusy(false) }
+    const chain = task?.kind === 'both' ? task : null     // B4C-4: a poster-then-reel task continues into the reel it really made
+    try { const r = await creative.toReel(p, { brand, platform, style, slug }); setMade(r); await report(chain, 'handoff', 'done', { reel: r.project, detail: `Reel ${r.project} created from the poster's PNG export; its script is not approved yet` }) }
+    catch (e) { setErr(msg(e)); if (chain?.steps.find(s => s.id === 'handoff')?.status === 'waiting') await report(chain, 'handoff', 'failed', { error: msg(e) }) }
+    finally { setBusy(false); onMade() }
   }
   if (!cat) return null
   return (
@@ -649,7 +654,7 @@ function MakeReelPanel({ p, locked }: { p: PosterProject; locked: boolean }) {
         <label className="text-xs text-ink-2">Short name<Field value={slug} onChange={e => setSlug(e.target.value)} placeholder="e.g. tools_poster" /></label>
       </div>
       <Btn kind="ghost" className="mt-2 w-full" disabled={locked || busy || !slug.trim() || p.dirty} onClick={go}>{p.dirty ? 'Save the poster first' : 'Make reel'}</Btn>
-      {made && <p role="status" className="mt-2 rounded-field bg-ok-subtle px-2 py-1.5 text-xs text-ok">Reel created with {made.slides} slide{made.slides > 1 ? 's' : ''}. <a className="underline" href={`#/p/${encodeURIComponent(made.project)}`}>Open it in Reels</a> to approve the script, add title words, build and render.</p>}
+      {made && <p role="status" className="mt-2 rounded-field bg-ok-subtle px-2 py-1.5 text-xs text-ok">Reel created with {made.slides} slide{made.slides > 1 ? 's' : ''}. <a className="underline" href={`#/p/${encodeURIComponent(made.project)}`}>Open the reel</a> to approve its script, set the title page words, then build and render.</p>}
       <Err msg={err} />
     </div>
   )

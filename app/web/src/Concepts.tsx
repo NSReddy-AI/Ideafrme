@@ -62,7 +62,7 @@ export function Concepts({ id, onOpen }: { id: string; onOpen: (posterId: string
         </div>
       </Card>
 
-      {task && <Card title="Where this stands"><TaskSteps task={task} onChange={tracked.setTask} /></Card>}
+      {task && <section aria-label="Progress" className="rounded-box border border-line bg-raised p-5 shadow-soft"><TaskSteps task={task} onChange={tracked.setTask} /></section>}
       <Notice tone="info">{CONCEPTS_ORIGIN}</Notice>
       {err && <Notice tone="error">{err}</Notice>}
 
