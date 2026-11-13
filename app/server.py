@@ -392,6 +392,13 @@ sys.path.insert(0, HERE)
 import creative
 app.include_router(creative.router)
 
+# M7-B B4C-1: durable local tasks (app/tasks.py). They record real step states; the job queue above is unchanged.
+import tasks
+def _task_start(name, action):
+    if action not in tasks.RETRY_ACTIONS: raise ValueError("not a retryable action")
+    return start_job(name, Job(action=action))["id"]
+TASKS = tasks.install(app, JOBS, _task_start, lambda jid: cancel(jid), lambda name: rs.next_step(name)[0])
+
 DIST = os.path.join(HERE, "web", "dist")
 if os.path.isdir(DIST):
     app.mount("/assets", StaticFiles(directory=os.path.join(DIST, "assets")), name="assets")

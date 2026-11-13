@@ -19,3 +19,19 @@ Checked in the browser (throwaway server, port 8776)
 Open
 - The stray ellipse layer seen once in B4B-3 did not reappear in 5 further scripted rounds of the same sequence. Cause unknown; treated as not reproducible.
 - Not done by hand: a real screen reader pass, a real Telugu keyboard (IME was simulated), Tab order on a physical keyboard.
+
+## B4C-1 - durable local tasks
+
+Changed
+- New `app/tasks.py`: one JSON record per task under `jobs/tasks/` (local data, not in Git). Kinds: poster, reel, both. States: pending, running, waiting, completed, failed, cancelled, retrying; a task's state is always derived from its steps.
+- Routes: `GET /api/tasks`, `GET /api/tasks/{id}`, `POST /api/tasks`, `POST /api/tasks/{id}/step`, `/cancel`, `/retry`. Seven lines added to `app/server.py` to install them; the job queue itself is unchanged.
+- Poster steps are reported by the screen when the existing M5 call really succeeds or fails. Reel steps mirror the existing engine jobs and the reel's own approval state; the screen cannot set them.
+- Same `key` twice gives the same task. Approvals and hand-written hooks are never retried automatically.
+
+Checked (`tests/test_tasks.py`, 9 tests, no engine job run)
+- Create, real progress, failure, retry, cancel, invalid requests, concurrent writes, damaged files reported and kept.
+- Restart: through the real server, a running step comes back as failed "interrupted by a restart", waiting-for-you survives, the prompt is kept.
+
+Open
+- Engine jobs still live in server memory; after a restart their step is reported as interrupted and can be queued again. That is honest, not seamless.
+- No clean-up of old task files yet.
