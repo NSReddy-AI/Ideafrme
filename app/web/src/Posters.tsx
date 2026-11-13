@@ -67,13 +67,17 @@ const CHECKER = { backgroundImage: 'conic-gradient(var(--color-bg-raised) 25%, v
 const layerKind = (l: Layer, text?: { language: string }) => l.type === 'text' ? (text?.language === 'te' ? 'Telugu text' : 'English text') : l.style.shape === 'ellipse' ? 'Ellipse' : 'Rectangle'
 const layerName = (l: Layer, text?: { text: string }) => l.type === 'text' ? (text?.text.split('\n')[0] || 'empty text') : l.style.shape === 'ellipse' ? 'Ellipse' : 'Rectangle'
 const PANEL_HEAD = 'text-xs font-semibold tracking-wide text-ink-3'
+// M7-C: a browser window that is covered or in the background stops drawing frames, and M5's image checks (which wait for
+// a decoded frame) then time out. This only asks whether frames are running, so the reason can be said plainly.
+const framesRunning = (ms = 800) => new Promise<boolean>(done => { let hit = false; requestAnimationFrame(() => { hit = true; done(true) }); setTimeout(() => { if (!hit) done(false) }, ms) })
+const BACKGROUND = 'This window is in the background or covered, so the browser has paused drawing. Bring it to the front; PNG is checked again by itself.'
 
 export function PosterEditor({ id }: { id: string }) {
   const [p, setP] = useState<PosterProject | null>(null)
   const [sel, setSel] = useState<string | null>(null)
   const [busy, setBusy] = useState(false); const [err, setErr] = useState<string | null>(null)
   const [upgrade, setUpgrade] = useState<Pending | null>(null)
-  const [faces, setFaces] = useState<Record<string, Face> | null>(null); const [pngOk, setPngOk] = useState(false); const [fontNote, setFontNote] = useState('Loading pinned fonts…')
+  const [faces, setFaces] = useState<Record<string, Face> | null>(null); const [pngOk, setPngOk] = useState(false); const [fontNote, setFontNote] = useState('Loading pinned fonts…'); const parityFailed = useRef(false); const probing = useRef(false); const [pngLocked, setPngLocked] = useState(false)
   const [scene, setScene] = useState<Scene | null>(null); const [preview, setPreview] = useState<string | null>(null)
   const [overflow, setOverflow] = useState<string[]>([]); const [previewErr, setPreviewErr] = useState<string | null>(null)
   const [measured, setMeasured] = useState<MeasuredCheck[]>([])
@@ -89,14 +93,29 @@ export function PosterEditor({ id }: { id: string }) {
   const [tick, setTick] = useState(0); const tracked = useTask({ poster: id }, tick); const task = tracked.task && !tracked.task.cancelled ? tracked.task : null
 
   useEffect(() => { setP(null); setSel(null); creative.view(id).then(setP).catch(e => setErr(msg(e))) }, [id])
-  useEffect(() => {   // M5's pinned fonts, then M5's own probe that decides whether PNG export is trustworthy here
+  // M5's own probe decides whether PNG export can be trusted here. It is M5's check, unchanged; M6 only runs it again when
+  // the window comes back to the front, because a failed probe in a background window says nothing about PNG itself.
+  const probePng = useCallback(async (f: Record<string, Face>) => {
+    if (probing.current || parityFailed.current) return      // a real pixel mismatch stays disabled until the page is reloaded
+    probing.current = true
+    try {
+      const proof = await qualifyEmbedded(f); setPngOk(proof.ok)
+      setFontNote(proof.ok ? 'Pinned Inter Bold and Noto Sans Telugu Black loaded. PNG export available.'
+        : (await framesRunning()) ? `PNG export unavailable: ${proof.reason}` : `PNG export is paused. ${BACKGROUND}`)
+    } finally { probing.current = false }
+  }, [])
+  useEffect(() => {   // M5's pinned fonts, then the probe
     creative.fonts().then(async f => {
       if (!f.fonts) throw Error(f.error ?? 'Pinned fonts unavailable.')
-      await loadFonts(f.fonts); setFaces(f.fonts)
-      const proof = await qualifyEmbedded(f.fonts); setPngOk(proof.ok)
-      setFontNote(proof.ok ? 'Pinned Inter Bold and Noto Sans Telugu Black loaded. PNG export available.' : `PNG export unavailable: ${proof.reason}`)
+      await loadFonts(f.fonts); setFaces(f.fonts); await probePng(f.fonts)
     }).catch(e => setFontNote(`Export unavailable: ${msg(e)}`))
-  }, [])
+  }, [probePng])
+  useEffect(() => {   // back in front: check PNG again if it was not available
+    if (!faces || pngOk) return
+    const again = () => { if (document.visibilityState === 'visible') probePng(faces) }
+    window.addEventListener('focus', again); document.addEventListener('visibilitychange', again)
+    return () => { window.removeEventListener('focus', again); document.removeEventListener('visibilitychange', again) }
+  }, [faces, pngOk, probePng])
   useEffect(() => {   // every revision: fresh SVG from the server, M5's overflow check in this browser, and poster QA
     if (!p || !faces) return
     const n = ++seq.current
@@ -233,7 +252,7 @@ export function PosterEditor({ id }: { id: string }) {
       if (withPng) {
         setRun({ png: withPng, phase: 'raster' })
         const r = await raster(start.scene.svg); parity = await comparePng(r.canvas, r.blob)
-        if (!parity) { setPngOk(false); throw Error('PNG disabled: the decoded image did not match the preview exactly.') }
+        if (!parity) { parityFailed.current = true; setPngLocked(true); setPngOk(false); setFontNote('PNG export is disabled: the saved image did not match the preview exactly. Reload the page to check again.'); throw Error('PNG disabled: the decoded image did not match the preview exactly.') }
         if (r.blob.size > 8 * 1024 * 1024) throw Error('PNG exceeds 8 MiB.')
         const bytes = new Uint8Array(await r.blob.arrayBuffer()); let s = ''
         for (let i = 0; i < bytes.length; i += 16384) s += String.fromCharCode(...bytes.subarray(i, i + 16384))
@@ -243,7 +262,10 @@ export function PosterEditor({ id }: { id: string }) {
       const saved = await creative.exportFinish({ token: start.token, revision: start.scene.revision, png, qa: { fonts_loaded: check.fonts_loaded, overflow: check.overflow, parity, embedded_fonts: pngOk } })
       if (saved.manifest.svg_sha256 !== start.scene.svg_sha256) throw Error('Saved SVG does not match the preview.')
       setReceipt(saved); await report(task, 'export', 'done', { detail: `${saved.manifest.png_sha256 ? 'SVG and PNG' : 'SVG'} saved, revision ${saved.manifest.revision}` })
-    } catch (e) { setExportErr(`Export refused: ${msg(e)}`); creative.exportCancel().catch(() => {}); await report(task, 'export', 'failed', { error: msg(e) }) }
+    } catch (e) {
+      const why = /timed out/i.test(msg(e)) && !(await framesRunning()) ? `${msg(e)} ${BACKGROUND.replace(' PNG is checked again by itself.', ' Then export again.')}` : msg(e)
+      setExportErr(`Export refused: ${why}`); creative.exportCancel().catch(() => {}); await report(task, 'export', 'failed', { error: why })
+    }
     finally { setExporting(false); setTick(t => t + 1) }
   }
 
@@ -405,6 +427,7 @@ export function PosterEditor({ id }: { id: string }) {
             <p className={cx('mt-2 text-center text-xs', previewErr ? 'text-bad' : 'text-ink-3')}>{status} · revision {p.revision}</p>
           </section>
           <ExportStep p={p} ready={ready} exporting={exporting} run={run} receipt={receipt} error={exportErr} qaErrors={failing.filter(c => c.level === 'error')} qaWarnings={failing.filter(c => c.level !== 'error')}
+            onRecheck={faces && !pngOk && !pngLocked ? () => probePng(faces) : undefined}
             onExport={exportDraft} onEdit={id => { if (id) { setSel(id); setSide('props') } setMode('edit') }} />
         </div>}
     </div>
@@ -474,7 +497,7 @@ const STATE: Record<ItemState, { symbol: string; word: string; tone: string }> =
   advisory: { symbol: '!', word: 'Review', tone: 'text-warn' }, pending: { symbol: '…', word: 'Checking', tone: 'text-ink-3' },
 }
 
-function ExportStep({ p, ready, exporting, run, receipt, error, qaErrors, qaWarnings, onExport, onEdit }: {
+function ExportStep({ p, ready, exporting, run, receipt, error, qaErrors, qaWarnings, onExport, onEdit, onRecheck }: { onRecheck?: () => void
   p: PosterProject; ready: ReturnType<typeof readiness>; exporting: boolean; run: Run | null; receipt: ExportReceipt | null; error: string | null
   qaErrors: Finding[]; qaWarnings: Finding[]; onExport: (withPng: boolean) => void; onEdit: (elementId?: string) => void }) {
   const [copied, setCopied] = useState(false)
@@ -517,6 +540,7 @@ function ExportStep({ p, ready, exporting, run, receipt, error, qaErrors, qaWarn
         <div className="flex flex-wrap gap-2">
           <Btn kind="ghost" busy={exporting && run?.png === false} disabled={!ready.svg.allowed} onClick={() => onExport(false)}>Export SVG</Btn>
           <Btn busy={exporting && run?.png === true} disabled={!ready.png.allowed} onClick={() => onExport(true)}>Export SVG and PNG</Btn>
+          {onRecheck && <Btn kind="quiet" disabled={exporting} onClick={onRecheck}>Check PNG again</Btn>}
           <Btn kind="quiet" disabled={exporting} onClick={() => onEdit()}>Back to Edit</Btn>
         </div>
         {!exporting && (ready.svg.reason ?? ready.png.reason) && <p className="mt-2 text-xs text-ink-2">{ready.svg.reason ? `Export is not available: ${ready.svg.reason}` : `SVG only: ${ready.png.reason}`}</p>}

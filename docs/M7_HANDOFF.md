@@ -112,3 +112,9 @@ Not done
 - `GET /api/version` says whether the running server is older than the code on disk, and whether the built screens are older than their source. The app shows "Restart needed" when so (also when the route is missing, i.e. a very old server).
 - Launcher: refuses with a plain message when Python or the built screens are missing or the port belongs to something else; reuses a current copy; replaces a stale copy of this workspace, but never while it has a job queued or running.
 - Checked: `tests/test_tasks.py` 12 tests; launcher exercised on a spare port against a fresh and a stale copy (old process stopped, new one current).
+
+## C2 - PNG export reliability
+- Finding: the stall is not about keyboard focus. In an unfocused but visible window, M5's image decode takes about 20 ms on the real 1.1 MB poster SVG. It stalls only when the browser has stopped drawing frames (window covered or in the background): `requestAnimationFrame` does not fire and `image.decode()` never settles, so M5's 5 s deadline ends with "Browser operation timed out". Reproduced live in the preview pane while it was in the background.
+- M6 change (no M5 file touched, no check weakened): M5's own probe is run again when the window regains focus or visibility, and by a "Check PNG again" button; when frames are not running the message says the window is in the background instead of a bare timeout, for the probe and for an export that times out. A real pixel mismatch still disables PNG until the page is reloaded.
+- Checked: background message seen live; recovery on focus checked with a stand-in for decode (the pane could not be brought to the front, and Chrome was not connected).
+- For Codex (M5): with `image.decode()` replaced by waiting for the image's `load` event, the same probe passed in a background window. Waiting for `load` before or instead of `decode()` in `browser_acceptance.js` would likely remove the stall at its source. Not changed here.
