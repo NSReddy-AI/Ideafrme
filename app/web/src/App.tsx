@@ -7,6 +7,7 @@ import { BrandStudio } from './BrandStudio'
 import { DesignReference } from './DesignReference'
 import { Create } from './Create'
 import { Home } from './Home'
+import { CapabilityList } from './CapabilityList'
 import { ProjectsPage } from './Projects'
 import { ExportsPage } from './ExportsPage'
 import { TaskPage, TaskSteps } from './TaskTracker'
@@ -501,9 +502,9 @@ export default function App() {
               <Card title="Design" right={<a href="#/design" className="text-sm text-link hover:underline">Component reference</a>}>
                 <p className="text-sm text-ink-2">Every shared button, field, status, dialog and notice, in the IDEAFRAME tokens.</p>
               </Card>
-              <Card title="Planner">
-                <div className="text-sm">{Object.entries(cat.providers).map(([k, v]) => <span key={k} className="mr-2"><Pill ok={!!v}>{k}</Pill></span>)}</div>
-                <p className="mt-2 text-xs text-ink-3">Local AI only (Ollama/Qwen3, Whisper, Indic Parler-TTS). Paid providers are optional and stay off unless their key is set.</p>
+              <Card title="Capabilities and providers">
+                <p className="mb-2 text-sm text-ink-2">What works on this Mac right now, with each answer shown separately. A model that works for reels is not thereby qualified for posters.</p>
+                <div className="text-sm"><CapabilityList detailed /></div>
               </Card>
             </div>
             : <div className="space-y-6">

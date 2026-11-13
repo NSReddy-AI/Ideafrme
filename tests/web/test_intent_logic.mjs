@@ -1,7 +1,6 @@
-// Unit test for app/web/src/intent-logic.ts and capabilities.ts (M7-B B4B-1). Run: node tests/web/test_intent_logic.mjs
+// Unit test for app/web/src/intent-logic.ts (M7-B B4B-1). Run: node tests/web/test_intent_logic.mjs
 import assert from 'node:assert/strict'
 import { interpret, matchBrand, missing, scriptOf } from '../../app/web/src/intent-logic.ts'
-import { CAPABILITIES } from '../../app/web/src/capabilities.ts'
 let checks = 0
 const eq = (a, b, m) => { checks++; assert.deepEqual(a, b, `${m ?? 'check ' + checks}: got ${JSON.stringify(a)}`) }
 const ok = (v, m) => { checks++; assert.ok(v, m) }
@@ -62,9 +61,4 @@ let b = matchBrand('Poster for Jagan For Andhra rally', eligible, ['Jagan For An
 eq(matchBrand('Poster for a rally', [], ['Jagan For Andhra']), { hash: null, note: null })
 eq(scriptOf('123 !!'), 'none')
 
-// ---- capability list: honest states only
-const cap = id => CAPABILITIES.find(c => c.id === id)
-eq(cap('poster.concepts.ai').state, 'unavailable'); eq(cap('language.translation').state, 'unavailable'); eq(cap('provider.web-bridge').state, 'unavailable'); eq(cap('provider.pro-api').state, 'off')
-eq(cap('intent.rules').runner, 'rules'); ok(!CAPABILITIES.some(c => c.runner === 'local-model' && c.state === 'available'), 'no model is shown as working without a health check')
-ok(new Set(CAPABILITIES.map(c => c.id)).size === CAPABILITIES.length)
 console.log(JSON.stringify({ checks, failures: 0 }))

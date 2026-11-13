@@ -50,3 +50,18 @@ Checked
 Open
 - Reel steps were not exercised with a live engine job in this stage (the mirror is covered by `tests/test_tasks.py`); a real build and render is part of B4C-4/B5.
 - Posters made before this stage have no task and show no strip.
+
+## B4C-3 - capability and provider health
+
+Changed
+- New `app/capabilities.py` and `GET /api/capabilities`: for each capability, separate answers for installed, configured, available, qualified, running, failed, unsupported (and switched off). Facts are read on this Mac only: `providers.json`, the local model server's own model list and in-memory list, whether a key exists in the environment (never its value), whether the local speech and voice environments exist.
+- `app/web/src/capabilities.ts` turns those answers into one headline (a reason it cannot be used always wins). `CapabilityList.tsx` shows the list on Home (short) and in Settings (every answer, with what it is based on). The old Planner pills in Settings are replaced by this list.
+- "Qualified" is per use: the local model is marked as used by the M4 reel planner, and as not qualified for poster concepts (Codex's NO-GO record).
+
+Checked
+- `tests/test_capabilities.py` (7 tests, made-up facts, nothing contacted) and `tests/web/test_capabilities_logic.mjs` (27 checks).
+- Browser, this Mac: local model server answering with qwen3:8b and qwen3:14b; reel planning Available; AI poster concepts Not qualified although the model is installed; Claude, Gemini and ChatGPT Switched off (two have a key in the environment and still show as off); translation, generated pictures and Web Bridge Unsupported.
+
+Open
+- Speech and voice environments are only checked for presence; they are not started to prove they work.
+- No paid provider was called, so "configured" for them means only that a key exists.

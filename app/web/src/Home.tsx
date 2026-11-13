@@ -3,7 +3,7 @@
 // created, translated or approved from the prompt alone, and no model reads it.
 import { useEffect, useRef, useState } from 'react'
 import { useBrandChoices } from './brand-choices'
-import { CAPABILITIES, STATE_LABEL } from './capabilities'
+import { CapabilityList } from './CapabilityList'
 import { BriefForm } from './Create'
 import { interpret, matchBrand, type Interpretation, type Note, type Output } from './intent-logic'
 import { Btn, Card, MOTION, Notice, Select, Tabs, cx } from './ui'
@@ -102,12 +102,8 @@ export function Home({ reelForm, onConcepts }: { reelForm: React.ReactNode; onCo
 
       <details className="mx-auto max-w-3xl rounded-box border border-line bg-raised px-4 py-3 text-sm">
         <summary className={cx('cursor-pointer font-medium', MOTION)}>What this build can and cannot do</summary>
-        <ul className="mt-3 divide-y divide-line">
-          {CAPABILITIES.map(c => <li key={c.id} className="grid gap-x-4 gap-y-0.5 py-2 sm:grid-cols-[1fr_8rem]">
-            <div><span className="font-medium">{c.label}</span><span className="block text-xs text-ink-2">{c.detail}</span></div>
-            <span className={cx('text-xs font-semibold sm:text-right', c.state === 'available' ? 'text-ok' : 'text-ink-3')}>{STATE_LABEL[c.state]}</span></li>)}
-        </ul>
-        <p className="mt-2 text-xs text-ink-3">Everything runs on this Mac. The status of local tools and models is in <a href="#/settings" className="text-link hover:underline">Settings</a>.</p>
+        <div className="mt-3"><CapabilityList /></div>
+        <p className="mt-2 text-xs text-ink-3">Every answer for each item is in <a href="#/settings" className="text-link hover:underline">Settings</a>.</p>
       </details>
     </div>
   )

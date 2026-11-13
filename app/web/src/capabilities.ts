@@ -1,24 +1,40 @@
-// M7-B B4B-1: what this build can and cannot do, in one typed list (no React, no storage, no provider routing).
-// Every entry is grounded in something that exists in this repository, or is explicitly marked as not available.
-// The list is descriptive only: it never switches a capability on. A later orchestrator can read the same type.
+// M7-B B4C-3: capability states for the screen (no React). The facts come from the server (app/capabilities.py:
+// providers.json, the local model server on this Mac, the environment, local tool folders). This file only turns the
+// seven separate answers into one honest headline, and never rounds an unknown up to "ready".
+export type Qualified = 'yes' | 'no' | 'not-assessed'
+export type Capability = {
+  id: string; label: string; runner: 'rules' | 'local-model' | 'online' | 'none'; detail: string; source: string | null
+  installed: boolean | null; configured: boolean | null; available: boolean; qualified: Qualified
+  running: boolean; failed: boolean; unsupported: boolean; off: boolean
+}
+export type CapabilityReport = { checked: string; default: string; local: { reachable: boolean; error: string | null; models: string[]; loaded: string[]; wanted: string[] }; capabilities: Capability[] }
+export type CapabilityState = 'unsupported' | 'failed' | 'off' | 'not-qualified' | 'running' | 'available' | 'installed' | 'not-configured' | 'not-installed'
 
-export type CapabilityState =
-  | 'available'      // works in this build without a model
-  | 'needs-check'    // exists, but depends on local tools whose health is shown in Settings > system check
-  | 'off'            // exists in the engine but is switched off in providers.json
-  | 'unavailable'    // not in this build
-export type CapabilityRunner = 'rules' | 'local-model' | 'online' | 'none'
-export type Capability = { id: string; label: string; state: CapabilityState; runner: CapabilityRunner; detail: string }
-
-export const CAPABILITIES: Capability[] = [
-  { id: 'intent.rules', label: 'Reading your prompt', state: 'available', runner: 'rules', detail: 'Fixed rules pick out what you typed. No AI model reads the prompt.' },
-  { id: 'poster.concepts.rules', label: 'Three poster concepts', state: 'available', runner: 'rules', detail: 'Arranged by layout rules on this Mac.' },
-  { id: 'poster.edit-export', label: 'Poster editing, QA and SVG/PNG export', state: 'available', runner: 'rules', detail: 'Telugu and English with pinned fonts.' },
-  { id: 'reel.workflow', label: 'Reels from your own video, pictures or recording', state: 'needs-check', runner: 'local-model', detail: 'Uses local tools and models. Their status is in Settings.' },
-  { id: 'poster.concepts.ai', label: 'AI poster concepts', state: 'unavailable', runner: 'none', detail: 'The local model has not passed qualification for posters.' },
-  { id: 'language.translation', label: 'Translation', state: 'unavailable', runner: 'none', detail: 'Text is used exactly as you type it.' },
-  { id: 'media.generated-images', label: 'Generated pictures', state: 'unavailable', runner: 'none', detail: 'Posters are built from text and shapes.' },
-  { id: 'provider.web-bridge', label: 'Web Bridge', state: 'unavailable', runner: 'none', detail: 'Not built. Nothing is sent online.' },
-  { id: 'provider.pro-api', label: 'Paid online models', state: 'off', runner: 'online', detail: 'Switched off. Posters never use them.' },
-]
-export const STATE_LABEL: Record<CapabilityState, string> = { available: 'Works here', 'needs-check': 'See Settings', off: 'Switched off', unavailable: 'Not available' }
+/** One headline per capability. Order matters: a reason it cannot be used always wins over a reason it could. */
+export function stateOf(c: Capability): CapabilityState {
+  if (c.unsupported) return 'unsupported'
+  if (c.failed) return 'failed'
+  if (c.off) return 'off'
+  if (c.qualified === 'no') return 'not-qualified'
+  if (c.available) return c.running ? 'running' : 'available'
+  if (c.installed === true) return 'installed'
+  if (c.runner === 'online') return 'not-configured'
+  return 'not-installed'
+}
+export const STATE_LABEL: Record<CapabilityState, string> = {
+  unsupported: 'Unsupported', failed: 'Check failed', off: 'Switched off', 'not-qualified': 'Not qualified', running: 'Running now',
+  available: 'Available', installed: 'Installed, not usable yet', 'not-configured': 'Not configured', 'not-installed': 'Not installed',
+}
+export const usable = (c: Capability) => { const s = stateOf(c); return s === 'available' || s === 'running' }
+const yn = (v: boolean | null) => (v === null ? 'not known' : v ? 'yes' : 'no')
+/** The seven separate answers, in plain words, for the detailed view. */
+export function facets(c: Capability): [string, string][] {
+  if (c.unsupported) return [['Unsupported', 'yes: not part of this build']]
+  return [['Installed', c.runner === 'rules' ? 'yes (part of the app)' : c.runner === 'online' ? 'not applicable (online service)' : yn(c.installed)], ['Configured', yn(c.configured)],
+    ['Available', c.off ? 'no (switched off)' : yn(c.available)], ['Qualified', c.qualified === 'yes' ? 'yes' : c.qualified === 'no' ? 'no' : 'not assessed'],
+    ['Running', yn(c.running)], ['Failed', c.failed ? 'yes: the health check failed' : 'no']]
+}
+export async function fetchCapabilities(): Promise<CapabilityReport> {
+  const r = await fetch('/api/capabilities'); if (!r.ok) throw Error(`the capability check failed (${r.status})`)
+  return r.json()
+}

@@ -399,6 +399,10 @@ def _task_start(name, action):
     return start_job(name, Job(action=action))["id"]
 TASKS = tasks.install(app, JOBS, _task_start, lambda jid: cancel(jid), lambda name: rs.next_step(name)[0])
 
+# M7-B B4C-3: capability and provider health as facts (app/capabilities.py). Local checks only; nothing is sent online.
+import capabilities
+capabilities.install(app, JOBS)
+
 DIST = os.path.join(HERE, "web", "dist")
 if os.path.isdir(DIST):
     app.mount("/assets", StaticFiles(directory=os.path.join(DIST, "assets")), name="assets")
