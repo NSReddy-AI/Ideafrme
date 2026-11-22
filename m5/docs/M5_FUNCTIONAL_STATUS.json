@@ -1,0 +1,116 @@
+{
+  "status": "M5 IN PROGRESS",
+  "features": [
+    {
+      "feature": "Idea/brief creation; Quick/Guided/Professional",
+      "state": "implemented",
+      "evidence_or_blocker": "Shared brief/binding contract and editor; UI-only experience mode, preserved pending fields. Quick defaults disclosed and recorded."
+    },
+    {
+      "feature": "Real local AI, three concepts, comparison and selection",
+      "state": "implemented",
+      "evidence_or_blocker": "Two actual pinned Qwen3-14B runs:103.9s and96.7s. Second run was necessary after a measured-RSS integration failure and bounded hashing correction, not a retry to manufacture AI validity. Three differentiated concepts passed existing validators."
+    },
+    {
+      "feature": "Concept refinement",
+      "state": "implemented",
+      "evidence_or_blocker": "Human edits in shared poster editor; no claim of conversational AI refinement."
+    },
+    {
+      "feature": "Brand Library, approved version pin and brief",
+      "state": "implemented",
+      "evidence_or_blocker": "Existing SQLite library, rights and append-only binding reused; unbound projects remain valid."
+    },
+    {
+      "feature": "Brand palette, supported typography and rules",
+      "state": "implemented",
+      "evidence_or_blocker": "Brand Application A remains authoritative. Subjective/unknown rules require review or fail closed."
+    },
+    {
+      "feature": "PNG logos/images and unified editing",
+      "state": "implemented-and-smoke-verified",
+      "evidence_or_blocker": "Explicit media v3 copy, no migration; qualified static RGB8/RGBA8 PNG only. Direct pointer movement and proportional handle resize, shared Undo/Redo and reopen passed; keyboard path implemented with targeted geometry checks, not a full accessibility acceptance."
+    },
+    {
+      "feature": "Text/geometry/layout and core layer order",
+      "state": "implemented",
+      "evidence_or_blocker": "Existing history v1/v2/v3, explicit upgrade checkpoints and renderer reused."
+    },
+    {
+      "feature": "PNG stacking and base/media interleaving",
+      "state": "blocked",
+      "evidence_or_blocker": "studio-media-workflow@3 permits place/geometry/remove only; complete permutation needs separately reviewed versioned transaction and old-reader behavior. Do not delete/recreate to simulate reorder."
+    },
+    {
+      "feature": "English/Telugu exact text",
+      "state": "implemented",
+      "evidence_or_blocker": "Targeted Unicode tests pass; pinned fonts and browser shaping checks reused. Native Telugu meaning/IME user approval remains open."
+    },
+    {
+      "feature": "Undo/Redo; committed-edit autosave; history; reopen/recovery",
+      "state": "implemented",
+      "evidence_or_blocker": "Autosave runs after completed edits, not raw IME composition. Existing journals/generation records unchanged. Physical power-loss durability is unverified."
+    },
+    {
+      "feature": "SVG/PNG export",
+      "state": "implemented-and-smoke-verified",
+      "evidence_or_blocker": "Existing single SVG scene, font/overflow refusal, browser decoded-RGBA parity and sandbox export checks; Browser export/parity, exact SVG Unicode text nodes, full process restart and19 unchanged retained files passed."
+    },
+    {
+      "feature": "Home/Projects/Create/Brand/Editor navigation",
+      "state": "implemented",
+      "evidence_or_blocker": "One loopback application, no disconnected PNG app required; explicit media version acknowledgement remains."
+    },
+    {
+      "feature": "Progress/cancel/errors/explicit fallback",
+      "state": "implemented",
+      "evidence_or_blocker": "Existing bounded local AI jobs and cancellation reused; Create shows actionable errors and never silently selects deterministic fallback."
+    },
+    {
+      "feature": "Reference Style Studio R2–R6",
+      "state": "separately-gated",
+      "evidence_or_blocker": "Essential eventual requirement preserved; latest sprint explicitly excludes separately gated expansion. Broad Gate A remains unchanged."
+    },
+    {
+      "feature": "AI image generation",
+      "state": "incomplete",
+      "evidence_or_blocker": "No qualified generator/model/weights and rights/runtime adopted. PNG decoder qualification does not qualify image generation."
+    },
+    {
+      "feature": "Cinematic reels and poster/reel adaptation",
+      "state": "blocked-separately-gated",
+      "evidence_or_blocker": "Requires G5/M4/M6 accepted adapters and separate integration authorization; external workspaces cannot be accessed in this sprint."
+    },
+    {
+      "feature": "Conversational atomic editing and provenance",
+      "state": "blocked",
+      "evidence_or_blocker": "Universal specification §8 marks atomic multi-operation/provenance as a future protected contract; not implemented by independent imperative edits."
+    },
+    {
+      "feature": "More media formats/uploaded fonts",
+      "state": "blocked-separately-gated",
+      "evidence_or_blocker": "SVG/TTF/OTF/JPEG/WebP/other PNG profiles remain disabled pending individual security/compatibility qualification."
+    },
+    {
+      "feature": "Full accessibility/native Telugu IME acceptance",
+      "state": "implemented-partly-unverified",
+      "evidence_or_blocker": "Keyboard paths, labels and composition safeguards exist; this is not full accessibility or native input-method acceptance."
+    },
+    {
+      "feature": "Clean offline build/distribution and licensing closure",
+      "state": "incomplete",
+      "evidence_or_blocker": "Local tested runtime works; complete retained build sources/toolchains/model/tokenizer provenance/transitive notices and clean provisioning remain open. No distribution claim."
+    },
+    {
+      "feature": "Expanded inspector and output taxonomy",
+      "state": "incomplete-or-future-gated",
+      "evidence_or_blocker": "Persistent visibility/opacity/locks, arbitrary duplicate/content unlink, asset crop/masks, broader dimensions/multi-output formats, motion/audio and style effects are not all supported by current protected transactions/render profiles. Proposed full taxonomy is preserved, not declared implemented."
+    },
+    {
+      "feature": "Production release and cross-milestone integration",
+      "state": "outside-current-authorization",
+      "evidence_or_blocker": "No deployment, M4/M6 integration or production access."
+    }
+  ],
+  "evidence_root": ".runtime/m5-functional-sprint-01"
+}

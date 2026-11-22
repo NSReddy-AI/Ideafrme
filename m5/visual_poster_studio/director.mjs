@@ -1,13 +1,19 @@
+import {installBrandApplication} from '/brand_application.mjs';
+import {installHybrid} from '/hybrid.mjs';
 // First-party deterministic concept comparison. No provider, model or external asset calls.
 export function installDirector(api){
+ const hybrid=installHybrid(api);
+ const brandApplication=installBrandApplication(api);
  const $=id=>document.getElementById(id);let bundle=null,source=null,stamp=null;
  const currentStamp=p=>JSON.stringify(p?[p.project_id,p.revision,p.dirty,p.binding?.hash,p.binding?.published_head]:null);
  function update(locked){
+  hybrid.update(locked);
+  brandApplication.update(locked);
   const p=api.current(),next=currentStamp(p);if(stamp!==next){bundle=null;source=null;$('director-results').replaceChildren();$('director-rules').textContent='';$('director-review').checked=false;$('director-brief-ack').checked=false;stamp=next;}
   $('director-generate').disabled=locked||!p?.binding||p.dirty||!p.binding.eligible;
-  $('director-seed').disabled=locked;$('director-brief-ack').disabled=locked;$('director-review').disabled=locked||!bundle;
+  $('director-seed').disabled=locked;$('director-brief-ack').disabled=locked;$('director-review').disabled=locked||!(bundle||hybrid.ready());
   for(const b of $('director-results').querySelectorAll('button'))b.disabled=locked||!$('director-review').checked;
-  $('director-status').textContent=!p?.binding?'Save an optional brand and complete brief in a new bound project first.':p.dirty?'Save project edits before planning.':!p.binding.eligible?'Pinned brand use is blocked: '+p.binding.status:'Saved brief available. Local deterministic planner; model-powered ideation is not qualified.';
+  $('director-status').textContent=!p?.binding?'Save an optional brand and complete brief in a new bound project first.':p.dirty?'Save project edits before planning.':!p.binding.eligible?'Pinned brand use is blocked: '+p.binding.status:'Saved brief available. Deterministic planning available; Hybrid AI is an optional, separately labelled slow mode below.';
  }
  function draw(){
   $('director-results').replaceChildren();$('director-rules').textContent=JSON.stringify({brief:bundle.inputs.brief,mandatory_rules:bundle.rules,preferences:bundle.preferences,inspiration:bundle.inspiration,typography_preferences:bundle.typography_preferences,warnings:bundle.warnings,seed:bundle.inputs.seed,digest:bundle.digest},null,2);

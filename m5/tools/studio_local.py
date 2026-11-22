@@ -30,7 +30,9 @@ def inventory(root=ROOT):
     try:
         import sqlite3
         sqlite_status={'available':True,'version':sqlite3.sqlite_version,'source_rebuild_verified':False}
-    except ImportError:sqlite_status={'available':False,'reason':'Optional sqlite3 module absent; Brand Studio unavailable; manual editing remains independent.'}
+    except ImportError:
+        sqlite_status={'available':False,'reason':'sqlite3 absent; current Visual binding modules require it. Original studio_manual_ui remains a separate workflow.'}
+        errors.append('SQLite support required for the current Visual Studio binding workflow; install/acquire nothing automatically.')
     fonts=[]
     from visual_poster_studio.fonts import SPECS
     for lang,(name,digest,family,weight,mime) in SPECS.items():
@@ -51,14 +53,14 @@ def inventory(root=ROOT):
         try:regular(root/name)
         except (OSError,ValueError) as e:missing.append({'file':name,'error':str(e)})
     errors.extend('Required local file unavailable: '+v['file'] for v in missing)
-    return {'ready_for_local_start':not errors,'errors':errors,'workspace':str(root),'runtime':{'executable':sys.executable,'version':platform.python_version(),'system':platform.system(),'machine':platform.machine(),'implementation':platform.python_implementation(),'third_party_python_packages_required':[]},'fonts':fonts,'source_files':len(required),'browser':'User-provided compatible browser; embedded fonts, Canvas, SVG and PNG qualification required at runtime. No browser bundled.','media_analysis':'OFF; real-media execution not qualified','independence':{'local_files_present':not errors,'network_isolation_tested':False,'clean_offline_install_verified':False,'runtime_source_rebuild_verified':False,'distribution_approved':False},'brand_asset_studio':{'implemented':'separate metadata-only library','sqlite':sqlite_status,'project_integration':False,'decoding':False}}
+    return {'ready_for_local_start':not errors,'errors':errors,'workspace':str(root),'runtime':{'executable':sys.executable,'version':platform.python_version(),'system':platform.system(),'machine':platform.machine(),'implementation':platform.python_implementation(),'third_party_python_packages_required':[]},'fonts':fonts,'source_files':len(required),'browser':'User-provided compatible browser; embedded fonts, Canvas, SVG and PNG qualification required at runtime. No browser bundled.','media_analysis':'OFF; reference/OCR/video unqualified; restricted PNG brand-asset capability is separately qualified','independence':{'local_files_present':not errors,'network_isolation_tested':False,'clean_offline_install_verified':False,'runtime_source_rebuild_verified':False,'distribution_approved':False},'brand_asset_studio':{'implemented':'separate metadata-only library with explicit project bindings','sqlite':sqlite_status,'project_integration':True,'registered_assets_applied':'qualified PNG only in explicit media v3 workspaces','decoding':'pinned capability sandbox; runtime artifacts checked on use'},'creative_director':{'deterministic_concepts':'implemented','local_ai_editor_integration':'Phase 2G pilot implemented; human acceptance pending','model_execution_checked':False},'compatibility':{'creative_format':'ai-reel-studio/creative@1','history_versions':[1,2,3],'project_binding':'studio-project-binding@1','runtime_roots':'package-local .runtime/studio-ui only'},'legacy_renderer':{'required_for_visual_start':False,'required_for_legacy_phase2':True,'dependencies_checked':False}}
 
 def source_paths(root=ROOT):
     names=[]
-    for folder in ('creative_core','studio_manual_ui','visual_poster_studio'):
+    for folder in ('creative_core','studio_manual_ui','visual_poster_studio','studio_png_sandbox'):
         directory=root/folder
         if directory.is_symlink():raise ValueError('Source directory symlink refused.')
-        names.extend(str(p.relative_to(root)) for p in directory.iterdir() if p.suffix in ('.py','.mjs','.js','.html','.css'))
+        names.extend(str(p.relative_to(root)) for p in directory.iterdir() if p.suffix in ('.py','.mjs','.js','.html','.css','.c'))
     # Fixed server routes include browser acceptance modules; retain their exact source.
     names.extend(str(p.relative_to(root)) for p in (root/'visual_poster_tests').iterdir() if p.suffix in ('.js','.mjs','.html'))
     names+=['Start Studio.command','tools/studio_local.py','docs/LOCAL_STUDIO_START.md','PROJECT_ENGINEERING_POLICY.md','OFFLINE_BUILD_STRATEGY.md','docs/BRAND_ASSET_FOUNDATION_CONTRACT.md','docs/BRAND_LIBRARY_PORTABILITY_CONTRACT.md','docs/PROJECT_BINDING_CONTRACT.md','docs/CREATIVE_DIRECTOR_PHASE1.md']

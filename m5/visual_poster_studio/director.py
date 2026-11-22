@@ -106,6 +106,8 @@ def directions(binding,seed):
 def generate(studio,request):
  with studio.manual.lock:
   doc,binding=source(studio,request);brand=binding['brand'];payload=brand['record']['payload'] if brand else {}
+  from .brand_application import policy,supported
+  supported(policy(binding))
   inputs={'planner':VERSION,'source_project':doc['id'],'source_document_sha256':sha(canonical(doc)),'binding_hash':sha(canonical(binding)),'source_head':request['expected_head'],'seed':request['seed'],'brief':binding['brief'],'brand_hash':brand['hash'] if brand else None,'profile':PROFILE,'fonts':{k:f['hash'] for k,f in studio.fonts.faces.items()}}
   bundle={'format':'studio-concept-proposals@1','inputs':inputs,'mode':'deterministic; local model unavailable','rules':payload.get('mandatory_rules',[]),'preferences':payload.get('preferences',[]),'inspiration':payload.get('inspiration',[]),'typography_preferences':payload.get('typography',{}),'instructions':binding['brief']['instructions'],'warnings':['Proposals only: review every rule and instruction; no automatic compliance or originality certification.','Only pinned Inter Bold and Noto Sans Telugu Black are used; typography preferences are advisory.','No registered assets applied. No invented claims, translation or model inference.'],'concepts':directions(binding,request['seed'])}
   
@@ -116,6 +118,8 @@ def generate(studio,request):
   bundle['digest']=sha(canonical(bundle));require(len(canonical(bundle))<=LIMIT,'Concept bundle exceeds 128 KiB.')
   for plan in bundle['concepts']:
    identity=str(uuid.uuid5(uuid.UUID(studio.pairs.session_id),bundle['digest']+':'+plan['id']));candidate=document(identity,plan,binding);core.validate(candidate,studio.manual.projects/doc["id"]);build_scene(candidate,studio.fonts)
+   from .brand_application import validate
+   validate(candidate,binding)
   return bundle
 
 def retain(studio,bundle):

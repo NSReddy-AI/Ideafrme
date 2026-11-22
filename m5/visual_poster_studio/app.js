@@ -1,3 +1,5 @@
+import {installProduct} from '/product.mjs';
+import {installMedia} from '/media.mjs';
 import {installDirector} from '/director.mjs';
 import {installBrands} from '/brands.mjs';
 import {installHome} from '/home.mjs';
@@ -16,7 +18,7 @@ let composingField = null, focusAfter = null, previewSequence = 0;
 let navigationData = null;
 let brandWorking=false,brandDirty=false,bindingDirty=false;
 let workflowVersions=[],workflowProposal=null,workflowImpact=null;
-let director=null;
+let director=null,mediaBridge=null,productUI=null;
 let homeNavigation=null,createdCallback=()=>{};
 let resizeHandles=[];
 let selectedIds = new Set(), gestureActive = false, dragController = null;
@@ -28,6 +30,7 @@ function notice(message, error = false) {
 }
 
 async function request(path, body, timeoutMs = 5000) {
+  const mapped=mediaBridge?.route(path,body);if(mapped){path=mapped.path;body=mapped.body;timeoutMs=Math.max(timeoutMs,17000);}
   const controller = new AbortController();
   const timer = setTimeout(() => controller.abort(), timeoutMs);
   try {
@@ -40,7 +43,7 @@ async function request(path, body, timeoutMs = 5000) {
     const response = await fetch(path, options);
     const value = await response.json();
     if (!response.ok) throw new Error(value.detail || 'The local service refused the request.');
-    return value;
+    mediaBridge?.observe(value);return value;
   } finally { clearTimeout(timer); }
 }
 
@@ -56,6 +59,8 @@ function render(preserveText = false) {
   const locked = busy || exporting || gestureActive;
   renderBinding(locked);
   director?.update(locked);
+  mediaBridge?.update(locked);
+  productUI?.update(locked);
   for(const id of ['wrap-text','fit-text','cancel-text-draft'])$(id).disabled=locked||!fontReady||selectedIds.size!==1||element()?.type!=='text';
   const current = project?.elements.find(e => e.id === selected);
   if (!current) selected = project?.elements[0]?.id || null;
@@ -67,7 +72,7 @@ function render(preserveText = false) {
   $('select-all-layers').disabled=locked || !project?.elements.length;
   $('select-primary').disabled=locked || !multiple;
   $('project-title').textContent = project?.name || 'Your next idea starts here';
-  $('project-meta').textContent = project ? `${project.view.width} × ${project.view.height} source · Revision ${project.revision}` : 'Create a project to begin manual editing.';
+  $('project-meta').textContent = project ? `${project.view.width} × ${project.view.height} source · ${project.media_context?'Media v3 · ':''}Revision ${project.revision}` : 'Create a project to begin manual editing.';
   $('save-state').textContent = project ? (project.dirty || pendingText() ? 'Unsaved changes' : 'Saved locally') : 'No project';
   $('save').disabled = locked || !project;
   $('undo').disabled = locked || !project || (!project.can_undo && !pendingText());
@@ -152,6 +157,7 @@ async function run(task, message) {
   const focusedId=document.activeElement?.id;
   busy = true;
   director?.update(true);
+  productUI?.update(true);
   $('project-binding-panel').querySelectorAll('input,select,textarea,button').forEach(x=>x.disabled=true);
   $('editor-root').setAttribute('aria-busy','true');
   // Disable controls without resetting pending input values.
@@ -162,7 +168,7 @@ async function run(task, message) {
   $('create-form').querySelectorAll('input,textarea,select,button').forEach(x => x.disabled = true);
   $('layers').querySelectorAll('button').forEach(x => x.disabled = true);
   let failed = false;
-  try { await task(); await refreshProjects(); notice(message); }
+  try { await task(); if(project?.dirty)await action('save'); await refreshProjects(); notice(message); }
   catch (error) { failed = true; notice(error.name === 'AbortError' ? 'Local service timed out. Your saved files were not automatically replaced.' : error.message, true); }
   finally {
     render(failed); await updatePreview(); busy = false; render(true); $('editor-root').setAttribute('aria-busy','false');
@@ -538,12 +544,16 @@ if(location.hash==='#text-completion-checks')import('/text_completion_browser.mj
 
 $('cancel-text-draft').addEventListener('click',()=>{if(composingField||busy||exporting||gestureActive||element()?.type!=='text')return;$('layer-text').value=content(element()).text;$('layer-text').dispatchEvent(new Event('input',{bubbles:true}));$('layer-text').focus();updateTextStatus();exportButtons();$('text-layout-status').textContent='Draft cancelled; applied text and history unchanged.';});
 
+productUI=installProduct({request,run,current:()=>project,pending:()=>pendingText()||brandDirty||bindingDirty||Boolean(project?.dirty),route:name=>homeNavigation?.route(name),opened:value=>{project=value;selected=project.elements[0]?.id;selectedIds=new Set(selected?[selected]:[]);sceneReady=false;currentScene=null;}});
+
 homeNavigation=installHome({request,ready:()=>!brandWorking&&!busy&&!exporting&&!gestureActive&&!composingField&&!$('workflow-dialog').open,pending:()=>pendingText()||brandDirty||bindingDirty,
  open:async identity=>{if(bindingDirty){notice('Save or discard unsubmitted context fields first.',true);return false;}if(busy||exporting||gestureActive||composingField)return false;let opened=false;await run(async()=>{await flushText();project=(await request('/api/project/'+encodeURIComponent(identity))).project;selected=project.elements[0]?.id;opened=true;},'Project opened.');return opened;},
  onCreated:fn=>{createdCallback=fn;}
 });
 
-director=installDirector({request,run,current:()=>project,pending:()=>pendingText()||bindingDirty||brandDirty,opened:value=>{project=value;selected=project.elements.find(e=>e.type==='text')?.id||project.elements[0]?.id;selectedIds=new Set(selected?[selected]:[]);}});
+mediaBridge=installMedia({request,run,current:()=>project,flush:flushText,pendingContext:()=>bindingDirty||brandDirty||pendingText()||Boolean(composingField),gesture:value=>{gestureActive=value;render(true);},invalidate:()=>{sceneReady=false;currentScene=null;previewSequence++;},opened:value=>{project=value;selected=project.elements[0]?.id;selectedIds=new Set(selected?[selected]:[]);},show:()=>document.querySelector('[data-page=editor]').click()});
+
+director=installDirector({request,run,current:()=>project,selected:()=>selectedIds.size===1?selected:null,updated:value=>{project=value;},pending:()=>pendingText()||bindingDirty||brandDirty,opened:value=>{project=value;selected=project.elements.find(e=>e.type==='text')?.id||project.elements[0]?.id;selectedIds=new Set(selected?[selected]:[]);}});
 
 installBrands({request,setDirty:v=>{brandDirty=v;},setWorking:v=>{brandWorking=v;},ready:()=>!busy&&!exporting&&!gestureActive&&!composingField&&!$('workflow-dialog').open});
 
@@ -568,6 +578,7 @@ function renderBinding(locked){
  $('binding-rules').textContent=JSON.stringify(state.record.brand?{identity:state.record.brand.hash,name:state.record.brand.record.payload.name,...state.record.brand.record.payload,status:state.status}: {brand:'None',status:state.status},null,2);
  for(const c of $('binding-editor').querySelectorAll('input,select,textarea,button'))c.disabled=locked;
  $('binding-confirm').disabled=locked||!workflowImpact||!$('binding-confirm-ack').checked;
+ if(project?.media_context){for(const c of $('binding-editor').querySelectorAll('input,select,textarea,button'))c.disabled=true;$('binding-refresh').disabled=true;}
 }
 for(const id of ['binding-brand','binding-purpose','binding-topic','binding-audience','binding-format','binding-instructions'])$(id).addEventListener('input',()=>{bindingDirty=true;workflowImpact=null;workflowProposal=null;$('binding-confirm').disabled=true;});
 $('create-brand-refresh').addEventListener('click',refreshWorkflowVersions);$('create-brand').addEventListener('change',showCreateBrand);

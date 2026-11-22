@@ -62,6 +62,8 @@ class VisualStudio:
         value['history_version']=self.manual.document(value['project_id'])['history'].get('version',1)
         from .binding_workflow import binding_state
         value['binding']=binding_state(self,value['project_id'])
+        from .brand_application import status
+        value['brand_application']=status(self,value['project_id'])
         return value
     def view(self,identity):
         self._ready(identity);return self._decorate(self.manual.view(identity))
@@ -69,6 +71,10 @@ class VisualStudio:
         if type(request)==dict and type(request.get('text'))==str and len(request['text'].split('\n'))>64:raise UIError('limit','64 explicit lines maximum.')
         return self._decorate(self.manual.create(request))
     def action(self,request):
+        if type(request)!=dict:raise UIError('request','Object required.')
+        from .brand_application import action
+        return action(self,request,self._action)
+    def _action(self,request):
         if type(request)!=dict:raise UIError('request','Object required.')
         if request.get('action')=='save' and request.get('project_id') in self.pairs.bindings:
             from .binding_workflow import save

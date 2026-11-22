@@ -1,14 +1,15 @@
 // Same-document navigation: editor drafts remain in their existing DOM/state.
 export function installHome(api){
  const $=id=>document.getElementById(id),main=document.querySelector('main.workspace');
- const editorPanels=[...main.children].filter(e=>!['home-screen','projects-screen','recovery-screen','brands-screen'].includes(e.id));let active='home',catalogue=null;
+ const editorPanels=[...main.children].filter(e=>!['home-screen','projects-screen','recovery-screen','brands-screen','create-screen'].includes(e.id));let active='home',catalogue=null;
  const message=(text,error=false)=>{$('home-status').textContent=text;$('navigation-status').textContent=text;$('home-status').classList.toggle('error',error);};
  function route(name,focus=true){
   if(!api.ready()){message('Finish the current action or text composition before navigating.',true);return;}
   active=name;for(const p of editorPanels)p.hidden=name!=='editor';
-  for(const n of ['home','projects','recovery','brands'])$(n+'-screen').hidden=name!==n;
+  for(const n of ['home','projects','recovery','brands','create'])$(n+'-screen').hidden=name!==n;
   for(const b of document.querySelectorAll('[data-page]'))b.setAttribute('aria-current',b.dataset.page===name?'page':'false');
   if(focus)(name==='editor'?$('editor-root'):$(name+'-title')).focus({preventScroll:true});
+  if(name==='create')document.dispatchEvent(new Event('studio-create-open'));
   if(name==='brands')document.dispatchEvent(new Event('studio-brand-open'));
   if(name!=='editor')refresh();
  }
@@ -30,7 +31,7 @@ export function installHome(api){
   }catch(e){message('Workspace unavailable: '+e.message,true);}
  }
  for(const b of document.querySelectorAll('[data-page]'))b.addEventListener('click',()=>route(b.dataset.page));
- $('home-create').addEventListener('click',()=>{route('editor');if(active==='editor'){document.getElementById('create-form').closest('details').open=true;$('project-name').focus();}});
+ $('home-create').addEventListener('click',()=>route('create'));
  $('home-open').addEventListener('click',()=>route('projects'));
  $('home-resume').addEventListener('click',()=>{route('projects');$('home-sessions').focus();});
  $('home-refresh').addEventListener('click',refresh);

@@ -74,7 +74,10 @@ def change(studio,request):
 def bound_scene(studio,identity,scene):
  b=studio.pairs.bindings.get(identity)
  if b is None:return scene
- if b['brand'] is not None:check(pin(studio,b['brand']['hash'])==b['brand'],'Pinned brand mismatch.')
+ if b['brand'] is not None:
+  check(pin(studio,b['brand']['hash'])==b['brand'],'Pinned brand mismatch.')
+  from .brand_application import validate
+  validate(studio.manual.document(identity),b)
  ident={'format':'studio-bound-render@1','binding_hash':sha(canonical(b)),'brand_hash':b['brand']['hash'] if b['brand'] else None,'brief_hash':sha(canonical(b['brief']))}
  ident['workflow_fingerprint']='sha256:'+sha(canonical({'creative_fingerprint':scene['source_fingerprint'],'context':ident,'profile':scene['profile']}))
  result=copy.deepcopy(scene);result['binding_identity']=ident;result['workflow_fingerprint']=ident['workflow_fingerprint'];result['svg']=scene['svg'].replace('</svg>','<metadata id="studio-binding-identity">'+html.escape(canonical(ident).decode())+'</metadata></svg>');check(len(result['svg'].encode())<=4*1024*1024,'Bound SVG exceeds export limit.');result['svg_sha256']=sha(result['svg'].encode());return result

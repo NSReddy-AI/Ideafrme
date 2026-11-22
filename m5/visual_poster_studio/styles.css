@@ -94,3 +94,10 @@ button:disabled{opacity:.65}button:focus-visible,input:focus-visible,textarea:fo
 .home-page{grid-column:1 / -1;min-height:300px}.home-actions{display:flex;gap:12px;flex-wrap:wrap}.home-page article{padding:14px 0;border-bottom:1px solid #ddd}.home-page code,.home-page pre{white-space:pre-wrap;overflow-wrap:anywhere}.topbar nav{display:flex;gap:6px;flex-wrap:wrap}.topbar{flex-wrap:wrap}.topbar [aria-current=page]{border-color:#5145bd;background:#eeeafb}
 
 #brands-screen form{border:1px solid #d8dbe8;padding:16px;margin:16px 0}#brands-screen input:not([type=checkbox]),#brands-screen textarea,#brands-screen select{max-width:680px}#brands-screen pre{max-height:460px;overflow:auto}#asset-preview article{overflow-wrap:anywhere}#brand-asset-refs label{display:block}
+
+/* Progressive disclosure only: shared project/selection/history stay intact. */
+body[data-experience="quick"] #geometry-panel,body[data-experience="quick"] #text-layout-panel{display:none}
+#product-create{max-width:760px}#product-create textarea{min-height:5em}
+.media-gesture-box{position:absolute;pointer-events:none;border:2px solid #5a45cf;box-sizing:border-box;z-index:30}
+.media-corner{min-height:0;min-width:0;box-sizing:border-box;position:absolute;width:16px;height:16px;padding:0;background:white;border:2px solid #5a45cf;z-index:31;touch-action:none}
+body.png-selected #selection-outline,body.png-selected .resize-handle{visibility:hidden!important}

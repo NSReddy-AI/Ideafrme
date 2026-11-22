@@ -1,0 +1,236 @@
+{
+  "format": "studio-png-dependencies@1",
+  "review_date": "2026-11-12",
+  "hardware": {
+    "cpu": "Apple M4 Pro",
+    "ram_bytes": 25769803776,
+    "os": "macOS Darwin 25.6.0 arm64"
+  },
+  "adoption_scope": "Restricted PNG decoder in isolated media workflow only; no distribution",
+  "runtime": {
+    "name": "Wasmtime",
+    "version": "50.0.1",
+    "license": "Apache-2.0 WITH LLVM-exception",
+    "source": "https://github.com/bytecodealliance/wasmtime/tree/v50.0.1",
+    "redistribution": "Preserve license, applicable notices and exception terms; full transitive distribution audit still required",
+    "c_api_archive_upstream_digest_verified": true,
+    "dynamic_library_sha256": "5ba1ebe3e4285ed8e132a5a44e421e8ddb10986da03f285739248ba71b01404e",
+    "native_dependencies": [
+      "macOS libSystem.B.dylib",
+      "macOS libiconv.2.dylib"
+    ],
+    "offline_source_rebuild": "NOT VERIFIED: Cargo dependencies and Rust toolchain not retained/installed"
+  },
+  "codec": {
+    "name": "LodePNG",
+    "version": "20261102",
+    "commit": "7b2893e35891c0c85bee5595caafaf3c2044b409",
+    "license": "Zlib",
+    "source": "https://github.com/lvandeve/lodepng/tree/7b2893e35891c0c85bee5595caafaf3c2044b409",
+    "compiled": "Unmodified lodepng.cpp as C plus application-owned wrapper; no utility sources, disk I/O, encoder, C++ or ancillary-chunk support",
+    "redistribution": "Retain notice; do not misrepresent origin; mark altered source versions. Upstream source is unmodified."
+  },
+  "toolchain": {
+    "name": "WASI SDK",
+    "version": "34.0",
+    "sdk_tag": "wasi-sdk-34",
+    "llvm_commit": "895aa2c896ada719451be2e3673c83da8ddf1141",
+    "wasi_libc_commit": "2e6fb9d8ee0cdf9e431fbcabe8af3115de000a13",
+    "license": "SDK/LLVM Apache-2.0 with LLVM exceptions; wasi-libc MIT plus incorporated licenses/notices retained in its source",
+    "role": "Build-time only. Linking wasi-libc does not expose WASI; Wasmtime rejects every import.",
+    "upstream_archive_digest_verified": true,
+    "offline_source_rebuild": "NOT VERIFIED: full LLVM source, remaining submodule/build inputs and compiler bootstrap closure missing",
+    "native_wrapper_compiler": "Apple clang 21.0.0; existing Command Line Tools, not installed or modified",
+    "native_dependencies": [
+      "SDK libclang-cpp.23.1-wasi-sdk.dylib",
+      "SDK libLLVM.23.1-wasi-sdk.dylib",
+      "macOS libc++.1.dylib",
+      "macOS libSystem.B.dylib"
+    ]
+  },
+  "security": {
+    "wasmtime_advisory_records_retained": 86,
+    "wasmtime_findings": "Selected latest stable 50.0.1 includes published fixes in 50.0.1, 50.0.0 and earlier. WASI/components/GC/threads disabled. No assertion of absence of unknown vulnerabilities.",
+    "lodepng_repository_advisories": 0,
+    "lodepng_known_cve": {
+      "id": "CVE-2026-112020",
+      "official_record_retained": "/Users/Nadish/projects/AI Video Editor./Codex/AI Studio/.runtime/png-first-001/downloads/CVE-2026-112020.json",
+      "exposure": "Affected lodepng_util.cpp/getFilterTypesInterlaced is NOT compiled or linked; interlaced PNG refused before decode. Do not infer every upstream utility is safe."
+    },
+    "native_runtime_escape": "Residual TCB risk; native helper is not an OS filesystem/network sandbox. No-import Wasm confines the decoder.",
+    "total_host_memory_kernel_enforced": false
+  },
+  "retention": {
+    "CVE-2026-112020.json": {
+      "sha256": "d1a08387820cc894bb54c69ae1ff206cf03dd2cf72436607918e16e15e9077eb",
+      "bytes": 7968,
+      "retained_path": "/Users/Nadish/projects/AI Video Editor./Codex/AI Studio/.runtime/png-first-001/downloads/CVE-2026-112020.json",
+      "source": "Official upstream metadata/license; see retained release JSON, git tree and handoff links"
+    },
+    "llvm-LICENSE.TXT": {
+      "sha256": "8d85c1057d742e597985c7d4e6320b015a9139385cff4cbae06ffc0ebe89afee",
+      "bytes": 15141,
+      "retained_path": "/Users/Nadish/projects/AI Video Editor./Codex/AI Studio/.runtime/png-first-001/downloads/llvm-LICENSE.TXT",
+      "source": "Official upstream metadata/license; see retained release JSON, git tree and handoff links"
+    },
+    "lodepng-LICENSE": {
+      "sha256": "bdafa318b8e637d600ca1b60545e894881977a16a16b74809c95e805701621e3",
+      "bytes": 886,
+      "retained_path": "/Users/Nadish/projects/AI Video Editor./Codex/AI Studio/.runtime/png-first-001/downloads/lodepng-LICENSE",
+      "source": "Official upstream metadata/license; see retained release JSON, git tree and handoff links"
+    },
+    "lodepng-advisories.json": {
+      "sha256": "2ba33ca0557f1bb5b7ba88d67f9d0093c7185a36ec51fe2b7bd9372d3e001d6d",
+      "bytes": 5,
+      "retained_path": "/Users/Nadish/projects/AI Video Editor./Codex/AI Studio/.runtime/png-first-001/downloads/lodepng-advisories.json",
+      "source": "Official upstream metadata/license; see retained release JSON, git tree and handoff links"
+    },
+    "lodepng-commit.json": {
+      "sha256": "4b519979a632887332260a26e5d311b0aa246705c8a7a9ad54cdfea6820b36f8",
+      "bytes": 9007,
+      "retained_path": "/Users/Nadish/projects/AI Video Editor./Codex/AI Studio/.runtime/png-first-001/downloads/lodepng-commit.json",
+      "source": "Official upstream metadata/license; see retained release JSON, git tree and handoff links"
+    },
+    "lodepng-source.tar.gz": {
+      "sha256": "e0b571062acdbe187fd4e8b0ff46f6e7d1b634457ff1a4b383aaac4c78bfd59b",
+      "bytes": 263495,
+      "retained_path": "/Users/Nadish/projects/AI Video Editor./Codex/AI Studio/.runtime/png-first-001/downloads/lodepng-source.tar.gz",
+      "source": "https://codeload.github.com/lvandeve/lodepng/tar.gz/7b2893e35891c0c85bee5595caafaf3c2044b409"
+    },
+    "wasi-libc-LICENSE": {
+      "sha256": "2711a8b5a5cdfef0e639f96c1aca12ae23d7d64a02d0507f1bdf14d2b27bbc3a",
+      "bytes": 910,
+      "retained_path": "/Users/Nadish/projects/AI Video Editor./Codex/AI Studio/.runtime/png-first-001/downloads/wasi-libc-LICENSE",
+      "source": "Official upstream metadata/license; see retained release JSON, git tree and handoff links"
+    },
+    "wasi-libc-source.tar.gz": {
+      "sha256": "f25ccd526235f7b351f9b49451b75fdd8e23250b9ad8fc9f8f2a19f517a4892f",
+      "bytes": 2670964,
+      "retained_path": "/Users/Nadish/projects/AI Video Editor./Codex/AI Studio/.runtime/png-first-001/downloads/wasi-libc-source.tar.gz",
+      "source": "https://codeload.github.com/WebAssembly/wasi-libc/tar.gz/2e6fb9d8ee0cdf9e431fbcabe8af3115de000a13"
+    },
+    "wasi-sdk-LICENSE": {
+      "sha256": "268872b9816f90fd8e85db5a28d33f8150ebb8dd016653fb39ef1f94f2686bc5",
+      "bytes": 12243,
+      "retained_path": "/Users/Nadish/projects/AI Video Editor./Codex/AI Studio/.runtime/png-first-001/downloads/wasi-sdk-LICENSE",
+      "source": "Official upstream metadata/license; see retained release JSON, git tree and handoff links"
+    },
+    "wasi-sdk-release.json": {
+      "sha256": "d45a332f227b5907e400510d106bef9f56842b845279699b13ae584f0d120201",
+      "bytes": 28370,
+      "retained_path": "/Users/Nadish/projects/AI Video Editor./Codex/AI Studio/.runtime/png-first-001/downloads/wasi-sdk-release.json",
+      "source": "Official upstream metadata/license; see retained release JSON, git tree and handoff links"
+    },
+    "wasi-sdk-source.tar.gz": {
+      "sha256": "3d7bc84a88b1a90a6cec5a6797e744c958bb7b357781797003a0ca2a8beaa2c9",
+      "bytes": 48831,
+      "retained_path": "/Users/Nadish/projects/AI Video Editor./Codex/AI Studio/.runtime/png-first-001/downloads/wasi-sdk-source.tar.gz",
+      "source": "https://codeload.github.com/WebAssembly/wasi-sdk/tar.gz/refs/tags/wasi-sdk-34"
+    },
+    "wasi-sdk-tree.json": {
+      "sha256": "d6c40b120da5191318d50eca32106f45275aff4a787ec9f60f2f9b05fef5b185",
+      "bytes": 28913,
+      "retained_path": "/Users/Nadish/projects/AI Video Editor./Codex/AI Studio/.runtime/png-first-001/downloads/wasi-sdk-tree.json",
+      "source": "Official upstream metadata/license; see retained release JSON, git tree and handoff links"
+    },
+    "wasi-sdk.tar.gz": {
+      "sha256": "9c59398106b417f8f14913380fdf0097a8cc0ff4af9eb3ce0065a859e88d49e9",
+      "bytes": 180322002,
+      "retained_path": "/Users/Nadish/projects/AI Video Editor./Codex/AI Studio/.runtime/png-first-001/downloads/wasi-sdk.tar.gz",
+      "source": "https://github.com/WebAssembly/wasi-sdk/releases/download/wasi-sdk-34/wasi-sdk-34.0-arm64-macos.tar.gz"
+    },
+    "wasmtime-LICENSE": {
+      "sha256": "268872b9816f90fd8e85db5a28d33f8150ebb8dd016653fb39ef1f94f2686bc5",
+      "bytes": 12243,
+      "retained_path": "/Users/Nadish/projects/AI Video Editor./Codex/AI Studio/.runtime/png-first-001/downloads/wasmtime-LICENSE",
+      "source": "Official upstream metadata/license; see retained release JSON, git tree and handoff links"
+    },
+    "wasmtime-advisories.json": {
+      "sha256": "73c3e44975722f47b962ed445e52c435522220a1b7c7db3a7f5401ac35c503da",
+      "bytes": 569702,
+      "retained_path": "/Users/Nadish/projects/AI Video Editor./Codex/AI Studio/.runtime/png-first-001/downloads/wasmtime-advisories.json",
+      "source": "Official upstream metadata/license; see retained release JSON, git tree and handoff links"
+    },
+    "wasmtime-c-api.tar.xz": {
+      "sha256": "a49327ca596fae51cd92e230265132112bb7896c5a24e4d58cd05b56612e26bb",
+      "bytes": 12699768,
+      "retained_path": "/Users/Nadish/projects/AI Video Editor./Codex/AI Studio/.runtime/png-first-001/downloads/wasmtime-c-api.tar.xz",
+      "source": "https://github.com/bytecodealliance/wasmtime/releases/download/v50.0.1/wasmtime-v50.0.1-aarch64-macos-c-api.tar.xz"
+    },
+    "wasmtime-release.json": {
+      "sha256": "e7d225a37ee47f30889b0255f7508e365ac29dc8fc96ac41d1a96f3a5e800e53",
+      "bytes": 81941,
+      "retained_path": "/Users/Nadish/projects/AI Video Editor./Codex/AI Studio/.runtime/png-first-001/downloads/wasmtime-release.json",
+      "source": "Official upstream metadata/license; see retained release JSON, git tree and handoff links"
+    },
+    "wasmtime-source.tar.gz": {
+      "sha256": "201e856c0c7699acd1785e063e7140eae0b43c4b7f777787bb88b7abb7cd6725",
+      "bytes": 27677293,
+      "retained_path": "/Users/Nadish/projects/AI Video Editor./Codex/AI Studio/.runtime/png-first-001/downloads/wasmtime-source.tar.gz",
+      "source": "https://codeload.github.com/bytecodealliance/wasmtime/tar.gz/refs/tags/v50.0.1"
+    }
+  },
+  "build": {
+    "format": "studio-png-build@1",
+    "commands": [
+      [
+        "/Users/Nadish/projects/AI Video Editor./Codex/AI Studio/.runtime/png-first-001/retained/wasi-sdk/wasi-sdk-34.0-arm64-macos/bin/clang",
+        "-x",
+        "c",
+        "-O2",
+        "-DLODEPNG_NO_COMPILE_CPP",
+        "-DLODEPNG_NO_COMPILE_DISK",
+        "-DLODEPNG_NO_COMPILE_ENCODER",
+        "-DLODEPNG_NO_COMPILE_ANCILLARY_CHUNKS",
+        "-I/Users/Nadish/projects/AI Video Editor./Codex/AI Studio/.runtime/png-first-001/retained/lodepng-source/lodepng-7b2893e35891c0c85bee5595caafaf3c2044b409",
+        "-nostartfiles",
+        "-Wl,--no-entry",
+        "-Wl,--export=input_ptr",
+        "-Wl,--export=pixels_ptr",
+        "-Wl,--export=image_width",
+        "-Wl,--export=image_height",
+        "-Wl,--export=decode_png",
+        "-Wl,--export=test_memory_limit",
+        "-Wl,--export=test_fuel",
+        "-Wl,--export=test_stack",
+        "-Wl,-z,stack-size=524288",
+        "-Wl,--max-memory=67108864",
+        "/Users/Nadish/projects/AI Video Editor./Codex/AI Studio/studio_png_sandbox/decoder.c",
+        "/Users/Nadish/projects/AI Video Editor./Codex/AI Studio/.runtime/png-first-001/retained/lodepng-source/lodepng-7b2893e35891c0c85bee5595caafaf3c2044b409/lodepng.cpp",
+        "-o",
+        "/Users/Nadish/projects/AI Video Editor./Codex/AI Studio/.runtime/png-first-001/build-08/decoder.wasm"
+      ],
+      [
+        "/usr/bin/clang",
+        "-O2",
+        "-Wall",
+        "-Wextra",
+        "-I/Users/Nadish/projects/AI Video Editor./Codex/AI Studio/.runtime/png-first-001/retained/wasmtime-c-api/wasmtime-v50.0.1-aarch64-macos-c-api/include",
+        "/Users/Nadish/projects/AI Video Editor./Codex/AI Studio/studio_png_sandbox/helper.c",
+        "-L/Users/Nadish/projects/AI Video Editor./Codex/AI Studio/.runtime/png-first-001/retained/wasmtime-c-api/wasmtime-v50.0.1-aarch64-macos-c-api/lib",
+        "-lwasmtime",
+        "-Wl,-rpath,/Users/Nadish/projects/AI Video Editor./Codex/AI Studio/.runtime/png-first-001/retained/wasmtime-c-api/wasmtime-v50.0.1-aarch64-macos-c-api/lib",
+        "-o",
+        "/Users/Nadish/projects/AI Video Editor./Codex/AI Studio/.runtime/png-first-001/build-08/png-helper"
+      ]
+    ],
+    "runtime": "wasmtime-50.0.1",
+    "runtime_library": "/Users/Nadish/projects/AI Video Editor./Codex/AI Studio/.runtime/png-first-001/retained/wasmtime-c-api/wasmtime-v50.0.1-aarch64-macos-c-api/lib/libwasmtime.dylib",
+    "runtime_library_sha256": "5ba1ebe3e4285ed8e132a5a44e421e8ddb10986da03f285739248ba71b01404e",
+    "lodepng_commit": "7b2893e35891c0c85bee5595caafaf3c2044b409",
+    "wasi_sdk": "34.0",
+    "files": {
+      "decoder.wasm": "8f39b16df524c5682f9614b858fd15977d0cd5cfc75b621ef6d50c257c325047",
+      "png-helper": "f532e9a22cb594449f02be17f4faae9c9225919e812358fcfb5a4cbac7dc517f"
+    },
+    "live_placement_enabled": false
+  },
+  "offline_wrapper_rebuild": {
+    "wasm_identical": true,
+    "native_helper_identical": true,
+    "network_used_by_build": false,
+    "clean_runtime_source_rebuild_proven": false
+  },
+  "distribution_ready": false,
+  "complete_notice_and_source_closure_verified": false
+}

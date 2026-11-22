@@ -1,0 +1,160 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "urn:ideaframe:m5:status:1",
+  "title": "IDEAFRAME M5 status manifest v1",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "format",
+    "schema_version",
+    "schema_reference",
+    "project_id",
+    "milestone_id",
+    "checkpoint_utc",
+    "source_workspace",
+    "checkpoint_version",
+    "overall_status",
+    "classification_enum",
+    "classification_scope",
+    "requirement_inventory",
+    "module_inventory",
+    "completed_features",
+    "partially_implemented_features",
+    "missing_features",
+    "blocked_features",
+    "unknown_features",
+    "deferred_improvements",
+    "dependency_graph",
+    "entry_points",
+    "protected_interfaces",
+    "required_external_assets",
+    "evidence_references",
+    "known_issues",
+    "next_implementation_tasks",
+    "release_authorization",
+    "source_integrity_manifests",
+    "exclusions",
+    "scope_limit"
+  ],
+  "properties": {
+    "format": {
+      "const": "ideaframe-m5-status@1"
+    },
+    "schema_version": {
+      "const": 1
+    },
+    "schema_reference": {
+      "type": "string"
+    },
+    "project_id": {
+      "type": "string"
+    },
+    "milestone_id": {
+      "type": "string"
+    },
+    "checkpoint_utc": {
+      "type": "string"
+    },
+    "source_workspace": {
+      "type": "string"
+    },
+    "checkpoint_version": {
+      "type": "string"
+    },
+    "overall_status": {
+      "const": "IN_PROGRESS"
+    },
+    "classification_enum": {
+      "type": "array"
+    },
+    "classification_scope": {
+      "type": "string"
+    },
+    "requirement_inventory": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": [
+          "id",
+          "feature",
+          "status",
+          "original_sources",
+          "source_files",
+          "dependencies",
+          "evidence",
+          "limitations",
+          "remaining_work",
+          "acceptance_criteria"
+        ],
+        "properties": {
+          "status": {
+            "enum": [
+              "COMPLETE AND VERIFIED",
+              "IMPLEMENTED BUT NOT FULLY VERIFIED",
+              "PARTIALLY IMPLEMENTED",
+              "NOT IMPLEMENTED",
+              "BLOCKED BY SECURITY OR CONTRACT",
+              "OUTSIDE M5 SCOPE",
+              "UNKNOWN / REQUIRES CONFIRMATION"
+            ]
+          }
+        }
+      }
+    },
+    "module_inventory": {
+      "type": "array"
+    },
+    "completed_features": {
+      "type": "array"
+    },
+    "partially_implemented_features": {
+      "type": "array"
+    },
+    "missing_features": {
+      "type": "array"
+    },
+    "blocked_features": {
+      "type": "array"
+    },
+    "unknown_features": {
+      "type": "array"
+    },
+    "deferred_improvements": {
+      "type": "array"
+    },
+    "dependency_graph": {
+      "type": "object"
+    },
+    "entry_points": {
+      "type": "array"
+    },
+    "protected_interfaces": {
+      "type": "array"
+    },
+    "required_external_assets": {
+      "type": "array"
+    },
+    "evidence_references": {
+      "type": "array"
+    },
+    "known_issues": {
+      "type": "array"
+    },
+    "next_implementation_tasks": {
+      "type": "array"
+    },
+    "release_authorization": {
+      "type": "object"
+    },
+    "source_integrity_manifests": {
+      "type": "array"
+    },
+    "exclusions": {
+      "type": "array"
+    },
+    "scope_limit": {
+      "type": "string"
+    }
+  },
+  "$comment": "Require all declared top-level fields;classification enum and IN_PROGRESS are stable. Unknown schema versions require explicit review. IDs do not imply completion percentage."
+}

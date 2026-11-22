@@ -2,14 +2,34 @@
 import json
 from pathlib import Path
 from studio_manual_ui.server import Server as ManualServer, Handler as ManualHandler
-from studio_manual_ui.service import UIError, exact
+from studio_manual_ui.service import UIError, exact, read
 
 HERE=Path(__file__).parent
-ASSETS={'/director.mjs':('director.mjs','text/javascript; charset=utf-8'),'/brands.mjs':('brands.mjs','text/javascript; charset=utf-8'),'/home.mjs':('home.mjs','text/javascript; charset=utf-8'),'/text_layout.mjs':('text_layout.mjs','text/javascript; charset=utf-8'),'/text_completion_browser.mjs':('../visual_poster_tests/text_completion_browser.mjs','text/javascript; charset=utf-8'),'/geometry_browser.mjs':('../visual_poster_tests/geometry_browser.mjs','text/javascript; charset=utf-8'),'/geometry.mjs':('geometry.mjs','text/javascript; charset=utf-8'),'/canvas.mjs':('canvas.mjs','text/javascript; charset=utf-8'),'/canvas_browser.mjs':('../visual_poster_tests/canvas_browser.mjs','text/javascript; charset=utf-8'),'/layout.mjs':('layout.mjs','text/javascript; charset=utf-8'),'/layout_browser.mjs':('../visual_poster_tests/layout_browser.mjs','text/javascript; charset=utf-8'),'/editing.mjs':('editing.mjs','text/javascript; charset=utf-8'),'/editing_browser.mjs':('../visual_poster_tests/editing_browser.mjs','text/javascript; charset=utf-8'),'/':('index.html','text/html; charset=utf-8'),'/app.js':('app.js','text/javascript; charset=utf-8'),'/styles.css':('styles.css','text/css; charset=utf-8'),
+ASSETS={'/brand_application.mjs':('brand_application.mjs','text/javascript; charset=utf-8'),'/hybrid-acceptance':('../visual_poster_tests/hybrid_browser.html','text/html; charset=utf-8'),'/hybrid.mjs':('hybrid.mjs','text/javascript; charset=utf-8'),'/hybrid_browser.mjs':('../visual_poster_tests/hybrid_browser.mjs','text/javascript; charset=utf-8'),'/director.mjs':('director.mjs','text/javascript; charset=utf-8'),'/brands.mjs':('brands.mjs','text/javascript; charset=utf-8'),'/home.mjs':('home.mjs','text/javascript; charset=utf-8'),'/text_layout.mjs':('text_layout.mjs','text/javascript; charset=utf-8'),'/text_completion_browser.mjs':('../visual_poster_tests/text_completion_browser.mjs','text/javascript; charset=utf-8'),'/geometry_browser.mjs':('../visual_poster_tests/geometry_browser.mjs','text/javascript; charset=utf-8'),'/geometry.mjs':('geometry.mjs','text/javascript; charset=utf-8'),'/canvas.mjs':('canvas.mjs','text/javascript; charset=utf-8'),'/canvas_browser.mjs':('../visual_poster_tests/canvas_browser.mjs','text/javascript; charset=utf-8'),'/layout.mjs':('layout.mjs','text/javascript; charset=utf-8'),'/layout_browser.mjs':('../visual_poster_tests/layout_browser.mjs','text/javascript; charset=utf-8'),'/editing.mjs':('editing.mjs','text/javascript; charset=utf-8'),'/editing_browser.mjs':('../visual_poster_tests/editing_browser.mjs','text/javascript; charset=utf-8'),'/':('index.html','text/html; charset=utf-8'),'/app.js':('app.js','text/javascript; charset=utf-8'),'/styles.css':('styles.css','text/css; charset=utf-8'),
  '/acceptance':('../visual_poster_tests/browser_acceptance.html','text/html; charset=utf-8'),
  '/browser_acceptance.js':('../visual_poster_tests/browser_acceptance.js','text/javascript; charset=utf-8')}
 class Server(ManualServer):
+    @property
+    def media(self):
+        from .media_bridge import Media
+        value=getattr(self,'_media',None)
+        if value is None or value.studio is not self.studio:
+            if value:value.close()
+            self._media=Media(self)
+        return self._media
+    @property
+    def hybrid(self):
+        from .hybrid_jobs import Jobs
+        existing=getattr(self,'_hybrid',None)
+        if existing is None or existing.studio is not self.studio:
+            if existing:existing.close()
+            self._hybrid=Jobs(self.studio)
+        return self._hybrid
     def server_close(self):
+        media=getattr(self,'_media',None)
+        if media:media.close()
+        planner=getattr(self,'_hybrid',None)
+        if planner:planner.close()
         try:super().server_close()
         finally:self.studio.close()
     def finish_request(self,request,client_address):Handler(request,client_address,self)
@@ -22,7 +42,7 @@ class Handler(ManualHandler):
         self.end_headers();self.wfile.write(body)
     def body(self):
         # Fixed PNG/opaque-asset/package routes alone permit larger bounded JSON bodies.
-        if self.path not in {'/api/export/finish','/api/brands/asset','/api/brands/restore-preview','/api/brands/restore'}:return super().body()
+        if self.path not in {'/api/export/finish','/api/media/export/finish','/api/brands/asset','/api/brands/restore-preview','/api/brands/restore'}:return super().body()
         values=self.headers.get_all('Content-Length',[])
         if len(values)!=1 or not values[0].isascii() or not values[0].isdigit() or len(values[0])>(9 if self.path in {'/api/brands/restore-preview','/api/brands/restore'} else 8):raise UIError('length','Invalid bounded length.',411)
         n=int(values[0])
@@ -35,6 +55,34 @@ class Handler(ManualHandler):
     def dispatch(self,method):
         try:
             path=self.guard(mutation=method=='POST')
+            if method=='GET' and path in ('/product.mjs','/media_gestures.mjs'):return self.reply(200,(HERE/path[1:]).read_bytes(),'text/javascript; charset=utf-8')
+            if path in ('/api/product/create','/api/product/history','/api/product/status'):
+                from . import product
+                if method=='GET' and path=='/api/product/status':return self.reply(200,product.capabilities(self.server))
+                if method=='POST' and path!='/api/product/status':return self.reply(200,(product.create if path.endswith('/create') else product.history)(self.server,self.body()))
+                raise UIError('method','Unsupported product method',405)
+            if method=='GET' and path=='/media.mjs':return self.reply(200,(HERE/'media.mjs').read_bytes(),'text/javascript; charset=utf-8')
+            if method=='GET' and path=='/api/media':return self.reply(200,self.server.media.listing())
+            if method=='GET' and path.startswith('/api/media/download/'):
+                import re
+                match=re.fullmatch(r'/api/media/download/([0-9a-f]{32})/([0-9a-f]{32})/(draft\.(?:svg|png))',path)
+                if not match:raise UIError('media-path','Fixed media export identity required.')
+                identity,export,name=match.groups();w=self.server.media.get(identity);w.scene(export_svg=True)
+                from studio_png_sandbox.controller import safe
+                payload=read(safe(w.root/'exports'/export/name),8*1024*1024)
+                return self.reply(200,payload,'image/svg+xml' if name.endswith('.svg') else 'image/png')
+            if method=='POST' and path.startswith('/api/media/'):
+                routes={'/api/media/recovery':'recovery','/api/media/recover':'recover','/api/media/fork':'fork','/api/media/open':'open','/api/media/action':'action','/api/media/scene':'scene','/api/media/overlay':'overlay','/api/media/assets':'assets','/api/media/navigation':'navigation','/api/media/export/begin':'begin','/api/media/export/finish':'finish'}
+                if path=='/api/media/export/cancel':self.server.media.pending=None;return self.reply(200,{'cancelled':True})
+                if path not in routes:raise UIError('media-route','Unsupported media route.',404)
+                import signal,threading
+                from studio_png_sandbox.controller import Refused
+                if threading.current_thread() is not threading.main_thread():raise UIError('media-runtime','Media route requires the qualified single-thread main server.',409)
+                def expired(*_):raise TimeoutError('Complete media job deadline exceeded')
+                previous=signal.signal(signal.SIGALRM,expired);signal.alarm(60)
+                try:return self.reply(200,getattr(self.server.media,routes[path])(self.body()))
+                except (Refused,ValueError,OSError,KeyError,TypeError) as exc:raise UIError('media-refused',str(exc)[:1024],409) from exc
+                finally:signal.alarm(0);signal.signal(signal.SIGALRM,previous)
             if method=='GET' and path in ASSETS:
                 name,kind=ASSETS[path];return self.reply(200,(HERE/name).read_bytes(),kind)
             if method=='POST' and path in {'/api/brands/backup','/api/brands/restore-preview','/api/brands/restore'}:
@@ -55,6 +103,14 @@ class Handler(ManualHandler):
                 value=self.body()
                 if type(value)!=dict or (path=='/api/brands/asset')!=(value.get('action')=='register_asset'):raise UIError('brand-contract','Use the fixed bounded action route.')
                 return self.reply(200,library.command(value))
+            if (method=='GET' and path=='/api/hybrid/status') or (method=='POST' and path in {'/api/hybrid/start','/api/hybrid/cancel','/api/hybrid/select'}):
+                from .brands import Store,ROOT as BRAND_ROOT
+                self.server.studio.brand_library=Store(getattr(self.server,'brand_root',BRAND_ROOT))
+                jobs=self.server.hybrid
+                if method=='GET':return self.reply(200,jobs.status())
+                value=self.body()
+                action={'/api/hybrid/start':jobs.start,'/api/hybrid/cancel':jobs.cancel,'/api/hybrid/select':jobs.select}[path]
+                return self.reply(200,action(value))
             if method=='POST' and path in {'/api/director/generate','/api/director/select'}:
                 from .director import generate,select
                 s=self.server.studio
@@ -88,7 +144,11 @@ class Handler(ManualHandler):
                 return self.reply(200,{'current_session_id':marker(self.server.studio.root)['manual_id'],'sessions':catalogue()})
             if method=='POST' and path=='/api/session/switch':
                 from .home import switch
-                return self.reply(200,switch(self.server,self.body()))
+                if getattr(self.server,'_hybrid',None) and self.server._hybrid.active:raise UIError('ai-busy','Cancel generation and wait for confirmed stop before switching sessions.',409)
+                result=switch(self.server,self.body())
+                media=getattr(self.server,'_media',None)
+                if media and media.studio is not self.server.studio:media.close();self.server._media=None
+                return self.reply(200,result)
             if method=='GET' and path=='/api/navigation':return self.reply(200,self.server.studio.navigation())
             if method=='GET' and path=='/api/fonts':
                 s=self.server.studio
@@ -97,7 +157,11 @@ class Handler(ManualHandler):
                 request=self.body();s=self.server.studio
                 if path=='/api/scene':
                     exact(request,{'project_id','expected_revision'});result=s.scene(request['project_id'],request['expected_revision'])
-                elif path=='/api/export/begin':result=s.begin(request)
+                elif path=='/api/export/begin':
+                    import time
+                    pending=getattr(getattr(self.server,'_media',None),'pending',None)
+                    if pending and time.monotonic()-pending['started']<=15:raise UIError('busy','One media export in flight.',409)
+                    result=s.begin(request)
                 elif path=='/api/export/finish':result=s.finish(request)
                 elif path=='/api/export/cancel':exact(request,set());s.exports.cancel();result={'cancelled':True}
                 else:

@@ -32,3 +32,25 @@ class LocalToolsTests(unittest.TestCase):
     def test_source_symlink_refused(self):
         parent=Path(os.environ['LOCAL_TEST_ROOT']);source=parent/'source';source.write_text('x');link=parent/'source-alias';link.symlink_to(source)
         with self.assertRaises(ValueError):local.regular(link)
+
+    def test_current_workflow_status_does_not_claim_ai_or_media_readiness(self):
+        r=local.inventory()
+        self.assertTrue(r['brand_asset_studio']['project_integration'])
+        self.assertFalse(r['brand_asset_studio']['registered_assets_applied'])
+        self.assertEqual(r['creative_director']['local_ai_editor_integration'],'Phase 2G pilot implemented; human acceptance pending')
+        self.assertFalse(r['creative_director']['model_execution_checked'])
+        self.assertFalse(r['legacy_renderer']['required_for_visual_start'])
+        self.assertTrue(r['legacy_renderer']['required_for_legacy_phase2'])
+        self.assertEqual(r['compatibility']['history_versions'],[1,2,3])
+
+    def test_missing_sqlite_refuses_current_visual_startup(self):
+        import builtins
+        original=builtins.__import__
+        def unavailable(name,*args,**kwargs):
+            if name=='sqlite3':raise ImportError('synthetic unavailable SQLite')
+            return original(name,*args,**kwargs)
+        with patch('builtins.__import__',side_effect=unavailable):
+            r=local.inventory()
+        self.assertFalse(r['ready_for_local_start'])
+        self.assertFalse(r['brand_asset_studio']['sqlite']['available'])
+        self.assertTrue(any('SQLite support required' in error for error in r['errors']))
