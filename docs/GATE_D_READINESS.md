@@ -1,5 +1,20 @@
 # Gate D readiness - M4 release (updated 11 Nov 2026, isolated release preparation)
 
+## Current qualification scope (22 Nov 2026)
+
+This document records the historical 11 Nov M4 RC1 preparation. Its checks and GO recommendation
+apply to that candidate only, not to the current integrated `develop` source.
+Historical Gate C passed; current integrated release qualification remains outstanding.
+Gate D and any production or `main` release require explicit owner approval.
+
+The isolated planner regression passed on 22 Nov with the checksum-verified historical
+transcript (exit 0). That result qualifies this regression only. A dedicated tracked copy
+now lives at `tests/fixtures/m4_planner/words.json`; see its README for provenance.
+No production deployment, historical evidence update, or full Gate C rerun is implied.
+
+The later owner decisions in section 9 supersede earlier pending-review and cache-only
+backup statements in this historical document. The model backup remains on the same disk.
+
 **Gate D is NOT started. Production has not been touched. Every command below is a procedure for the owner-approved release only.**
 `P="/Users/Nadish/projects/AI Video Editor."`
 
