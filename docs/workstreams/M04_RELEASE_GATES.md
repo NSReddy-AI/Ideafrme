@@ -16,3 +16,7 @@ The latest M4 implementation is already carried into `develop`: the local applic
 ## Completion evidence
 
 This workstream is complete only when every release check has a reproducible command, retained result, source identity and explicit verdict. Product approval remains a separate human decision.
+
+## Current qualification checklist
+
+See [M04_CURRENT_QUALIFICATION.md](M04_CURRENT_QUALIFICATION.md) for historical evidence identifiers, execution hazards and current verdicts.
