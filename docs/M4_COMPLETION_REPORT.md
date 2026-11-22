@@ -1,7 +1,9 @@
 # M4 completion report - feature by feature (11 Nov 2026, development copy)
 
 Scope = the approved M4 handoff (Telugu/English branded reels; narration B1; safe areas B2; planner-to-reel B3) and CLAUDE.md.
-Gate C (comprehensive regression) and Gate D (production release) are NOT done and NOT authorised. Nothing is ever published.
+Historical report: the feature evidence below describes the 11 Nov development checkpoint, not current release qualification.
+Gate C subsequently passed on 11 Nov 2026 (see `GATE_D_READINESS.md` for historical evidence).
+Gate D has not started. Current integrated `develop` requires separate release qualification; this report does not authorise release. Nothing is ever published.
 Start the app: double-click `Start Reel Studio.command` (or `~/.venvs/reelstudio/bin/python app/server.py`) -> http://127.0.0.1:8765
 
 Legend: **App** = usable in the app screens; **CLI** = command line only; ✅ verified by a real run today.
