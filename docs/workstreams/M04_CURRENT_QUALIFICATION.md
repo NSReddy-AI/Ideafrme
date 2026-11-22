@@ -29,7 +29,7 @@ Except for the completed planner safety regression, dependency and transitive wr
 | Engine settings, title and frame | `tests/test_milestone2.py` | Creates and deletes projects; invokes title/frame scripts; inspect callees before isolated run | NOT RUN |
 | Narration contracts, approvals, memory stop, disclosure | `tests/test_narration.py --out <new-evidence-dir>` | Temporary projects and private heavy lock; ffmpeg, numpy, legacy `.preB1` files; fake worker is not model-quality proof | NOT RUN; inspect legacy input availability |
 | Telugu and English STT | `tests/test_transcribe.py` | Writes tests/out, extracts audio; inspect reference source paths and workers; cached models required | NOT RUN |
-| Local planner and approval integration | `tests/test_planner.py --models qwen3:14b --provider local` | Writes/deletes fixed zz_plan_te, tests/out, uses reel_002 project.json and words.json; local Ollama calls; render gate path | NOT READY: missing project inputs; isolate and adapt |
+| Local planner and approval integration | `tests/test_planner.py --models qwen3:14b --provider local` | Writes/deletes fixed zz_plan_te, tests/out, uses reel_002 project.json and words.json; local Ollama calls; render gate path | NOT READY: project metadata present, build/words.json missing; isolate and adapt |
 | Baseline and three-platform export | Historical `checkpoint.sh`, current isolated render-job API | Legacy script targets protected reel_002, writes exports/history and fixed /tmp file; shell output does not reliably propagate every failure | DO NOT RUN legacy script; design isolated parity harness |
 | App approvals, captions, narration, export | Historical gatec_app.py (31 checks) | Hard-coded port 8765, historical demo inputs, project POST/PUT/PATCH, fixed-directory deletion, model and render jobs | DO NOT RUN unchanged; adapt server root, port, fixtures and cleanup |
 | Production and evidence preservation | Before/after read-only SHA-256 manifests | Protected roots must never be output destinations; allow for concurrent user activity when interpreting differences | PENDING scoped manifest design |
@@ -56,3 +56,5 @@ Except for the completed planner safety regression, dependency and transitive wr
 
 No historical evidence was changed and no legacy gate, production render, or model job
 was executed while preparing this checklist. M5 remains IN_PROGRESS.
+
+Prerequisite availability: see [M04_PREREQUISITE_INVENTORY.md](M04_PREREQUISITE_INVENTORY.md).
