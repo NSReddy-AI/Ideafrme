@@ -1,0 +1,26 @@
+[
+  {
+    "env": "reelstudio",
+    "freeze_exit": 0,
+    "added": [],
+    "removed": [],
+    "pip_check_exit": 0,
+    "pip_check": "No broken requirements found.\nWARNING: The directory '/Users/Nadish/Library/Caches/pip' or its parent directory is not owned or is not writable by the current user. The cache has been disabled. Check the permissions and owner of that directory. If executing pip with sudo, you should use sudo's -H flag.\n"
+  },
+  {
+    "env": "rs_asr",
+    "freeze_exit": 0,
+    "added": [],
+    "removed": [],
+    "pip_check_exit": 0,
+    "pip_check": "No broken requirements found.\nWARNING: The directory '/Users/Nadish/Library/Caches/pip' or its parent directory is not owned or is not writable by the current user. The cache has been disabled. Check the permissions and owner of that directory. If executing pip with sudo, you should use sudo's -H flag.\n"
+  },
+  {
+    "env": "rs_tts",
+    "freeze_exit": 0,
+    "added": [],
+    "removed": [],
+    "pip_check_exit": 0,
+    "pip_check": "No broken requirements found.\nWARNING: The directory '/Users/Nadish/Library/Caches/pip' or its parent directory is not owned or is not writable by the current user. The cache has been disabled. Check the permissions and owner of that directory. If executing pip with sudo, you should use sudo's -H flag.\n"
+  }
+]

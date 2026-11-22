@@ -1,0 +1,11 @@
+test_any_change_after_approval_is_refused (__main__.Derive.test_any_change_after_approval_is_refused) ... ok
+test_hand_approved_baseline_is_labelled (__main__.Derive.test_hand_approved_baseline_is_labelled) ... ok
+test_item_status (__main__.Derive.test_item_status) ... ok
+test_narrated_script (__main__.Derive.test_narrated_script) ... ok
+test_speaker_plan (__main__.Derive.test_speaker_plan) ... ok
+test_unapproved_gives_nothing (__main__.Derive.test_unapproved_gives_nothing) ... ok
+
+----------------------------------------------------------------------
+Ran 6 tests in 0.030s
+
+OK

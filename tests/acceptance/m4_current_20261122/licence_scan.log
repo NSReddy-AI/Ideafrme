@@ -1,0 +1,43 @@
+{
+ "reelstudio": {
+  "permissive": 35,
+  "weak-copyleft": 1,
+  "strong-copyleft": 0,
+  "check": 2,
+  "unknown": 0
+ },
+ "rs_tts": {
+  "permissive": 91,
+  "weak-copyleft": 3,
+  "strong-copyleft": 0,
+  "check": 2,
+  "unknown": 2
+ },
+ "rs_asr": {
+  "permissive": 47,
+  "weak-copyleft": 1,
+  "strong-copyleft": 0,
+  "check": 0,
+  "unknown": 0
+ },
+ "npm": {
+  "permissive": 51,
+  "weak-copyleft": 2,
+  "strong-copyleft": 0,
+  "check": 0,
+  "unknown": 0
+ }
+}
+  reelstudio: certifi 2026.10.23 | MPL-2.0 | weak-copyleft
+  reelstudio: kiwisolver 1.5.1 | ========================= | check
+  reelstudio: matplotlib 3.11.2 | License agreement for matplotlib versions 1.3.0 and later | check
+  rs_tts: certifi 2026.10.23 | MPL-2.0 | weak-copyleft
+  rs_tts: kiwisolver 1.5.1 | ========================= | check
+  rs_tts: matplotlib 3.11.2 | License agreement for matplotlib versions 1.3.0 and later | check
+  rs_tts: parler_tts 0.2.2 |  | unknown
+  rs_tts: ptyprocess 0.7.0 | UNKNOWN | unknown
+  rs_tts: soxr 1.1.0 | LGPL-2.1-or-later | weak-copyleft
+  rs_tts: tqdm 4.70.1 | MPL-2.0 AND MIT | weak-copyleft
+  rs_asr: tqdm 4.70.1 | MPL-2.0 AND MIT | weak-copyleft
+  npm: lightningcss 1.33.0 | MPL-2.0 | weak-copyleft
+  npm: lightningcss-darwin-arm64 1.33.0 | MPL-2.0 | weak-copyleft
