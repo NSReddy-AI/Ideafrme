@@ -65,6 +65,15 @@ body {
   -webkit-font-smoothing: antialiased;
 }
 
+/* M7-C: click targets of at least 24 px (WCAG 2.2). Text links and disclosure lines keep their look: block padding on an
+   inline link enlarges where it can be clicked without moving the line; utilities on a link still win. */
+@layer base {
+  a[href] { padding-block: 0.25rem; }
+  summary { min-height: 1.5rem; padding-block: 0.25rem; }
+  input[type="checkbox"], input[type="radio"] { width: 1rem; height: 1rem; flex-shrink: 0; }
+  label:has(> input[type="checkbox"]), label:has(> input[type="radio"]) { min-height: 1.5rem; }
+}
+
 /* Telugu text: its own face and more room for vowel signs. */
 .te { font-family: var(--font-telugu); line-height: var(--leading-telugu); }
 

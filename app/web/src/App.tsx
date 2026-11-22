@@ -121,7 +121,7 @@ function Inputs({ p, reload }: { p: Project; reload: (x?: Project) => void }) {
       <label className="block">Brief / notes<TextArea value={notes} onChange={e => setNotes(e.target.value)} rows={2} className="mt-1" /></label>
       {notes !== p.notes && <Btn kind="ghost" onClick={async () => reload(await api.patch(p.name, { notes }))}>Save notes</Btn>}
       <div className="flex flex-wrap gap-1 text-xs">{p.inputs.filter(f => !['notes.txt', 'urls.txt', 'script.txt'].includes(f) && !f.endsWith('.part')).map(f =>
-        <span key={f} className="inline-flex items-center gap-1 rounded-chip bg-surface px-2 py-0.5">{f}<button title="Remove (kept in inputs/.removed)" className="text-ink-3 hover:text-bad"
+        <span key={f} className="inline-flex items-center gap-1 rounded-chip bg-surface px-2 py-0.5">{f}<button title="Remove (kept in inputs/.removed)" aria-label={`Remove ${f} (kept in inputs/.removed)`} className="-my-0.5 grid h-6 w-6 place-items-center rounded-chip text-ink-3 hover:text-bad"
           onClick={async () => { setErr(null); try { reload(await api.removeInput(p.name, f)) } catch (e) { setErr((e as Error).message) } }}>×</button></span>)}</div>
       {p.project.video && <Framing p={p} reload={reload} />}
       <Err msg={err} />

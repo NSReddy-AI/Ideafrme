@@ -122,7 +122,7 @@ export function ConfirmProvider({ children }: { children: React.ReactNode }) {
   }
   return <ConfirmCtx.Provider value={confirm}>
     {children}
-    <dialog ref={ref} aria-labelledby={titleId} aria-describedby={opts?.body ? bodyId : undefined} onCancel={e => { e.preventDefault(); done(false) }}
+    <dialog ref={ref} aria-labelledby={opts ? titleId : undefined} aria-label={opts ? undefined : 'Confirmation'} aria-describedby={opts?.body ? bodyId : undefined} onCancel={e => { e.preventDefault(); done(false) }}
       className="dialog-motion m-auto w-[min(28rem,calc(100vw-2rem))] rounded-sheet border border-line bg-raised p-6 text-ink shadow-float backdrop:bg-scrim">
       {opts && <>
         <h2 id={titleId} className="text-base font-semibold">{opts.title}</h2>
@@ -161,6 +161,6 @@ function ToastItem({ t, onClose }: { t: Toast; onClose: (id: number) => void }) 
     className={cx('toast-motion pointer-events-auto flex items-start gap-2 rounded-box border border-line bg-raised p-3 text-sm text-ink shadow-float')}>
     <span aria-hidden className={cx('mt-px flex h-5 w-5 shrink-0 items-center justify-center rounded-full text-xs font-bold', TONE_STYLE[t.tone])}>{s.symbol}</span>
     <p className="min-w-0 flex-1"><span className="sr-only">{s.word}: </span>{t.text}</p>
-    <button onClick={() => onClose(t.id)} aria-label="Dismiss" className={cx('-m-1 rounded-field p-1 text-ink-3 hover:bg-surface hover:text-ink', MOTION)}>×</button>
+    <button onClick={() => onClose(t.id)} aria-label="Dismiss" className={cx('-m-1 grid h-6 w-6 place-items-center rounded-field text-ink-3 hover:bg-surface hover:text-ink', MOTION)}>×</button>
   </div>
 }
