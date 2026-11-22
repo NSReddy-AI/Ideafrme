@@ -1,0 +1,4 @@
+import { describe,it,expect } from 'vitest';
+import { ideaSchema,planSchema } from './validation';
+describe('idea validation',()=>{it('accepts a valid idea',()=>{expect(ideaSchema.safeParse({title:'New idea',description:'A useful idea for teams'}).success).toBe(true);});it('rejects blank titles',()=>{expect(ideaSchema.safeParse({title:' ',description:'A useful idea for teams'}).success).toBe(false);});it('rejects short descriptions',()=>{expect(ideaSchema.safeParse({title:'Test',description:'short'}).success).toBe(false);});it('rejects oversized titles',()=>{expect(ideaSchema.safeParse({title:'x'.repeat(121),description:'A useful idea for teams'}).success).toBe(false);});});
+describe('plan validation',()=>{it('rejects malformed ids',()=>expect(planSchema.safeParse({ideaId:'../../x'}).success).toBe(false));});
