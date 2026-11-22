@@ -1,0 +1,13 @@
+__pycache__/
+.pytest_cache/
+.ruff_cache/
+.venv/
+*.pyc
+*.egg-info/
+build/
+dist/
+.env
+workspace/
+exports/
+models/
+.DS_Store
