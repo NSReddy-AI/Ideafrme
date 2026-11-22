@@ -7,5 +7,6 @@ This directory is the control centre for the IDEAFRAME repository migration and 
 - `REVISION_PROVENANCE.md` records how the current source was selected and preserved.
 - `DATA_POLICY.md` distinguishes repository source, local user data and generated output.
 - `BRANCH_AND_RELEASE_POLICY.md` defines the integration and production flow.
+- `DEVELOPMENT_WORKSTREAMS.md` maps unfinished module work to dedicated feature branches.
 
 Historical milestone folders remain read-only evidence. The active repository carries one latest implementation, with Git history and these records providing traceability.
