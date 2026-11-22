@@ -1,0 +1,8 @@
+test_failed_english_fails (__main__.AcceptanceVerdict.test_failed_english_fails) ... ok
+test_inaccurate_telugu_fails (__main__.AcceptanceVerdict.test_inaccurate_telugu_fails) ... ok
+test_matching_transcript_succeeds (__main__.AcceptanceVerdict.test_matching_transcript_succeeds) ... ok
+
+----------------------------------------------------------------------
+Ran 3 tests in 0.096s
+
+OK

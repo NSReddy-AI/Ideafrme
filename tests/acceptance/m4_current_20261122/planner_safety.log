@@ -1,0 +1,109 @@
+PASS number 'నాలుగు' = 4
+PASS number 'ఆరు' = 6
+PASS number 'పది' = 10
+PASS number 'పదిహేడు' = 17
+PASS number 'లక్ష' = 100,000
+PASS number '31 లక్షలు' = 3,100,000
+PASS number '31 లక్షల' = 3,100,000
+PASS number 'రెండు లక్షల యాభై వేలు' = 250,000
+PASS number '2.5 లక్షలు' = 250,000
+PASS number '750 కోట్లతో' = 7,500,000,000.0
+PASS number 'లక్ష కోట్లకు' = 1,000,000,000,000.0
+PASS number '17,000' = 17,000
+PASS number 'మూడు వేల ఐదు వందలు' = 3,500
+PASS number 'ఇరవై ఐదు' = 25
+PASS number 'పది లక్షల కోట్లు' = 10,000,000,000,000.0
+PASS 'ఒక సారి' is not a number
+PASS 16 numbers found in the reel_002 speech
+PASS correct plan: no problems
+PASS card time comes from the spoken words (31 లక్షల at 6.87-7.71 s)
+PASS tag written as 'number — label'
+PASS card number not spoken inside its beat (8B misalignment)
+PASS card with wrong unit (31 instead of 31 లక్షలు)
+PASS card with wrong number in the right place
+PASS card label about a different claim
+PASS tag label about a different claim
+PASS invented claim in post intro: '10,000 కోట్లతో మంచినీరు' (8B)
+PASS invented number in post intro
+PASS real number tied to the wrong claim is marked ❓
+PASS post text is built from the checked cards only
+PASS misspelt name in a hashtag (14B 'జగన్నాథ్') is marked ❓
+PASS hashtags get # and no spaces
+PASS filler-only label (8B '2.5 లక్షలు — మంది')
+PASS overlapping beats repaired: no problems, every card still in its beat
+PASS repairs are listed for the user
+PASS a beat going back in time is still a problem
+PASS 750 కోట్లతో: before/after ambiguity is marked ❓
+PASS November hook + two good options: no problems
+PASS quote that is not the speaker's words
+PASS hook line over 4 words
+PASS headline repeating the hook (14B problem)
+PASS invented statistic in a hook
+PASS unit changed in a hook (31 కోట్లు)
+PASS English line for a Telugu brand
+PASS fewer than 3 options is a problem
+PASS new words (possible new claim) are marked ❓
+PASS candidates: valid ones build 3 options with no problems
+PASS quote line is the transcript's exact words
+PASS long, invented-number and fake-quote candidates are rejected
+PASS a headline that repeats the opener is not paired with it
+PASS too few valid candidates is a problem (with reasons for the retry)
+PASS the same line twice in one option is a problem (8B option A)
+PASS incomplete quote rejected: అక్కచెల్లెమ్మలకు 31 లక్షల
+PASS incomplete quote rejected: 15,000 సచివాలయాలు ప్రభుత్వానికి
+PASS incomplete quote rejected: చేశాడనే ప్రస్తావన వస్తే
+PASS incomplete quote rejected: పట్టాలు సొంతింటి కల నెరవేర్చేలా
+PASS complete quote accepted: “24 గంటలు సరిపోవు”
+PASS complete quote accepted: “31 లక్షల ఇళ్ల పట్టాలు”
+PASS complete quote accepted: “2.5 లక్షల మంది వాలంటీర్లు”
+PASS unfinished hook line rejected (ends on -గా is allowed only... ) / ends on 'జగన్ చేసిన'
+PASS '15,000 గ్రామ సచివాలయాలు' (commentary line, complete) accepted
+PASS model quote ranges cut mid-phrase are rejected, the complete one is used
+PASS card label over 3 words (8B)
+PASS tag label over 3 words (14B)
+PASS more than 8 hashtags (8B gave 32)
+PASS filler hashtag (#సార్)
+PASS misplaced cards with one exact matching claim are moved
+PASS each move is recorded: original beat, new beat, reason, original error
+PASS moved cards are marked ❓ (approval needs --checked)
+PASS moved card's time comes from the spoken words
+PASS label with a new claim is not moved - blocked for review
+PASS same card already in the right beat: duplicate not doubled
+PASS target beat has another graphic: not moved, blocked
+PASS number matching two spoken claims is not guessed - blocked
+PASS option D keeps the wording exactly
+PASS option D passes the checks
+PASS option D: speaker's words without quotes are marked as commentary ❓
+PASS option D: headline that reports the speaker is compared with his words ❓
+PASS approval fingerprint changes when the plan is edited
+PASS 16 claims with the speaker's own 1-3 word labels
+PASS beats cover the whole speech, in order, without gaps or overlaps
+PASS purpose phrase goes with its number ('అన్నదాతకు ఆసరాగా 10,500 ఆర్బీకేలు')
+PASS sentence end stays with its claim ('… 24 గంటలు సరిపోవు సార్')
+PASS 'నాడు నేడు' stays with the schools
+PASS default choice: no card for '24 గంటలు', tag = 31 లక్షలు — ఇళ్ల పట్టాలు
+PASS code-built facts pass every check; only the real 750 కోట్లతో ambiguity is ❓
+PASS every card is timed to the spoken words
+PASS model choice with invalid ids: only valid claims get cards, bad tag gives no tag
+PASS choice check reports invalid ids for the retry
+PASS bad hashtags are left out (listed), never block the plan
+PASS program's own quote candidates are complete phrases ('24 గంటలు సరిపోవు')
+PASS few valid candidates still give 3 different options (combinations)
+PASS tag '24 — గంటలు' (time talk) is rejected for the retry, with the allowed claims listed
+PASS a time-talk tag never reaches the plan
+PASS a hand-edited time-talk tag is a problem (blocks approval)
+PASS no achievement in the speech -> no tag (not invented), and that is not a problem
+PASS program's default tag is an achievement: 31 లక్షలు — ఇళ్ల పట్టాలు
+PASS quote “జగన్ ఏం చేశాడనే ప్రస్తావన” rejected
+PASS quote “24 గంటలు” rejected
+PASS quote “అసలు జగన్” rejected
+PASS quote “31 లక్షల ఇళ్ల పట్టాలు” accepted
+PASS quote “24 గంటలు సరిపోవు” accepted
+PASS quote “24 గంటలు సరిపోవు సార్” accepted
+PASS quote “15,000 సచివాలయాలు” accepted
+PASS a quote that is not in the transcript is rejected (attribution must match the source)
+PASS 8B's quote range 'జగన్ ఏం చేశాడనే ప్రస్తావన' is rejected in drafting too
+PASS quote 'నేడు 130 భారీ ప్రాజెక్టులు' (takes 'నేడు' from 'నాడు నేడు') is rejected
+PASS quote '130 భారీ ప్రాజెక్టులు' is accepted
+
+ALL PASSED

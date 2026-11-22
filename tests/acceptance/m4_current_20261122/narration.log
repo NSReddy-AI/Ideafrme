@@ -1,0 +1,104 @@
+PASS numbers: known spoken forms  ({31: 'ముప్పై ఒక్క', 17805: 'పదిహేడు వేల ఎనిమిది వందల ఐదు', 100000: 'ఒక లక్ష', 3100000: 'ముప్పై ఒక్క లక్షల', 105: 'నూట ఐదు', 250000: 'రెండు లక్షల యాభై వేల'})
+PASS numbers: 6000 numbers read back exactly by the existing reader  ([])
+PASS numbers: sentence spoken form  (అక్కచెల్లెమ్మలకు ముప్పై ఒక్క లక్షల ఇళ్ల పట్టాలు.)
+PASS numbers: decimals and joined endings are marked for review
+PASS legacy: existing number reader gives identical results
+PASS script: written text kept exactly
+PASS script: approval stores the fingerprint in narration.json and project.json  (f541392047c6)
+PASS script: a ❓ number is refused without --checked  (not approved:
+  line 1: number marked ❓ - check it, then approve with --checked
+)
+PASS script: digits left in the spoken form are refused even with --checked
+PASS script: verify OK after approval
+PASS script: an edit after approval -> NARRATION_TEXT_CHANGED
+PASS script: restored text verifies again
+PASS narrate: refuses an unapproved script (NARRATION_NOT_APPROVED)  (['NARRATION_NOT_APPROVED'])
+PASS narrate: AI narration made (fake voice)  (([], ''))
+PASS narrate: pauses between sentences = style pause (news 0.35 s)  ([0.35, 0.35])
+PASS narrate: timeline carries the approval fingerprint and audio checksum
+PASS narrate: 3 sentences spoken, 0 from cache  ({'spoken': 3, 'cached': 0, 'load_s': 0.01, 'per_sentence': [{'event': 'sentence', 'id': '0', 'n': 1, 'of': 3, 'audio_s': 3.3, 'synth_s': 0.0}, {'event': 'senten)
+PASS cache: a re-run speaks nothing again
+PASS cache: re-run audio is identical
+PASS restart: a fresh voice process every N sentences (N=2, 3 sentences -> 2 loads)  (([], [{'sentences': 2, 'peak_rss_gb': 0.0, 'load_s': 0.01}, {'sentences': 1, 'peak_rss_gb': 0.0, 'load_s': 0.01}]))
+PASS restart: same audio, text and timing as one long run
+PASS settings: 10 ms edge fade is the accepted default (tts.json)
+PASS restart: off by default (tts.json restart_every = 0)
+PASS continuity (exact samples): every pause is digital silence  ([0, 0])
+PASS approved audio preserved: with the fade off, the corrected code makes the same audio as before the corrections  (([], ''))
+PASS fade 10 ms: sentence and pause positions unchanged (alignment and pauses identical)
+PASS fade 10 ms: every sample outside the 10 ms edges is identical (no speech cut, nothing else changed)
+PASS fade 10 ms: the faded edges lie in the quiet trim margin (below the speech threshold)
+PASS fade 10 ms: edges now start and end at silence
+PASS length: a long sentence is marked ❓ and refused without --checked  ({'est_speech_s': 10.52, 'spoken_chars': 107, 'too_long': True})
+PASS length: after review (--checked) it is approved exactly as written - never split or rewritten
+PASS length: 70-character rule
+PASS memory label: a cached run says 'model not loaded' (no fake measurement)  (model not loaded (every sentence came from the cache))
+PASS speed 1.15x rubberband: not in this FFmpeg -> clear SPEED_METHOD_UNAVAILABLE, nothing changed  (['SPEED_METHOD_UNAVAILABLE'])
+PASS speed 1.2x rubberband: not in this FFmpeg -> clear SPEED_METHOD_UNAVAILABLE, nothing changed  (['SPEED_METHOD_UNAVAILABLE'])
+PASS speed 1.15x atempo: speech 1.15x shorter (±3%)  (([1.161, 1.153, 1.161], []))
+PASS speed 1.15x atempo: pauses unchanged  ([0.35, 0.35])
+PASS speed 1.15x atempo: pitch kept (±3%)  ((np.float64(220.1), np.float64(220.1)))
+PASS speed 1.15x atempo: uses the cache (no new speaking)
+PASS speed 1.2x atempo: speech 1.2x shorter (±3%)  (([1.201, 1.21, 1.201], []))
+PASS speed 1.2x atempo: pauses unchanged  ([0.35, 0.35])
+PASS speed 1.2x atempo: pitch kept (±3%)  ((np.float64(220.1), np.float64(220.2)))
+PASS speed 1.2x atempo: uses the cache (no new speaking)
+PASS speed: FFmpeg filter check recognises a filter that does not exist
+PASS speed: 1.3x refused (NARRATION_SPEED_INVALID)  (['NARRATION_SPEED_INVALID'])
+PASS speed: rs.py refuses 1.3x too
+FAIL error: TTS_MEMORY_LIMIT (memory)  ((['TTS_FAILED'], ''))
+FAIL memory: warning sent before the stop
+PASS error: TTS_ENV_MISSING (env)  ((['TTS_ENV_MISSING'], ''))
+PASS error: TTS_MODEL_MISSING (model)  ((['TTS_MODEL_MISSING'], ''))
+PASS error: TTS_MODEL_MISSING (worker_missing)  ((['TTS_MODEL_MISSING'], ''))
+PASS error: TTS_FAILED (crash)  ((['TTS_FAILED'], ''))
+PASS error: BUSY_HEAVY_MODEL (busy)  ((['BUSY_HEAVY_MODEL'], ''))
+PASS error: NARRATION_VOICE_INVALID (voice)  ((['NARRATION_VOICE_INVALID'], ''))
+PASS lock: released after every run
+PASS recorded: missing recording refused (NARRATION_FILE_MISSING)
+PASS recorded: recording read, sentence times left for alignment  ([])
+PASS align: captions are the approved written words, in order  ((16, []))
+PASS align: numbers highlighted
+PASS align: every sentence's first caption within 0.1 s of its speech  ([0.0, 0.0, 0.0])
+PASS align: captions inside their sentence and never overlapping
+PASS align: a missing word is listed for its own sentence only  ((0.087, [2]))
+PASS align: a number heard differently is listed for the user  ([['numbers heard [32.0, 100000.0] vs approved [3100000.0]']])
+PASS align: speech-to-text times 0.6 s late do not move words to the wrong sentence  ([(1, 0.0, 'అక్కచెల్లెమ్మలకు ముప్పై ఒక్క ల'), (2, 0.0, 'సొంతింటి కల నెరవేర్చేలా పదిహేడ'), (3, 0.0, 'పేదవాడి ఆరోగ్యానికి పదివేల విల')])
+PASS align: joined number words read correctly ('పదివేల' = 10,000)
+PASS align: unchanged audio re-uses the earlier speech-to-text (no model loaded)  ([])
+PASS align: approved script untouched after the check
+PASS recorded: sentence times from speech-to-text  ([])
+PASS slides: edit length follows the narration (±1 frame)  ((10.066, 10.074, []))
+PASS slides: slide/sentence count mismatch refused
+PASS slides (AI narration): photos stay below the disclosure band, also at full push-in  ({'reserve': 0.16, 'orange_pixels_in_band': 0, 'errors': []})
+PASS legacy: slides without narration identical to pre-B1 (frames + cues)  (('', ''))
+PASS legacy: frame.png and window_mask.png byte-identical to pre-B1, layout.json identical apart from the B2 'elements' list (3 brands x 3 platforms)  ([])
+PASS disclosure: complete approved line on 2 lines at >= 30 px, inside the safe area, covering no logo/headline/social row, window hole correct (3 brands x 3 platforms x 2 positions)  ([])
+PASS disclosure: absent for narration 'recorded'
+PASS disclosure: absent for narration 'none'
+PASS qa: AI disclosure found readable on sampled frames (framed brand)  ({'name': 'ai_disclosure', 'value': 'on screen, inside safe area', 'rule': 'AI narration: Telugu disclosure readable on screen, inside the safe area', 'passed': )
+PASS qa: clipping check passes on clean audio  ({'name': 'clipping', 'value': 0, 'rule': 'no clipped audio samples', 'passed': True})
+PASS qa: AI narration WITHOUT a visible disclosure fails  (['not readable at 2.4s (text 104, background 104)', 'not readable at 2.8s (text 104, background 104)', 'not readable at 3.2s (text 104, background 104)'])
+PASS qa: AI disclosure found readable (fullscreen brand)  ({'name': 'ai_disclosure', 'value': 'on screen, inside safe area', 'rule': 'AI narration: Telugu disclosure readable on screen, inside the safe area', 'passed': )
+PASS qa: no disclosure for narration none passes  ({'name': 'ai_disclosure', 'value': 'absent', 'rule': "no AI-voice disclosure for narration 'none'", 'passed': True})
+PASS qa: clipped audio is caught  (20343)
+PASS legacy: QA on a project without narration gives exactly the same checks as pre-B1  ((['size', 'fps', 'codecs', 'loudness', 'true_peak', 'black_frames'], ['size', 'fps', 'codecs', 'loudness', 'true_peak', 'black_frames']))
+PASS legacy: voice.py without a narration setting behaves as before (no key -> NO_VOICE)  (NO_VOICE: ELEVENLABS_API_KEY not set -> make this reel as text + music.
+)
+PASS voice.py: narration none -> text + music, no error
+PASS voice.py: narration ai -> local narration (not ElevenLabs)  ([])
+PASS voice.py: a script file that differs from the approved one is refused
+PASS adapter: narrated project renders only when ready (fake narration ready -> next gate is the missing edit)  (['EDIT_MISSING'])
+PASS adapter: unapproved narration blocks rendering
+PASS adapter: narration audio changed after it was made -> blocked
+PASS adapter: voice changed since the audio was made -> blocked
+PASS adapter: narrate action -> events + done ok with memory, error rate and items to check  ({'ok': True, 'cer_total': 0.087, 'duration': 10.074})
+PASS legacy: adapter render events for a project without narration identical to pre-B1  ([{'event': 'error', 'step': 'adapter', 'code': 'EDIT_MISSING', 'message': 'missing build/edit.mp4: build the edit first'}, {'event': 'done', 'ok': False}])
+PASS legacy: adapter check output identical to pre-B1
+PASS legacy: rs.py settings validation identical
+PASS legacy: rs.py 'new project' code identical (no narration fields added to new projects)
+PASS legacy: mix.py output identical to pre-B1 (voice + none)  (('', ''))
+PASS mix: AI narration is not cleaned again  (vdnhl0951xxcm0gfcqqc33tr0000gp/T/rs_b1test__t45vlqw/mix_ai/build/out_mix.py.wav
+)
+
+96/98 passed  SOME TESTS FAILED

@@ -58,3 +58,7 @@ No historical evidence was changed and no legacy gate, production render, or mod
 was executed while preparing this checklist. M5 remains IN_PROGRESS.
 
 Prerequisite availability: see [M04_PREREQUISITE_INVENTORY.md](M04_PREREQUISITE_INVENTORY.md).
+
+## Consolidated execution result
+
+See [current report](../../tests/acceptance/m4_current_20261122/REPORT.md). Title/frame, planner safety, frontend build, selected integration and three-platform render passed. Narration is 96/98; memory monitoring, localhost bind and offline sandbox are denied in this session. Current full qualification remains BLOCKED.

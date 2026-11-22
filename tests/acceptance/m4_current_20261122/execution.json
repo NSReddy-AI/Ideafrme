@@ -1,0 +1,19 @@
+{
+  "root": "/var/folders/nt/vdnhl0951xxcm0gfcqqc33tr0000gp/T/ideafrme_m4_1xc7yn35",
+  "source": "83b2a909335a79289be2a65d55b9277f2a72ff57",
+  "legacy_source": "/Users/Nadish/projects/AI Video Editor./Reel Studio_dev/engine",
+  "legacy_sha256": {
+    "common.py.preB1": "773dd17d1d6f8f47b6a70a42055e3ad60da16fe7449f299f11810d206deac83e",
+    "te_numbers.py.preB1": "ab615b8d25738b170be578c6c1430ebfd52a81167b187849ae4e4fd06dbc2ab0",
+    "frame.py.preB1": "43a43aab06696727b66d99cec6a7c991cb948db3d4ff69e661f7dfe91ef14b45",
+    "slides.py.preB1": "a50d0b531bf48622ab69f9b8720c772515514691254f1a915fc147762c09b621",
+    "qa.py.preB1": "12efed6d97889a6421d609a64ba6ebc2e6242b318271449cade52476f4201da2",
+    "voice.py.preB1": "09f0057c66d98ba6e9686b3a2efc99c81bd8fca41d6f45db50d7a5a59ae9c47c",
+    "adapter.py.preB1": "b67f9ab33a104f6c541fa95f4795478a5b0f96ac00a566af6c86e35e03410f63",
+    "rs.py.preB1": "f02179cbac379f3b2381b7b90bf839baadcb30f6aae367cd230a2628b9a13859",
+    "mix.py.preB1": "e1b6999bd67048697b44acec4c1524430c0e160be49a23a025ee7dce1b47345c",
+    "narrate.py.preB12": "6ec91a47df4d80dc3e2492553860faa187fd72eadf057f3cfa70080535c7dadc",
+    "narration_script.py.preB12": "2e3e558258ecb0e88a1f71a58b56e82337a15a0dcf8c5e19be7f067c0e35b3d1",
+    "tts.json.preB12": "18a0d3def0d274ac5a077ec1f896c39a889092669c1e0ce516f109e8690f2d1e"
+  }
+}

@@ -1,0 +1,37 @@
+setUpClass (__main__.CreativeRoutes) ... ERROR
+test_restart_resumes_same_session (__main__.Resume.test_restart_resumes_same_session) ... ERROR
+
+======================================================================
+ERROR: setUpClass (__main__.CreativeRoutes)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/private/var/folders/nt/vdnhl0951xxcm0gfcqqc33tr0000gp/T/ideafrme_m4_1xc7yn35/tests/test_m6_creative.py", line 67, in setUpClass
+    cls.S = Server(); cls.S.start()
+            ^^^^^^^^
+  File "/private/var/folders/nt/vdnhl0951xxcm0gfcqqc33tr0000gp/T/ideafrme_m4_1xc7yn35/tests/test_m6_creative.py", line 27, in __init__
+    self.port = free_port(); self.proc = None
+                ^^^^^^^^^^^
+  File "/private/var/folders/nt/vdnhl0951xxcm0gfcqqc33tr0000gp/T/ideafrme_m4_1xc7yn35/tests/test_m6_creative.py", line 18, in free_port
+    with socket.socket() as s: s.bind(("127.0.0.1", 0)); return s.getsockname()[1]
+                               ^^^^^^^^^^^^^^^^^^^^^^^^
+PermissionError: [Errno 1] Operation not permitted
+
+======================================================================
+ERROR: test_restart_resumes_same_session (__main__.Resume.test_restart_resumes_same_session)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/private/var/folders/nt/vdnhl0951xxcm0gfcqqc33tr0000gp/T/ideafrme_m4_1xc7yn35/tests/test_m6_creative.py", line 269, in test_restart_resumes_same_session
+    S = Server()
+        ^^^^^^^^
+  File "/private/var/folders/nt/vdnhl0951xxcm0gfcqqc33tr0000gp/T/ideafrme_m4_1xc7yn35/tests/test_m6_creative.py", line 27, in __init__
+    self.port = free_port(); self.proc = None
+                ^^^^^^^^^^^
+  File "/private/var/folders/nt/vdnhl0951xxcm0gfcqqc33tr0000gp/T/ideafrme_m4_1xc7yn35/tests/test_m6_creative.py", line 18, in free_port
+    with socket.socket() as s: s.bind(("127.0.0.1", 0)); return s.getsockname()[1]
+                               ^^^^^^^^^^^^^^^^^^^^^^^^
+PermissionError: [Errno 1] Operation not permitted
+
+----------------------------------------------------------------------
+Ran 1 test in 0.003s
+
+FAILED (errors=2)

@@ -1,0 +1,822 @@
+{
+  "passed": 96,
+  "total": 98,
+  "results": [
+    {
+      "test": "numbers: known spoken forms",
+      "passed": true,
+      "detail": "{31: 'ముప్పై ఒక్క', 17805: 'పదిహేడు వేల ఎనిమిది వందల ఐదు', 100000: 'ఒక లక్ష', 3100000: 'ముప్పై ఒక్క లక్షల', 105: 'నూట ఐదు', 250000: 'రెండు లక్షల యాభై వేల'}"
+    },
+    {
+      "test": "numbers: 6000 numbers read back exactly by the existing reader",
+      "passed": true,
+      "detail": "[]"
+    },
+    {
+      "test": "numbers: sentence spoken form",
+      "passed": true,
+      "detail": "అక్కచెల్లెమ్మలకు ముప్పై ఒక్క లక్షల ఇళ్ల పట్టాలు."
+    },
+    {
+      "test": "numbers: decimals and joined endings are marked for review",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "test": "legacy: existing number reader gives identical results",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "test": "script: written text kept exactly",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "test": "script: approval stores the fingerprint in narration.json and project.json",
+      "passed": true,
+      "detail": "f541392047c6"
+    },
+    {
+      "test": "script: a ❓ number is refused without --checked",
+      "passed": true,
+      "detail": "not approved:\n  line 1: number marked ❓ - check it, then approve with --checked\n"
+    },
+    {
+      "test": "script: digits left in the spoken form are refused even with --checked",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "test": "script: verify OK after approval",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "test": "script: an edit after approval -> NARRATION_TEXT_CHANGED",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "test": "script: restored text verifies again",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "test": "narrate: refuses an unapproved script (NARRATION_NOT_APPROVED)",
+      "passed": true,
+      "detail": "['NARRATION_NOT_APPROVED']"
+    },
+    {
+      "test": "narrate: AI narration made (fake voice)",
+      "passed": true,
+      "detail": "([], '')"
+    },
+    {
+      "test": "narrate: pauses between sentences = style pause (news 0.35 s)",
+      "passed": true,
+      "detail": "[0.35, 0.35]"
+    },
+    {
+      "test": "narrate: timeline carries the approval fingerprint and audio checksum",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "test": "narrate: 3 sentences spoken, 0 from cache",
+      "passed": true,
+      "detail": "{'spoken': 3, 'cached': 0, 'load_s': 0.01, 'per_sentence': [{'event': 'sentence', 'id': '0', 'n': 1, 'of': 3, 'audio_s': 3.3, 'synth_s': 0.0}, {'event': 'sentence', 'id': '1', 'n': 2, 'of': 3, 'audio_s': 3.45, 'synth_s': 0.0}, {'event': 'sentence', 'id': '2', 'n': 3, 'of': 3, 'audio_s': 3.25, 'synth_s': 0.0}], 'restart_every': 3, 'batches': [{'sentences': 3, 'peak_rss_gb': 0.0, 'load_s': 0.01}]}"
+    },
+    {
+      "test": "cache: a re-run speaks nothing again",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "test": "cache: re-run audio is identical",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "test": "restart: a fresh voice process every N sentences (N=2, 3 sentences -> 2 loads)",
+      "passed": true,
+      "detail": "([], [{'sentences': 2, 'peak_rss_gb': 0.0, 'load_s': 0.01}, {'sentences': 1, 'peak_rss_gb': 0.0, 'load_s': 0.01}])"
+    },
+    {
+      "test": "restart: same audio, text and timing as one long run",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "test": "settings: 10 ms edge fade is the accepted default (tts.json)",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "test": "restart: off by default (tts.json restart_every = 0)",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "test": "continuity (exact samples): every pause is digital silence",
+      "passed": true,
+      "detail": "[0, 0]"
+    },
+    {
+      "test": "approved audio preserved: with the fade off, the corrected code makes the same audio as before the corrections",
+      "passed": true,
+      "detail": "([], '')"
+    },
+    {
+      "test": "fade 10 ms: sentence and pause positions unchanged (alignment and pauses identical)",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "test": "fade 10 ms: every sample outside the 10 ms edges is identical (no speech cut, nothing else changed)",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "test": "fade 10 ms: the faded edges lie in the quiet trim margin (below the speech threshold)",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "test": "fade 10 ms: edges now start and end at silence",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "test": "length: a long sentence is marked ❓ and refused without --checked",
+      "passed": true,
+      "detail": "{'est_speech_s': 10.52, 'spoken_chars': 107, 'too_long': True}"
+    },
+    {
+      "test": "length: after review (--checked) it is approved exactly as written - never split or rewritten",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "test": "length: 70-character rule",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "test": "memory label: a cached run says 'model not loaded' (no fake measurement)",
+      "passed": true,
+      "detail": "model not loaded (every sentence came from the cache)"
+    },
+    {
+      "test": "speed 1.15x rubberband: not in this FFmpeg -> clear SPEED_METHOD_UNAVAILABLE, nothing changed",
+      "passed": true,
+      "detail": "['SPEED_METHOD_UNAVAILABLE']"
+    },
+    {
+      "test": "speed 1.2x rubberband: not in this FFmpeg -> clear SPEED_METHOD_UNAVAILABLE, nothing changed",
+      "passed": true,
+      "detail": "['SPEED_METHOD_UNAVAILABLE']"
+    },
+    {
+      "test": "speed 1.15x atempo: speech 1.15x shorter (±3%)",
+      "passed": true,
+      "detail": "([1.161, 1.153, 1.161], [])"
+    },
+    {
+      "test": "speed 1.15x atempo: pauses unchanged",
+      "passed": true,
+      "detail": "[0.35, 0.35]"
+    },
+    {
+      "test": "speed 1.15x atempo: pitch kept (±3%)",
+      "passed": true,
+      "detail": "(np.float64(220.1), np.float64(220.1))"
+    },
+    {
+      "test": "speed 1.15x atempo: uses the cache (no new speaking)",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "test": "speed 1.2x atempo: speech 1.2x shorter (±3%)",
+      "passed": true,
+      "detail": "([1.201, 1.21, 1.201], [])"
+    },
+    {
+      "test": "speed 1.2x atempo: pauses unchanged",
+      "passed": true,
+      "detail": "[0.35, 0.35]"
+    },
+    {
+      "test": "speed 1.2x atempo: pitch kept (±3%)",
+      "passed": true,
+      "detail": "(np.float64(220.1), np.float64(220.2))"
+    },
+    {
+      "test": "speed 1.2x atempo: uses the cache (no new speaking)",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "test": "speed: FFmpeg filter check recognises a filter that does not exist",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "test": "speed: 1.3x refused (NARRATION_SPEED_INVALID)",
+      "passed": true,
+      "detail": "['NARRATION_SPEED_INVALID']"
+    },
+    {
+      "test": "speed: rs.py refuses 1.3x too",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "test": "error: TTS_MEMORY_LIMIT (memory)",
+      "passed": false,
+      "detail": "(['TTS_FAILED'], '')"
+    },
+    {
+      "test": "memory: warning sent before the stop",
+      "passed": false,
+      "detail": ""
+    },
+    {
+      "test": "error: TTS_ENV_MISSING (env)",
+      "passed": true,
+      "detail": "(['TTS_ENV_MISSING'], '')"
+    },
+    {
+      "test": "error: TTS_MODEL_MISSING (model)",
+      "passed": true,
+      "detail": "(['TTS_MODEL_MISSING'], '')"
+    },
+    {
+      "test": "error: TTS_MODEL_MISSING (worker_missing)",
+      "passed": true,
+      "detail": "(['TTS_MODEL_MISSING'], '')"
+    },
+    {
+      "test": "error: TTS_FAILED (crash)",
+      "passed": true,
+      "detail": "(['TTS_FAILED'], '')"
+    },
+    {
+      "test": "error: BUSY_HEAVY_MODEL (busy)",
+      "passed": true,
+      "detail": "(['BUSY_HEAVY_MODEL'], '')"
+    },
+    {
+      "test": "error: NARRATION_VOICE_INVALID (voice)",
+      "passed": true,
+      "detail": "(['NARRATION_VOICE_INVALID'], '')"
+    },
+    {
+      "test": "lock: released after every run",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "test": "recorded: missing recording refused (NARRATION_FILE_MISSING)",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "test": "recorded: recording read, sentence times left for alignment",
+      "passed": true,
+      "detail": "[]"
+    },
+    {
+      "test": "align: captions are the approved written words, in order",
+      "passed": true,
+      "detail": "(16, [])"
+    },
+    {
+      "test": "align: numbers highlighted",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "test": "align: every sentence's first caption within 0.1 s of its speech",
+      "passed": true,
+      "detail": "[0.0, 0.0, 0.0]"
+    },
+    {
+      "test": "align: captions inside their sentence and never overlapping",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "test": "align: a missing word is listed for its own sentence only",
+      "passed": true,
+      "detail": "(0.087, [2])"
+    },
+    {
+      "test": "align: a number heard differently is listed for the user",
+      "passed": true,
+      "detail": "[['numbers heard [32.0, 100000.0] vs approved [3100000.0]']]"
+    },
+    {
+      "test": "align: speech-to-text times 0.6 s late do not move words to the wrong sentence",
+      "passed": true,
+      "detail": "[(1, 0.0, 'అక్కచెల్లెమ్మలకు ముప్పై ఒక్క ల'), (2, 0.0, 'సొంతింటి కల నెరవేర్చేలా పదిహేడ'), (3, 0.0, 'పేదవాడి ఆరోగ్యానికి పదివేల విల')]"
+    },
+    {
+      "test": "align: joined number words read correctly ('పదివేల' = 10,000)",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "test": "align: unchanged audio re-uses the earlier speech-to-text (no model loaded)",
+      "passed": true,
+      "detail": "[]"
+    },
+    {
+      "test": "align: approved script untouched after the check",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "test": "recorded: sentence times from speech-to-text",
+      "passed": true,
+      "detail": "[]"
+    },
+    {
+      "test": "slides: edit length follows the narration (±1 frame)",
+      "passed": true,
+      "detail": "(10.066, 10.074, [])"
+    },
+    {
+      "test": "slides: slide/sentence count mismatch refused",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "test": "slides (AI narration): photos stay below the disclosure band, also at full push-in",
+      "passed": true,
+      "detail": "{'reserve': 0.16, 'orange_pixels_in_band': 0, 'errors': []}"
+    },
+    {
+      "test": "legacy: slides without narration identical to pre-B1 (frames + cues)",
+      "passed": true,
+      "detail": "('', '')"
+    },
+    {
+      "test": "legacy: frame.png and window_mask.png byte-identical to pre-B1, layout.json identical apart from the B2 'elements' list (3 brands x 3 platforms)",
+      "passed": true,
+      "detail": "[]"
+    },
+    {
+      "test": "disclosure: complete approved line on 2 lines at >= 30 px, inside the safe area, covering no logo/headline/social row, window hole correct (3 brands x 3 platforms x 2 positions)",
+      "passed": true,
+      "detail": "[]"
+    },
+    {
+      "test": "disclosure: absent for narration 'recorded'",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "test": "disclosure: absent for narration 'none'",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "test": "qa: AI disclosure found readable on sampled frames (framed brand)",
+      "passed": true,
+      "detail": "{'name': 'ai_disclosure', 'value': 'on screen, inside safe area', 'rule': 'AI narration: Telugu disclosure readable on screen, inside the safe area', 'passed': True}"
+    },
+    {
+      "test": "qa: clipping check passes on clean audio",
+      "passed": true,
+      "detail": "{'name': 'clipping', 'value': 0, 'rule': 'no clipped audio samples', 'passed': True}"
+    },
+    {
+      "test": "qa: AI narration WITHOUT a visible disclosure fails",
+      "passed": true,
+      "detail": "['not readable at 2.4s (text 104, background 104)', 'not readable at 2.8s (text 104, background 104)', 'not readable at 3.2s (text 104, background 104)']"
+    },
+    {
+      "test": "qa: AI disclosure found readable (fullscreen brand)",
+      "passed": true,
+      "detail": "{'name': 'ai_disclosure', 'value': 'on screen, inside safe area', 'rule': 'AI narration: Telugu disclosure readable on screen, inside the safe area', 'passed': True}"
+    },
+    {
+      "test": "qa: no disclosure for narration none passes",
+      "passed": true,
+      "detail": "{'name': 'ai_disclosure', 'value': 'absent', 'rule': \"no AI-voice disclosure for narration 'none'\", 'passed': True}"
+    },
+    {
+      "test": "qa: clipped audio is caught",
+      "passed": true,
+      "detail": "20343"
+    },
+    {
+      "test": "legacy: QA on a project without narration gives exactly the same checks as pre-B1",
+      "passed": true,
+      "detail": "(['size', 'fps', 'codecs', 'loudness', 'true_peak', 'black_frames'], ['size', 'fps', 'codecs', 'loudness', 'true_peak', 'black_frames'])"
+    },
+    {
+      "test": "legacy: voice.py without a narration setting behaves as before (no key -> NO_VOICE)",
+      "passed": true,
+      "detail": "NO_VOICE: ELEVENLABS_API_KEY not set -> make this reel as text + music.\n"
+    },
+    {
+      "test": "voice.py: narration none -> text + music, no error",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "test": "voice.py: narration ai -> local narration (not ElevenLabs)",
+      "passed": true,
+      "detail": "[]"
+    },
+    {
+      "test": "voice.py: a script file that differs from the approved one is refused",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "test": "adapter: narrated project renders only when ready (fake narration ready -> next gate is the missing edit)",
+      "passed": true,
+      "detail": "['EDIT_MISSING']"
+    },
+    {
+      "test": "adapter: unapproved narration blocks rendering",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "test": "adapter: narration audio changed after it was made -> blocked",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "test": "adapter: voice changed since the audio was made -> blocked",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "test": "adapter: narrate action -> events + done ok with memory, error rate and items to check",
+      "passed": true,
+      "detail": "{'ok': True, 'cer_total': 0.087, 'duration': 10.074}"
+    },
+    {
+      "test": "legacy: adapter render events for a project without narration identical to pre-B1",
+      "passed": true,
+      "detail": "[{'event': 'error', 'step': 'adapter', 'code': 'EDIT_MISSING', 'message': 'missing build/edit.mp4: build the edit first'}, {'event': 'done', 'ok': False}]"
+    },
+    {
+      "test": "legacy: adapter check output identical to pre-B1",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "test": "legacy: rs.py settings validation identical",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "test": "legacy: rs.py 'new project' code identical (no narration fields added to new projects)",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "test": "legacy: mix.py output identical to pre-B1 (voice + none)",
+      "passed": true,
+      "detail": "('', '')"
+    },
+    {
+      "test": "mix: AI narration is not cleaned again",
+      "passed": true,
+      "detail": "vdnhl0951xxcm0gfcqqc33tr0000gp/T/rs_b1test__t45vlqw/mix_ai/build/out_mix.py.wav\n"
+    }
+  ],
+  "speed": {
+    "rubberband_available": false,
+    "atempo_available": true,
+    "atempo_1.15": {
+      "ratio": [
+        1.161,
+        1.153,
+        1.161
+      ],
+      "gaps": [
+        0.35,
+        0.35
+      ],
+      "pitch": [
+        220.1,
+        220.1
+      ],
+      "spoken": 0
+    },
+    "atempo_1.2": {
+      "ratio": [
+        1.201,
+        1.21,
+        1.201
+      ],
+      "gaps": [
+        0.35,
+        0.35
+      ],
+      "pitch": [
+        220.1,
+        220.2
+      ],
+      "spoken": 0
+    }
+  },
+  "disclosure": {
+    "jagan_for_andhra|instagram|window_top": {
+      "ok": true,
+      "box": [
+        225,
+        590,
+        856,
+        716
+      ],
+      "px": 34,
+      "lines": [
+        "ఈ వీడియోలో AI ద్వారా రూపొందించిన",
+        "వాయిస్‌ఓవర్ ఉపయోగించబడింది."
+      ],
+      "issues": [],
+      "error": null
+    },
+    "jagan_for_andhra|instagram|window_bottom": {
+      "ok": true,
+      "box": [
+        225,
+        1420,
+        856,
+        1546
+      ],
+      "px": 34,
+      "lines": [
+        "ఈ వీడియోలో AI ద్వారా రూపొందించిన",
+        "వాయిస్‌ఓవర్ ఉపయోగించబడింది."
+      ],
+      "issues": [],
+      "error": null
+    },
+    "jagan_for_andhra|youtube|window_top": {
+      "ok": true,
+      "box": [
+        225,
+        590,
+        856,
+        716
+      ],
+      "px": 34,
+      "lines": [
+        "ఈ వీడియోలో AI ద్వారా రూపొందించిన",
+        "వాయిస్‌ఓవర్ ఉపయోగించబడింది."
+      ],
+      "issues": [],
+      "error": null
+    },
+    "jagan_for_andhra|youtube|window_bottom": {
+      "ok": true,
+      "box": [
+        225,
+        1420,
+        856,
+        1546
+      ],
+      "px": 34,
+      "lines": [
+        "ఈ వీడియోలో AI ద్వారా రూపొందించిన",
+        "వాయిస్‌ఓవర్ ఉపయోగించబడింది."
+      ],
+      "issues": [],
+      "error": null
+    },
+    "jagan_for_andhra|facebook|window_top": {
+      "ok": true,
+      "box": [
+        225,
+        590,
+        856,
+        716
+      ],
+      "px": 34,
+      "lines": [
+        "ఈ వీడియోలో AI ద్వారా రూపొందించిన",
+        "వాయిస్‌ఓవర్ ఉపయోగించబడింది."
+      ],
+      "issues": [],
+      "error": null
+    },
+    "jagan_for_andhra|facebook|window_bottom": {
+      "ok": true,
+      "box": [
+        225,
+        1420,
+        856,
+        1546
+      ],
+      "px": 34,
+      "lines": [
+        "ఈ వీడియోలో AI ద్వారా రూపొందించిన",
+        "వాయిస్‌ఓవర్ ఉపయోగించబడింది."
+      ],
+      "issues": [],
+      "error": null
+    },
+    "tech_ai_tools|instagram|top": {
+      "ok": true,
+      "box": [
+        225,
+        264,
+        856,
+        390
+      ],
+      "px": 34,
+      "lines": [
+        "ఈ వీడియోలో AI ద్వారా రూపొందించిన",
+        "వాయిస్‌ఓవర్ ఉపయోగించబడింది."
+      ],
+      "issues": [],
+      "error": null
+    },
+    "tech_ai_tools|instagram|bottom": {
+      "ok": true,
+      "box": [
+        225,
+        1420,
+        856,
+        1546
+      ],
+      "px": 34,
+      "lines": [
+        "ఈ వీడియోలో AI ద్వారా రూపొందించిన",
+        "వాయిస్‌ఓవర్ ఉపయోగించబడింది."
+      ],
+      "issues": [],
+      "error": null
+    },
+    "tech_ai_tools|youtube|top": {
+      "ok": true,
+      "box": [
+        225,
+        264,
+        856,
+        390
+      ],
+      "px": 34,
+      "lines": [
+        "ఈ వీడియోలో AI ద్వారా రూపొందించిన",
+        "వాయిస్‌ఓవర్ ఉపయోగించబడింది."
+      ],
+      "issues": [],
+      "error": null
+    },
+    "tech_ai_tools|youtube|bottom": {
+      "ok": true,
+      "box": [
+        225,
+        1420,
+        856,
+        1546
+      ],
+      "px": 34,
+      "lines": [
+        "ఈ వీడియోలో AI ద్వారా రూపొందించిన",
+        "వాయిస్‌ఓవర్ ఉపయోగించబడింది."
+      ],
+      "issues": [],
+      "error": null
+    },
+    "tech_ai_tools|facebook|top": {
+      "ok": true,
+      "box": [
+        225,
+        264,
+        856,
+        390
+      ],
+      "px": 34,
+      "lines": [
+        "ఈ వీడియోలో AI ద్వారా రూపొందించిన",
+        "వాయిస్‌ఓవర్ ఉపయోగించబడింది."
+      ],
+      "issues": [],
+      "error": null
+    },
+    "tech_ai_tools|facebook|bottom": {
+      "ok": true,
+      "box": [
+        225,
+        1420,
+        856,
+        1546
+      ],
+      "px": 34,
+      "lines": [
+        "ఈ వీడియోలో AI ద్వారా రూపొందించిన",
+        "వాయిస్‌ఓవర్ ఉపయోగించబడింది."
+      ],
+      "issues": [],
+      "error": null
+    },
+    "editing_freelance|instagram|top": {
+      "ok": true,
+      "box": [
+        225,
+        264,
+        856,
+        390
+      ],
+      "px": 34,
+      "lines": [
+        "ఈ వీడియోలో AI ద్వారా రూపొందించిన",
+        "వాయిస్‌ఓవర్ ఉపయోగించబడింది."
+      ],
+      "issues": [],
+      "error": null
+    },
+    "editing_freelance|instagram|bottom": {
+      "ok": true,
+      "box": [
+        225,
+        1420,
+        856,
+        1546
+      ],
+      "px": 34,
+      "lines": [
+        "ఈ వీడియోలో AI ద్వారా రూపొందించిన",
+        "వాయిస్‌ఓవర్ ఉపయోగించబడింది."
+      ],
+      "issues": [],
+      "error": null
+    },
+    "editing_freelance|youtube|top": {
+      "ok": true,
+      "box": [
+        225,
+        264,
+        856,
+        390
+      ],
+      "px": 34,
+      "lines": [
+        "ఈ వీడియోలో AI ద్వారా రూపొందించిన",
+        "వాయిస్‌ఓవర్ ఉపయోగించబడింది."
+      ],
+      "issues": [],
+      "error": null
+    },
+    "editing_freelance|youtube|bottom": {
+      "ok": true,
+      "box": [
+        225,
+        1420,
+        856,
+        1546
+      ],
+      "px": 34,
+      "lines": [
+        "ఈ వీడియోలో AI ద్వారా రూపొందించిన",
+        "వాయిస్‌ఓవర్ ఉపయోగించబడింది."
+      ],
+      "issues": [],
+      "error": null
+    },
+    "editing_freelance|facebook|top": {
+      "ok": true,
+      "box": [
+        225,
+        264,
+        856,
+        390
+      ],
+      "px": 34,
+      "lines": [
+        "ఈ వీడియోలో AI ద్వారా రూపొందించిన",
+        "వాయిస్‌ఓవర్ ఉపయోగించబడింది."
+      ],
+      "issues": [],
+      "error": null
+    },
+    "editing_freelance|facebook|bottom": {
+      "ok": true,
+      "box": [
+        225,
+        1420,
+        856,
+        1546
+      ],
+      "px": 34,
+      "lines": [
+        "ఈ వీడియోలో AI ద్వారా రూపొందించిన",
+        "వాయిస్‌ఓవర్ ఉపయోగించబడింది."
+      ],
+      "issues": [],
+      "error": null
+    }
+  }
+}

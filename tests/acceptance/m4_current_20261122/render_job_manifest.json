@@ -1,0 +1,143 @@
+{
+ "format": "ideaframe-engine-job@1",
+ "job": "20261122-134701-2026-11-03_reel_002_development-2e2b39",
+ "project": "2026-11-03_reel_002_development",
+ "created": "2026-11-22 13:47:56",
+ "engine": {
+  "unchanged": true,
+  "files": {
+   "adapter.py": "8317ac6e10b93e20f65f48ab4c48524b093b184e8f563ec313217cd7112314fd",
+   "asr.json": "ac791a311b29f98ea39b7e46ed5fafc88ca238943c6043166b512cf8cf109c9e",
+   "asr_worker.py": "ffb112e76746d305ab0d499b63da76940b156fe646a180a758c68435417d2461",
+   "assemble.py": "b6d2447e5424daa397103601f30f22b0b280c1e0bfa6bfd67961452d7df262ab",
+   "build.py": "5f79f82fca6f060a44023282bba461592b38c201988dcb6816fa99b748d63b54",
+   "captions.py": "59645a1a90a830358ee8cc47f6c8a28f2123d588091fb852288533d6a026d3a9",
+   "common.py": "182cd53365f16663b4010c5db69f956bc157e69dd63e977dde99f4ed9fadf08e",
+   "cut.py": "1185b4c1421f34154abb2e4bce14d2e3901e35c391eccdacfce5c5f195b4faaf",
+   "esrgan_np.py": "4df3abd902ceef75bb58f5506dcc9124578d176847ca057539a927ba633c754a",
+   "facetrack.py": "81c267cd68558a55aab34ef68e6f579b6c664b5bb4a3cf54619829b9e6453a47",
+   "frame.py": "e6dfe1b77d8920179b8d38910fdefb3d5561626d759bcc2d37465fcf47c01479",
+   "matte.py": "4ba53757d8c46556742652866ca263fa1ee0ca7f14749f7a6ced35934c747e1b",
+   "mix.py": "a9fdb6eb695bea7b4ff6224eaf269dfdec1e434d9428d491816fa37b50bc47b0",
+   "motion.py": "21ff82ee5c6eddb43cdbf1dfc00fdaa950fd60ac339bbb7ad2ec5b50ae6c8fee",
+   "music.py": "2ed208af841b4bb4ba2eaefbd8d576c8cd1f220eb7097cab9c8f3bba4c5a01a3",
+   "narrate.py": "ffe9a3710a067142b61658d27073aa905fc474868c4df4a9c548f41f8fd2dd8c",
+   "narration_align.py": "e46923d44fedfa389ad5536519b2948422c7acb13e7b97da5bfaf74f0eae36c6",
+   "narration_script.py": "005227d276d3da447a5237dec50648f3beaf9c0e06a121f42da6693341aa9557",
+   "planner.py": "049c18fb44f93e6e26274993423ab1ebc7f139ccc3da429a34ef9d09fbb86389",
+   "post.py": "dba5a2af674e092ac01c983b624a9feb4b97454c859a437b229fc8a893b5bb22",
+   "providers.py": "930be9f8ac42f067d3878dac12414b11c9f7a04ce3cd30b6600ca52cdf417371",
+   "qa.py": "6372083479c73aa6aae891d2631351b2d7e7ab03b53cbd6c63e24d94ceff597e",
+   "rs.py": "bcc9cda0b016c4dd8a902e3bc3c552df7d3186de0cc638b1d4c32cccde141468",
+   "slides.py": "8cffe7cd3288d99ad3ad5a41db8c5c307fc49ee79cdf1c70f56f776ffcfdb103",
+   "te_numbers.py": "6b8c0db5cb9d489eafdfd0b35b3adc3acf437db7b77619e06eb5871159b9d3d9",
+   "title.py": "fd6d855aed81c90ab5f0400f896beba1b215eef72c880e5bfca6dc58ff0ba925",
+   "transcribe.py": "42772836240ff700e45777cb5f6edb1d0bc09ea47343dded5bd79fb72fe1baaa",
+   "tts.json": "383e0592d6b25cdf1a26a6208a1c0319de47d9452b4bbfdc76e1ed6c503f95fd",
+   "tts_worker.py": "4debbb1d1d3d224000d924517db37da600fd26b92ad9f59afb012a53ce05fd6f",
+   "voice.py": "472bd8802bed39abeea1388b9c37ba90799786f4056b8b9906b04c4cebcc9f51"
+  }
+ },
+ "brand": {
+  "kind": "folder",
+  "path": "brands/jagan_for_andhra"
+ },
+ "project_inputs": {
+  "project.json": "c360184e7a1a508eaabf482dcf0e2599b9f3fccf2f27a1274d5e5cb2ab61f36e",
+  "build/edit.mp4": "4979716b06d4755ec4d4c56477201ef446af2d9892a5cac12255afe54f484ef7",
+  "build/edit_audio.wav": "1c86117383d6bfb701a9d77d3dd9d8370930743bc6fbd0ee85b9b9f20a7bd7fd"
+ },
+ "command": [
+  "engine/adapter.py",
+  "render",
+  "2026-11-03_reel_002_development",
+  "--platform",
+  "instagram",
+  "--platform",
+  "youtube",
+  "--platform",
+  "facebook",
+  "--baseline",
+  "/private/var/folders/nt/vdnhl0951xxcm0gfcqqc33tr0000gp/T/ideafrme_m4_1xc7yn35/tests/baseline_reel_002.json"
+ ],
+ "exit_code": 0,
+ "ok": true,
+ "qa_passed": true,
+ "errors": [],
+ "outputs": [
+  {
+   "platform": "instagram",
+   "path": "exports/2026-11-03_reel_002_development_jagan_for_andhra_instagram_v1.mp4",
+   "sha256": "38ec3ad60f275db1d6fd5097f70131e0497bb007808f6dc1a9ceab9005ad1d93",
+   "bytes": 70374099,
+   "qa_passed": true,
+   "qa": {
+    "frames": 1849,
+    "file_size": 70374099,
+    "loudness_lufs": -14.1,
+    "true_peak_db": -1.4,
+    "passed": true
+   },
+   "checks": {
+    "size": true,
+    "fps": true,
+    "codecs": true,
+    "loudness": true,
+    "true_peak": true,
+    "black_frames": true,
+    "baseline_frames": true,
+    "baseline_file_size": true
+   }
+  },
+  {
+   "platform": "youtube",
+   "path": "exports/2026-11-03_reel_002_development_jagan_for_andhra_youtube_v1.mp4",
+   "sha256": "93ddec74786f3f41e3b2c4084b16f5a10a1b75d6bfb4aae27ac6eb4fa016b959",
+   "bytes": 70326487,
+   "qa_passed": true,
+   "qa": {
+    "frames": 1849,
+    "file_size": 70326487,
+    "loudness_lufs": -14.1,
+    "true_peak_db": -1.4,
+    "passed": true
+   },
+   "checks": {
+    "size": true,
+    "fps": true,
+    "codecs": true,
+    "loudness": true,
+    "true_peak": true,
+    "black_frames": true,
+    "baseline_frames": true,
+    "baseline_file_size": true
+   }
+  },
+  {
+   "platform": "facebook",
+   "path": "exports/2026-11-03_reel_002_development_jagan_for_andhra_facebook_v1.mp4",
+   "sha256": "5491fea1b7f514b89a8593d352d106801412c28021a4f85be0c01e3f17d0a00e",
+   "bytes": 70491597,
+   "qa_passed": true,
+   "qa": {
+    "frames": 1849,
+    "file_size": 70491597,
+    "loudness_lufs": -14.1,
+    "true_peak_db": -1.4,
+    "passed": true
+   },
+   "checks": {
+    "size": true,
+    "fps": true,
+    "codecs": true,
+    "loudness": true,
+    "true_peak": true,
+    "black_frames": true,
+    "baseline_frames": true,
+    "baseline_file_size": true
+   }
+  }
+ ],
+ "seconds": 55.7,
+ "stderr_tail": []
+}
