@@ -351,7 +351,7 @@ def cancel(jid: str):
 @app.get("/api/projects/{name}/source_frame")
 def source_frame(name: str, t: float = 3.0):
     """One still from the source video (for choosing the speaker crop). Written to build/source_frame.jpg."""
-    d = _name_ok(name); P = load(os.path.join(d, "project.json"))
+    d = _name_ok(name, write=True); P = load(os.path.join(d, "project.json"))
     if not P.get("video"): raise HTTPException(400, "no source video")
     out = os.path.join(d, "build", "source_frame.jpg")
     r = subprocess.run(["ffmpeg", "-y", "-loglevel", "error", "-ss", str(max(0, t)), "-i", os.path.join(d, P["video"]), "-frames:v", "1", "-vf", "scale=640:-2", out], capture_output=True, text=True)

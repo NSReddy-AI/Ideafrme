@@ -102,6 +102,22 @@ def rss_bytes(pid):
         raise RuntimeError("ps returned no RSS measurement")
     return int(value) * 1024
 
+def worker_rss(p):
+    """Allow a just-exited worker to be reaped before declaring monitor failure.
+
+    macOS can remove proc_pidinfo before waitpid observes exit. A live worker
+    still fails closed after this bounded grace period; no zero-RSS fallback.
+    """
+    try:
+        return rss_bytes(p.pid)
+    except (OSError, RuntimeError, ValueError):
+        try:
+            p.wait(timeout=0.1)
+        except subprocess.TimeoutExpired:
+            raise RuntimeError("cannot measure live voice worker memory")
+        return 0
+
+
 def unload_ollama():
     """Free the memory a local Ollama model may still hold (local server only). Not running = nothing to do."""
     url = "http://localhost:11434"
@@ -159,7 +175,7 @@ def synthesize(C, lines, voice, style, cache, T):
         err, killed, load_s = None, None, None
         while True:
             try:
-                r = rss_bytes(p.pid)
+                r = worker_rss(p)
             except (OSError, RuntimeError, ValueError) as exc:
                 if p.poll() is None:
                     p.kill()
