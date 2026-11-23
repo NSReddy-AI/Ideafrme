@@ -59,8 +59,48 @@ def stretch(x, sr, speed, method, T, tag):
     return read_wav(b)[0]
 
 def rss_bytes(pid):
-    try: return int(subprocess.run(["ps", "-o", "rss=", "-p", str(pid)], capture_output=True, text=True, timeout=5).stdout.strip() or 0) * 1024
-    except Exception: return 0
+    """Return live worker RSS; raise if a running process cannot be measured."""
+    if sys.platform == "darwin":
+        import ctypes
+        import ctypes.util
+
+        class ProcTaskInfo(ctypes.Structure):
+            _fields_ = [
+                ("virtual", ctypes.c_uint64),
+                ("resident", ctypes.c_uint64),
+                ("total_user", ctypes.c_uint64),
+                ("total_system", ctypes.c_uint64),
+                ("threads_user", ctypes.c_uint64),
+                ("threads_system", ctypes.c_uint64),
+            ] + [(f"field_{i}", ctypes.c_int32) for i in range(12)]
+
+        libpath = ctypes.util.find_library("proc")
+        if not libpath:
+            raise RuntimeError("macOS libproc unavailable")
+        lib = ctypes.CDLL(libpath, use_errno=True)
+        lib.proc_pidinfo.argtypes = [
+            ctypes.c_int, ctypes.c_int, ctypes.c_uint64,
+            ctypes.c_void_p, ctypes.c_int
+        ]
+        lib.proc_pidinfo.restype = ctypes.c_int
+        info = ProcTaskInfo()
+        result = lib.proc_pidinfo(
+            pid, 4, 0, ctypes.byref(info), ctypes.sizeof(info)
+        )
+        if result != ctypes.sizeof(info):
+            raise RuntimeError(
+                f"proc_pidinfo returned {result}/{ctypes.sizeof(info)} bytes"
+            )
+        return info.resident
+
+    result = subprocess.run(
+        ["ps", "-o", "rss=", "-p", str(pid)],
+        capture_output=True, text=True, timeout=5, check=True
+    )
+    value = result.stdout.strip()
+    if not value:
+        raise RuntimeError("ps returned no RSS measurement")
+    return int(value) * 1024
 
 def unload_ollama():
     """Free the memory a local Ollama model may still hold (local server only). Not running = nothing to do."""
@@ -118,11 +158,19 @@ def synthesize(C, lines, voice, style, cache, T):
         threading.Thread(target=lambda p=p, e=errbuf: e.extend(p.stderr.readlines()), daemon=True).start()
         err, killed, load_s = None, None, None
         while True:
-            r = rss_bytes(p.pid); bpeak = max(bpeak, r)
+            try:
+                r = rss_bytes(p.pid)
+            except (OSError, RuntimeError, ValueError) as exc:
+                if p.poll() is None:
+                    p.kill()
+                    p.wait()
+                    fail("TTS_MEMORY_MONITOR_FAILED", f"cannot monitor voice worker memory: {exc}")
+                r = 0
+            bpeak = max(bpeak, r)
+            if r > warn and not st["warned"]:
+                st["warned"] = True; emit("warning", code="TTS_MEMORY_HIGH", message=f"voice model is using {r / 1e9:.2f} GB (warning level {warn / 1e9:.1f} GB)")
             if r > limit and killed is None:
                 p.kill(); killed = r
-            elif r > warn and not st["warned"]:
-                st["warned"] = True; emit("warning", code="TTS_MEMORY_HIGH", message=f"voice model is using {r / 1e9:.2f} GB (warning level {warn / 1e9:.1f} GB)")
             try: line = q.get(timeout=poll)
             except queue.Empty:
                 if p.poll() is not None and q.empty(): break
