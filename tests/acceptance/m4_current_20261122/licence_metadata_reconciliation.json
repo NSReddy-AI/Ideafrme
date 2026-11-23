@@ -1,0 +1,60 @@
+[
+  {
+    "env": "reelstudio",
+    "package": "kiwisolver",
+    "version": "1.5.1",
+    "scanner_class": "check",
+    "recorded_rows": [
+      "| kiwisolver | 1.5.1 | BSD-3-Clause |",
+      "| kiwisolver | 1.5.1 | BSD-3-Clause |"
+    ]
+  },
+  {
+    "env": "reelstudio",
+    "package": "matplotlib",
+    "version": "3.11.2",
+    "scanner_class": "check",
+    "recorded_rows": [
+      "| matplotlib | 3.11.2 | LicenseRef-Matplotlib (PSF-based) |",
+      "| matplotlib | 3.11.2 | LicenseRef-Matplotlib (PSF-based) |"
+    ]
+  },
+  {
+    "env": "rs_tts",
+    "package": "kiwisolver",
+    "version": "1.5.1",
+    "scanner_class": "check",
+    "recorded_rows": [
+      "| kiwisolver | 1.5.1 | BSD-3-Clause |",
+      "| kiwisolver | 1.5.1 | BSD-3-Clause |"
+    ]
+  },
+  {
+    "env": "rs_tts",
+    "package": "matplotlib",
+    "version": "3.11.2",
+    "scanner_class": "check",
+    "recorded_rows": [
+      "| matplotlib | 3.11.2 | LicenseRef-Matplotlib (PSF-based) |",
+      "| matplotlib | 3.11.2 | LicenseRef-Matplotlib (PSF-based) |"
+    ]
+  },
+  {
+    "env": "rs_tts",
+    "package": "parler_tts",
+    "version": "0.2.2",
+    "scanner_class": "unknown",
+    "recorded_rows": [
+      "| parler_tts | 0.2.2 | Apache-2.0 |"
+    ]
+  },
+  {
+    "env": "rs_tts",
+    "package": "ptyprocess",
+    "version": "0.7.0",
+    "scanner_class": "unknown",
+    "recorded_rows": [
+      "| ptyprocess | 0.7.0 | ISC |"
+    ]
+  }
+]

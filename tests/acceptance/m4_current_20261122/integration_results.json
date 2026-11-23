@@ -1,0 +1,69 @@
+[
+  {
+    "name": "web_tests",
+    "command": [
+      "node",
+      "--test",
+      "tests/web/test_capabilities_logic.mjs",
+      "tests/web/test_concepts_logic.mjs",
+      "tests/web/test_export_logic.mjs",
+      "tests/web/test_intent_logic.mjs",
+      "tests/web/test_measure.mjs",
+      "tests/web/test_projects_logic.mjs",
+      "tests/web/test_tasks_logic.mjs",
+      "tests/web/test_ui_logic.mjs"
+    ],
+    "exit": 0,
+    "seconds": 0.3
+  },
+  {
+    "name": "web_build",
+    "command": [
+      "npm",
+      "run",
+      "build"
+    ],
+    "exit": 0,
+    "seconds": 2.0
+  },
+  {
+    "name": "engine_jobs",
+    "command": [
+      "/Users/Nadish/.venvs/reelstudio/bin/python",
+      "-B",
+      "tests/test_engine_jobs.py"
+    ],
+    "exit": 0,
+    "seconds": 0.1
+  },
+  {
+    "name": "approved_content",
+    "command": [
+      "/Users/Nadish/.venvs/reelstudio/bin/python",
+      "-B",
+      "tests/test_approved_content.py"
+    ],
+    "exit": 0,
+    "seconds": 0.1
+  },
+  {
+    "name": "brand_bridge",
+    "command": [
+      "/Users/Nadish/.venvs/reelstudio/bin/python",
+      "-B",
+      "tests/test_brand_bridge.py"
+    ],
+    "exit": 0,
+    "seconds": 0.7
+  },
+  {
+    "name": "creative_routes",
+    "command": [
+      "/Users/Nadish/.venvs/reelstudio/bin/python",
+      "-B",
+      "tests/test_m6_creative.py"
+    ],
+    "exit": 1,
+    "seconds": 0.1
+  }
+]

@@ -1,0 +1,24 @@
+{"checks":27,"failures":0}
+✔ tests/web/test_capabilities_logic.mjs (106.917666ms)
+{"checks":10,"failures":0}
+✔ tests/web/test_concepts_logic.mjs (105.160375ms)
+{"checks":44,"failures":0}
+✔ tests/web/test_export_logic.mjs (105.165083ms)
+{"checks":51,"failures":0}
+✔ tests/web/test_intent_logic.mjs (112.306875ms)
+{"checks":9,"failures":0}
+✔ tests/web/test_measure.mjs (103.71775ms)
+{"checks":53,"failures":0}
+✔ tests/web/test_projects_logic.mjs (113.584959ms)
+{"checks":41,"failures":0}
+✔ tests/web/test_tasks_logic.mjs (107.964625ms)
+{"checks":14,"failures":0}
+✔ tests/web/test_ui_logic.mjs (101.915292ms)
+ℹ tests 8
+ℹ suites 0
+ℹ pass 8
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 126.18125

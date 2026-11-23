@@ -1,9 +1,9 @@
 """Offline test of the planner's safety checks (no model needed): Telugu numbers, card-to-beat sync, units, labels, hooks.
-Run: ~/.venvs/reelstudio/bin/python tests/test_plan_checks.py     (uses reel_002's words.json)"""
+Run: ~/.venvs/reelstudio/bin/python tests/test_plan_checks.py     (uses the tracked M4 planner fixture)"""
 import os, sys, json, copy
 ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__))); sys.path.insert(0, os.path.join(ROOT, "engine"))
 import te_numbers as N, planner as PL
-W = json.load(open(os.path.join(ROOT, "projects", "2026-11-03_reel_002_development", "build", "words.json"), encoding="utf-8"))
+W = json.load(open(os.path.join(ROOT, "tests", "fixtures", "m4_planner", "words.json"), encoding="utf-8"))
 Q = N.quantities(W); _, _, FR = PL.brand_guide({"brand": "jagan_for_andhra"}); fails = []
 def ok(name, cond, extra=""):
     print(("PASS " if cond else "FAIL ") + name + (f"  [{extra}]" if extra and not cond else "")); cond or fails.append(name)

@@ -1,0 +1,8 @@
+test_export_refusals (__main__.BrandBridge.test_export_refusals) ... ok
+test_round_trip_rebuilds_every_brand_folder_byte_for_byte (__main__.BrandBridge.test_round_trip_rebuilds_every_brand_folder_byte_for_byte) ... ok
+test_three_brands_import_as_drafts_with_unknown_rights (__main__.BrandBridge.test_three_brands_import_as_drafts_with_unknown_rights) ... ok
+
+----------------------------------------------------------------------
+Ran 3 tests in 0.609s
+
+OK

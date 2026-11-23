@@ -1,0 +1,18 @@
+{
+  "command": [
+    "/Users/Nadish/.venvs/reelstudio/bin/python",
+    "-B",
+    "tools/m6_render_job.py",
+    "2026-11-03_reel_002_development",
+    "--platform",
+    "instagram",
+    "--platform",
+    "youtube",
+    "--platform",
+    "facebook",
+    "--baseline",
+    "tests/baseline_reel_002.json"
+  ],
+  "exit": 0,
+  "seconds": 55.70141315460205
+}
