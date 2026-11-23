@@ -260,6 +260,11 @@ def caption_fixes(name: str, c: CaptionFix):
         if PL.get("approved"):
             PL["approved"] = False; json.dump(PL, open(pj, "w", encoding="utf-8"), ensure_ascii=False, indent=1)
             _history(d, "app: plan approval withdrawn - captions corrected after approval")
+        P = load(os.path.join(d, "project.json"))
+        if P.get("approved"):
+            P["approved"] = False
+            _save_project(d, P)
+            _history(d, "app: project approval withdrawn - captions corrected")
     _history(d, f"app: caption spelling fixes ({len(changed)}): " + "; ".join(changed)[:500])
     return _project_view(name)
 
